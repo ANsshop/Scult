@@ -1,0 +1,86 @@
+{
+  "currency": "EUR",
+  "vatRate": "0.00",
+  "researchDisclaimer": null,
+  "updatedAt": "2026-10-19T21:00:00.000Z",
+  "categories": [
+    { "id": "0199f000-0000-7000-8000-00000000c001", "slug": "poudres", "name": "Poudres", "description": null, "position": 0 },
+    { "id": "0199f000-0000-7000-8000-00000000c002", "slug": "packs", "name": "Packs", "description": null, "position": 1 }
+  ],
+  "products": [
+    {
+      "id": "0199f000-0000-7000-8000-00000000a001",
+      "name": "Whey isolate",
+      "slug": "whey",
+      "description": "Isolat de protéines de lactosérum, 90 % de protéines sur matière sèche. Saveur nature, sans sucres ajoutés, sans édulcorant. Pot de 750 g, cuillère-dose incluse (25 g). Fabriqué dans l'Union européenne.",
+      "imageUrl": "/products/scult-02.webp",
+      "category": { "slug": "poudres", "name": "Poudres" },
+      "seo": { "title": "Whey isolate nature 750 g — SCULT", "description": "Isolat de whey 90 % de protéines, nature, sans édulcorant. 750 g, fabriqué en UE. Livraison Europe, offerte dès 60 €." },
+      "images": [
+        { "url": "/products/scult-02.webp", "alt": "Pot SCULT Whey isolate 750 g, blanc, sur fond bleu Klein", "width": 1792, "height": 2240 },
+        { "url": "/lifestyle/scult-01.webp", "alt": "Pot de whey ouvert, cuillère-dose remplie de poudre blanche sur une dalle de marbre", "width": 1792, "height": 2240 },
+        { "url": "/products/scult-05.webp", "alt": "Gros plan sur le couvercle blanc et la pastille rouge du pot SCULT", "width": 1792, "height": 2240 },
+        { "url": "/products/scult-15.webp", "alt": "Dos du pot SCULT, tableau nutritionnel imprimé en noir", "width": 1792, "height": 2240 }
+      ],
+      "faqs": [],
+      "variants": [
+        { "id": "0199f000-0000-7000-8000-00000000b001", "sku": "SCULT-WHEY-750", "name": "750 g", "priceCents": 3900, "compareAtCents": null, "stock": 120, "available": true, "preorder": { "allowed": false, "eta": null }, "weightGrams": 820, "unitCount": 1 }
+      ]
+    },
+    {
+      "id": "0199f000-0000-7000-8000-00000000a002",
+      "name": "Créatine monohydrate",
+      "slug": "creatine",
+      "description": "Créatine monohydrate micronisée, 99,9 % de pureté (Creapure®). Poudre nature, sans additif. Pot de 300 g, soit 100 portions de 3 g. Fabriqué dans l'Union européenne.",
+      "imageUrl": "/products/scult-03.webp",
+      "category": { "slug": "poudres", "name": "Poudres" },
+      "seo": { "title": "Créatine monohydrate Creapure 300 g — SCULT", "description": "Créatine monohydrate micronisée 99,9 % (Creapure®), 300 g = 100 portions. Fabriquée en UE. Livraison Europe, offerte dès 60 €." },
+      "images": [
+        { "url": "/products/scult-03.webp", "alt": "Pot SCULT Créatine monohydrate 300 g, blanc, sur fond bleu Klein", "width": 1792, "height": 2240 },
+        { "url": "/lifestyle/scult-02.webp", "alt": "Verre d'eau où se dissout la créatine, à côté du pot SCULT", "width": 1792, "height": 2240 },
+        { "url": "/products/scult-06.webp", "alt": "Une main tient le pot SCULT Créatine pour montrer sa taille", "width": 1792, "height": 2240 },
+        { "url": "/products/scult-15.webp", "alt": "Dos du pot SCULT, tableau nutritionnel imprimé en noir", "width": 1792, "height": 2240 }
+      ],
+      "faqs": [],
+      "variants": [
+        { "id": "0199f000-0000-7000-8000-00000000b002", "sku": "SCULT-CREA-300", "name": "300 g", "priceCents": 2400, "compareAtCents": null, "stock": 200, "available": true, "preorder": { "allowed": false, "eta": null }, "weightGrams": 360, "unitCount": 1 }
+      ]
+    },
+    {
+      "id": "0199f000-0000-7000-8000-00000000a003",
+      "name": "Collagène marin",
+      "slug": "collagene",
+      "description": "Peptides de collagène marin hydrolysé (type I), issus de peau de poisson sauvage, 300 g. Poudre nature, soluble à froid, sans arôme. 30 portions de 10 g. Fabriqué dans l'Union européenne.",
+      "imageUrl": "/products/scult-04.webp",
+      "category": { "slug": "poudres", "name": "Poudres" },
+      "seo": { "title": "Collagène marin hydrolysé 300 g — SCULT", "description": "Peptides de collagène marin type I, 300 g = 30 portions, soluble à froid, sans arôme. Fabriqué en UE. Livraison Europe, offerte dès 60 €." },
+      "images": [
+        { "url": "/products/scult-04.webp", "alt": "Pot SCULT Collagène marin 300 g, blanc, sur fond bleu Klein", "width": 1792, "height": 2240 },
+        { "url": "/lifestyle/scult-03.webp", "alt": "Buste de marbre regardant le pot SCULT Collagène posé devant lui", "width": 1792, "height": 2240 },
+        { "url": "/products/scult-05.webp", "alt": "Gros plan sur le couvercle blanc et la pastille rouge du pot SCULT", "width": 1792, "height": 2240 },
+        { "url": "/products/scult-15.webp", "alt": "Dos du pot SCULT, tableau nutritionnel imprimé en noir", "width": 1792, "height": 2240 }
+      ],
+      "faqs": [],
+      "variants": [
+        { "id": "0199f000-0000-7000-8000-00000000b003", "sku": "SCULT-COLL-300", "name": "300 g", "priceCents": 2900, "compareAtCents": null, "stock": 150, "available": true, "preorder": { "allowed": false, "eta": null }, "weightGrams": 360, "unitCount": 1 }
+      ]
+    },
+    {
+      "id": "0199f000-0000-7000-8000-00000000a004",
+      "name": "Trio Sculpt",
+      "slug": "trio",
+      "description": "Les trois poudres SCULT : Whey isolate 750 g, Créatine monohydrate 300 g, Collagène marin 300 g. 79 € au lieu de 92 €. Livraison offerte.",
+      "imageUrl": "/products/scult-01.webp",
+      "category": { "slug": "packs", "name": "Packs" },
+      "seo": { "title": "Trio Sculpt : whey + créatine + collagène — 79 € — SCULT", "description": "Les trois poudres SCULT en un pack : whey isolate 750 g, créatine 300 g, collagène marin 300 g. 79 € au lieu de 92 €, livraison offerte." },
+      "images": [
+        { "url": "/products/scult-01.webp", "alt": "Les trois pots SCULT alignés : Whey, Créatine, Collagène, sur fond bleu Klein", "width": 1792, "height": 2240 },
+        { "url": "/lifestyle/scult-04.webp", "alt": "Vue de dessus des trois pots SCULT, cuillère-dose et fragment de marbre", "width": 1792, "height": 2240 }
+      ],
+      "faqs": [],
+      "variants": [
+        { "id": "0199f000-0000-7000-8000-00000000b004", "sku": "SCULT-TRIO", "name": "Pack", "priceCents": 7900, "compareAtCents": 9200, "stock": 80, "available": true, "preorder": { "allowed": false, "eta": null }, "weightGrams": 1540, "unitCount": 3 }
+      ]
+    }
+  ]
+}

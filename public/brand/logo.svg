@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 120" width="560" height="120" fill="currentColor" aria-label="SCULT">
+  <!-- Wordmark géométrique en rectangles — module 24, lettre 96 × 120, chasse 20 -->
+  <!-- S -->
+  <rect x="0" y="0" width="96" height="24"/>
+  <rect x="0" y="0" width="24" height="72"/>
+  <rect x="0" y="48" width="96" height="24"/>
+  <rect x="72" y="48" width="24" height="72"/>
+  <rect x="0" y="96" width="96" height="24"/>
+  <!-- C -->
+  <rect x="116" y="0" width="96" height="24"/>
+  <rect x="116" y="0" width="24" height="120"/>
+  <rect x="116" y="96" width="96" height="24"/>
+  <!-- U -->
+  <rect x="232" y="0" width="24" height="120"/>
+  <rect x="304" y="0" width="24" height="120"/>
+  <rect x="232" y="96" width="96" height="24"/>
+  <!-- L -->
+  <rect x="348" y="0" width="24" height="120"/>
+  <rect x="348" y="96" width="96" height="24"/>
+  <!-- T -->
+  <rect x="464" y="0" width="96" height="24"/>
+  <rect x="500" y="0" width="24" height="120"/>
+</svg>

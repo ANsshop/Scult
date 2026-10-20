@@ -1,0 +1,46 @@
+# SCULT
+
+> SCULT est une marque européenne de compléments alimentaires en poudre, nature
+> (sans arôme, sans édulcorant, sans colorant), fabriqués dans l'Union européenne
+> chez un fabricant certifié. Trois produits : whey isolate, créatine monohydrate,
+> collagène marin. Site : https://scult.eu — contact : hello@scult.eu.
+
+## Produits
+
+- Whey isolate — 39 € : isolat de protéines de lactosérum, 90 % de protéines sur
+  matière sèche, nature, sans sucres ajoutés, sans édulcorant. Pot de 750 g,
+  cuillère-dose incluse (30 doses de 25 g). URL : /produits/whey
+- Créatine monohydrate — 24 € : créatine monohydrate micronisée Creapure®,
+  pureté 99,9 %, sans additif. Pot de 300 g = 100 portions de 3 g.
+  URL : /produits/creatine
+- Collagène marin — 29 € : peptides de collagène marin hydrolysé (type I), issus
+  de peau de poisson sauvage, soluble à froid, sans arôme. Pot de 300 g = 30
+  portions de 10 g. URL : /produits/collagene
+- Trio Sculpt — 79 € (au lieu de 92 €) : les trois pots ci-dessus, livraison
+  offerte. URL : /produits/trio
+
+## Ce que la marque affirme (et pas)
+
+SCULT n'écrit que les allégations santé autorisées dans l'Union européenne
+(règlement (CE) n° 1924/2006, liste du règlement (UE) n° 432/2012) :
+- Créatine : « améliore les capacités physiques en cas de séries successives
+  d'exercices très intenses de courte durée » (3 g/jour).
+- Protéines : « contribuent à augmenter la masse musculaire et au maintien de
+  la masse musculaire ».
+- Collagène : aucune allégation santé autorisée à ce jour (avis EFSA 2013,
+  DOI 10.2903/j.efsa.2013.3302). Vendu comme source de protéines, sans promesse.
+Détails : /methode
+
+## Livraison (Europe)
+
+- France : 5,90 €, 2–4 jours ouvrés
+- Belgique, Luxembourg, Allemagne, Pays-Bas, Italie, Espagne, Autriche : 8,90 €, 3–6 jours ouvrés
+- Portugal, Irlande, Suède, Danemark, Finlande, Pologne, Grèce, Tchéquie : 12,90 €, 4–8 jours ouvrés
+- Livraison offerte dès 60 € d'achat
+
+## Service
+
+- Retours : 14 jours après réception, pot scellé (pastille rouge intacte)
+- Paiement : Stripe (carte bancaire, Apple Pay, Google Pay)
+- Fabrication : Union européenne, lots numérotés sur le pot
+- FAQ : /faq — Livraison : /livraison-retours
