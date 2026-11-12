@@ -7,12 +7,6 @@ export const REASSURANCE_ITEMS = [
   ["Paiement", "Stripe — CB, Apple Pay, Google Pay. Aucune donnée bancaire chez nous."],
 ];
 
-/** Le même trio, plus la fabrication : la bande de réassurance de l'accueil. */
-export const REASSURANCE_STRIP = [
-  ...REASSURANCE_ITEMS,
-  ["Fabrication", "Union européenne, fabricant certifié. Numéro de lot sur chaque pot."],
-];
-
 export function Reassurance({ className = "" }: { className?: string }) {
   return (
     <ul aria-label="Garanties" className={`space-y-3 ${className}`}>

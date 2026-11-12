@@ -133,15 +133,25 @@ Quatre slides CRI, textes dans `src/lib/content/hero-slides.ts`, visuels dans
 ## Architecture (accueil mono-produit, 2026-11-13)
 ```
 H  Slider plein cadre, 4 scènes CRI — le produit sous quatre angles
-P3 Carte d'achat collante + I2 fiche technique — section 2 « La formule » :
-   prix et bouton au deuxième écran, à côté de la preuve (les dosages)
+★  « L'affiche de la dose » — section 2, prix et bouton au deuxième écran
 I4 Image matière plein cadre — interlude vers la méthode (à reprendre)
 FAQ courte
-Événement typo : « SCULT » dans le footer
 ```
-Section 2 (`src/components/site/Offer.tsx`) : bande de réassurance à filets
-sous le hero ; à gauche le pot sur mur bleu, le prix, le prix par dose et le
-bouton, collés pendant que la formule défile à droite ; chaque ligne porte sa
-quantité en display et l'étiquette « Allégation autorisée » ou « Sans
-allégation ». Les quantités viennent de `product-info.ts`, jamais ressaisies.
-
+**Section 2, `src/components/site/Offer.tsx`.** Première version rejetée le
+jour même (« ultra générique ») : carte produit collante + liste de specs +
+quatre cases de garanties, c'est-à-dire un gabarit. La version retenue part
+des codes du pot :
+- **Échelle typographique** : chaque quantité est écrite à la taille de son
+  poids dans la dose (`--k` = la taille d'un gramme ; « 8G » remplit sa
+  colonne, « 1G » fait un huitième). C'est la preuve et le dessin à la fois.
+- **Le pot en travers de la grille** : détouré (`public/home/pot-detoure.webp`,
+  job `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850`), penché de 5°, ombre dure du
+  flash (`.flash-shadow`), posé sur le « G » du 8 et sur les filets — le
+  geste de la ref 2, où le mot passe derrière le sujet.
+- **Trois colonnes à filets visibles**, ligne de labels mono en tête, titre
+  qui franchit un filet, garanties en pied d'affiche.
+- **Les signes du pot** : trois coups de ciseau sur le 8 (`.chisel`), la
+  phrase du couvercle en bandeau défilant, la pastille rouge qui porte le prix.
+- Le bloc d'achat est un « ticket » à fond plein collé sous le pot.
+Règle à garder pour les sections suivantes : une idée tirée de l'objet ou des
+refs d'abord, le gabarit ensuite — jamais l'inverse.

@@ -80,6 +80,22 @@ body {
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
+/* — Affiche de la dose (section 2 de l'accueil) — */
+/* Trois coups de ciseau en travers des gros chiffres, comme sur le mot CRI du pot */
+.chisel { position: relative; display: inline-block; }
+.chisel::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(153deg,
+    transparent 0 38.6%, var(--color-marble) 38.6% 40%,
+    transparent 40% 49.2%, var(--color-marble) 49.2% 50.9%,
+    transparent 50.9% 60%, var(--color-marble) 60% 61.3%, transparent 61.3%);
+}
+/* Flash direct : l'ombre du pot est dure, noire, décalée — pas un halo */
+.flash-shadow { filter: drop-shadow(0.85rem 0.75rem 0 rgb(11 11 15 / 0.9)); }
+/* La phrase du couvercle, qui tourne comme autour du pot */
+@keyframes lid-line { to { transform: translateX(-50%); } }
+.lid-line { animation: lid-line 48s linear infinite; }
+
 /* Barre de progression du slider hero : sa fin déclenche la slide suivante */
 @keyframes hero-progress { from { transform: translateY(-1px) scaleX(0); } to { transform: translateY(-1px) scaleX(1); } }
 .hero-progress { animation: hero-progress 7s linear forwards; }

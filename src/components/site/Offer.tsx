@@ -1,117 +1,150 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { AddToCart } from "@/components/cart/AddToCart";
 import { Container } from "@/components/ui/Container";
 import type { Product } from "@/lib/catalog/queries";
 import { CRI_DOSES, getFormula } from "@/lib/content/formula";
 import { formatPrice } from "@/lib/utils";
-import { REASSURANCE_STRIP } from "./Reassurance";
-import { Reveal } from "./Reveal";
+import { REASSURANCE_ITEMS } from "./Reassurance";
+
+const LID = "Rien ne se sculpte en silence.";
 
 /**
- * Section 2 de l'accueil — l'offre. Boutique mono-produit : le prix et le
- * bouton d'achat arrivent dès le deuxième écran, à côté de la preuve (la
- * formule, quantité par quantité).
+ * Section 2 de l'accueil — « l'affiche de la dose ».
  *
- * Ordinateur : la carte d'achat reste collée à gauche pendant que la formule
- * défile à droite — le bouton ne quitte jamais l'écran. Mobile : visuel, prix
- * et bouton d'abord, la formule ensuite.
+ * L'idée : la formule composée comme une affiche, avec les codes du pot.
+ * Chaque quantité est écrite à la taille de son poids dans la dose (8 g est
+ * huit fois plus gros que 1 g), en bleu, griffée de trois coups de ciseau
+ * comme le mot CRI. Le pot détouré est posé en travers de la grille à filets,
+ * penché, avec l'ombre dure du flash ; le prix est sa pastille rouge.
+ *
+ * Ordinateur : trois colonnes à filets — les chiffres, le pot (collé, avec le
+ * bouton d'achat), les noms. Mobile : le pot et l'achat d'abord, l'affiche
+ * ensuite, sur deux colonnes.
  */
 export function Offer({ product }: { product: Product }) {
   const formula = getFormula(product.slug);
   if (!formula) return null;
   const perDose = formatPrice(Math.round(product.priceCents / CRI_DOSES));
+  // --k : la taille d'un gramme. Réglée pour que « 8G » remplisse sa colonne.
+  const scale = { "--k": "3.55vw", "--k-md": "calc((min(100vw, 1360px) - 5rem) / 3 / 11.9)" } as CSSProperties;
 
   return (
     <section id="formule" className="scroll-mt-14 border-b">
-      {/* Bande de réassurance : quatre cases à filets, juste sous le hero */}
-      <div className="border-b">
-        <Container>
-          <ul aria-label="Garanties" className="grid grid-cols-2 lg:grid-cols-4">
-            {REASSURANCE_STRIP.map(([title, text], i) => (
-              <li key={title} className={`py-5 pr-4 lg:py-6 ${i % 2 ? "border-l pl-4" : ""} ${i > 1 ? "border-t lg:border-t-0" : ""} ${i === 2 ? "lg:border-l lg:pl-6" : ""} ${i % 2 ? "lg:pl-6" : ""}`}>
+      {/* Le bord du couvercle */}
+      <div aria-hidden className="overflow-hidden bg-ink text-marble">
+        <p className="lid-line label flex w-max whitespace-nowrap py-3">
+          {Array.from({ length: 16 }, (_, i) => <span key={i} className="px-4">{LID} ·</span>)}
+        </p>
+      </div>
+
+      <Container>
+        <div className="relative md:border-x" style={scale}>
+          {/* Les deux filets verticaux de l'affiche */}
+          <div aria-hidden className="pointer-events-none absolute inset-y-0 left-1/3 hidden border-l md:block" />
+          <div aria-hidden className="pointer-events-none absolute inset-y-0 left-2/3 hidden border-l md:block" />
+
+          {/* Ligne de métadonnées */}
+          <div className="label grid grid-cols-2 border-b py-4 text-stone md:grid-cols-3 md:px-5">
+            <p>La dose · 23 g</p>
+            <p className="hidden md:block md:pl-5">CRI · pré-workout · fruits rouges</p>
+            <p className="text-right md:pl-5 md:text-left"><span className="hidden md:inline">Fabriqué dans l&apos;UE · </span>Lot 001</p>
+          </div>
+
+          {/* Titre : il passe par-dessus le filet */}
+          <div className="grid gap-6 border-b py-10 md:grid-cols-3 md:gap-0 md:py-14">
+            <h2 className="display relative text-[clamp(2.5rem,5.4vw,5.25rem)] md:col-span-2 md:pl-5">
+              Plus c&apos;est dosé, plus c&apos;est gros.
+            </h2>
+            <p className="max-w-md self-end leading-relaxed text-stone md:pl-8 md:pr-5">
+              Chaque quantité est écrite à la taille de son poids dans la dose. Rien n&apos;est fondu dans un « mélange » dont on tairait les proportions : c&apos;est ce qui est imprimé sur le pot.
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Le pot et l'achat : dans le flux sur mobile, collés dans la colonne du milieu sur ordinateur */}
+            <div className="relative z-10 border-b py-10 md:pointer-events-none md:absolute md:inset-y-0 md:left-1/3 md:w-1/3 md:border-b-0 md:py-0">
+              <div className="md:pointer-events-auto md:sticky md:top-16 md:px-6 md:pb-8 md:pt-8">
+                <div className="relative mx-auto w-[64%] md:ml-[-9%] md:w-[84%]">
+                  <Link href={`/produits/${product.slug}`} aria-label={`${product.name} — voir la fiche produit`} className="block">
+                    <Image
+                      src="/home/pot-detoure.webp"
+                      alt="Le pot SCULT CRI de face : le mot CRI en bleu sur le visage d'une statue qui hurle, strap rouge autour du couvercle"
+                      width={900}
+                      height={1096}
+                      sizes="(min-width: 768px) 28vw, 64vw"
+                      className="flash-shadow h-auto w-full -rotate-[5deg] md:max-h-[50svh] md:w-auto"
+                    />
+                  </Link>
+                  {/* La pastille : le seul rouge, et c'est le prix */}
+                  <p className="absolute -right-[16%] top-[7%] flex h-[6.25rem] w-[6.25rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-ruby text-white outline outline-1 -outline-offset-[5px] outline-white/45 md:-right-[10%]">
+                    <span className="display text-[1.9rem] tabular-nums">{formatPrice(product.priceCents)}</span>
+                    <span className="label mt-1 !text-[0.6rem]">{CRI_DOSES} doses</span>
+                  </p>
+                </div>
+                {/* Le ticket : fond plein, pour que les filets de l'affiche ne traversent pas le texte */}
+                <div className="mt-8 border border-ink bg-marble">
+                  <AddToCart product={product} className="w-full" />
+                  <p className="label flex justify-between border-b px-4 py-3 text-stone">
+                    <span>690 g · {CRI_DOSES} doses</span>
+                    <span className="text-ink">{perDose} la dose</span>
+                  </p>
+                  {formula.caffeineWarning && <p className="px-4 pt-3 text-[0.8rem] leading-snug text-stone">{formula.caffeineWarning}</p>}
+                  <Link href={`/produits/${product.slug}`} className="label inline-block px-4 pb-4 pt-3 underline underline-offset-4 hover:text-klein">
+                    La fiche complète : ingrédients, précautions →
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* L'affiche : une ligne par actif, le chiffre à l'échelle */}
+            <ol>
+              {formula.main.map((line) => {
+                const grams = line.unit === "g" ? Number(line.value.replace(",", ".")) : 0;
+                const size = grams
+                  ? { fontSize: `max(calc(var(--kk) * ${grams}), 1.5rem)` }
+                  : { fontSize: "clamp(1.1rem, 1.7vw, 1.5rem)" };
+                return (
+                  <li key={line.name} className="grid grid-cols-[45vw_1fr] items-start gap-x-3 border-b py-4 [--kk:var(--k)] md:grid-cols-3 md:gap-x-0 md:py-5 md:[--kk:var(--k-md)]">
+                    <p className="md:pl-5">
+                      <span className={`display text-klein ${grams >= 8 ? "chisel" : ""}`} style={size}>
+                        {line.value}{line.unit}
+                      </span>
+                    </p>
+                    <div className="md:col-start-3 md:pl-8 md:pr-5">
+                      <p className="display text-[clamp(1.05rem,1.9vw,1.75rem)] leading-none">{line.name}</p>
+                      {line.claim && <p className="label mt-2 text-ruby">Allégation autorisée · UE 432/2012</p>}
+                      {line.note && <p className="mt-2 max-w-sm text-[0.95rem] leading-relaxed text-stone">{line.note}</p>}
+                    </div>
+                  </li>
+                );
+              })}
+              <li className="grid gap-y-2 border-b py-5 md:grid-cols-3">
+                <p className="label text-stone md:pl-5">Et aussi, par dose</p>
+                <p className="label leading-relaxed md:col-start-3 md:pl-8 md:pr-5">
+                  {formula.rest.map((l) => `${l.name} ${l.amount}${l.nrv ? ` (${l.nrv} VNR)` : ""}`).join(" · ")}
+                </p>
+              </li>
+            </ol>
+          </div>
+
+          {/* Pied d'affiche : les garanties, en labels dans la grille */}
+          <ul aria-label="Garanties" className="grid md:grid-cols-3">
+            {REASSURANCE_ITEMS.map(([title, text], i) => (
+              <li key={title} className={`py-5 md:py-6 ${i ? "border-t md:border-t-0 md:pl-8" : "md:pl-5"} md:pr-5`}>
                 <p className="label flex items-center gap-2"><span aria-hidden className="h-1.5 w-1.5 bg-ruby" />{title}</p>
                 <p className="mt-2 text-sm leading-snug text-stone">{text}</p>
               </li>
             ))}
           </ul>
-        </Container>
-      </div>
-
-      <Container className="grid gap-12 py-14 md:grid-cols-12 md:gap-x-6 md:py-24">
-        {/* Carte d'achat */}
-        <div className="md:col-span-4">
-          <div className="md:sticky md:top-20">
-            <Link href={`/produits/${product.slug}`} aria-label={`${product.name} — voir la fiche produit`} className="group relative block aspect-square overflow-hidden bg-klein md:aspect-auto md:h-[min(52svh,32rem)]">
-              <Image
-                src="/home/pot-4x5.webp"
-                alt="Le pot SCULT CRI de face, posé sur un bloc de marbre devant un mur bleu"
-                fill
-                sizes="(min-width: 768px) 33vw, 100vw"
-                className="object-cover object-[50%_40%] transition-transform duration-700 ease-(--ease-scult) group-hover:scale-[1.03]"
-              />
-              <span className="label absolute left-4 top-4 text-marble">CRI · Lot 001</span>
-              <span className="label absolute right-4 top-4 text-marble">690 g · {CRI_DOSES} doses</span>
-            </Link>
-            <p className="label mt-6 text-stone">Pré-workout · fruits rouges</p>
-            <div className="mt-2 flex items-end justify-between gap-6">
-              <p className="display text-[clamp(3rem,5vw,4.25rem)] tabular-nums">{formatPrice(product.priceCents)}</p>
-              <p className="label whitespace-nowrap pb-1.5 text-right leading-relaxed text-stone">
-                {CRI_DOSES} doses<br />
-                <span className="text-ink">{perDose} la dose</span>
-              </p>
-            </div>
-            <AddToCart product={product} className="mt-5 w-full" />
-            {formula.caffeineWarning && <p className="mt-3 text-[0.8rem] leading-snug text-stone">{formula.caffeineWarning}</p>}
-            <Link href={`/produits/${product.slug}`} className="label mt-5 inline-block underline underline-offset-4 hover:text-klein">
-              Ingrédients, mode d&apos;emploi, précautions →
-            </Link>
-          </div>
         </div>
-
-        {/* La formule */}
-        <div className="md:col-span-7 md:col-start-6">
-          <Reveal>
-            <p className="label text-stone">La formule · par dose de 23 g</p>
-            <h2 className="display mt-5 text-[clamp(2.3rem,5vw,4.5rem)]">Ce qu&apos;il y a dedans. Au gramme près.</h2>
-            <p className="mt-6 max-w-xl leading-relaxed text-stone">
-              Sept actifs, sept quantités. Aucune n&apos;est fondue dans un « mélange » dont on tairait les proportions : ce que vous lisez ici est imprimé sur le pot.
-            </p>
-          </Reveal>
-
-          <ol className="mt-10 border-t border-ink">
-            {formula.main.map((line, i) => (
-              <li key={line.name} className="border-b">
-                <Reveal delay={i * 0.04} className="grid grid-cols-[6.5rem_1fr] items-baseline gap-x-4 py-5 md:grid-cols-[9.5rem_1fr] md:gap-x-6 md:py-6">
-                  <p className="flex items-baseline gap-1.5">
-                    <span className="display text-[clamp(2.6rem,4.4vw,4rem)] tabular-nums">{line.value}</span>
-                    <span className="label !text-[0.8rem] text-stone">{line.unit}</span>
-                  </p>
-                  <div>
-                    <p className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                      <span className="text-lg font-medium">{line.name}</span>
-                      <span className={`label ${line.claim ? "text-ruby" : "text-stone/80"}`}>{line.claim ? "Allégation autorisée" : "Sans allégation"}</span>
-                    </p>
-                    {line.note && <p className="mt-1.5 max-w-lg text-[0.95rem] leading-relaxed text-stone">{line.note}</p>}
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
-
-          <dl className="mt-6 grid gap-x-10 sm:grid-cols-2">
-            {formula.rest.map((line) => (
-              <div key={line.name} className="flex items-baseline justify-between gap-4 border-b py-3 text-sm">
-                <dt>{line.name}</dt>
-                <dd className="shrink-0 tabular-nums text-stone">{line.amount}{line.nrv ? ` · ${line.nrv} VNR` : ""}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-4 text-[0.8rem] leading-relaxed text-stone">
-            VNR : valeurs nutritionnelles de référence. « Sans allégation » : l&apos;Europe n&apos;autorise aucune allégation santé pour cet ingrédient dans un complément alimentaire, donc on donne sa quantité et rien d&apos;autre.{" "}
-            <Link href="/methode" className="underline underline-offset-2 hover:text-klein">Lire la méthode</Link>
-          </p>
-        </div>
+      </Container>
+      <Container className="pb-8 pt-4">
+        <p className="text-[0.8rem] leading-relaxed text-stone">
+          VNR : valeurs nutritionnelles de référence. Sans mention « allégation autorisée », l&apos;Europe n&apos;autorise aucune allégation santé pour l&apos;ingrédient dans un complément alimentaire : on donne sa quantité, rien d&apos;autre.{" "}
+          <Link href="/methode" className="underline underline-offset-2 hover:text-klein">Lire la méthode</Link>
+        </p>
       </Container>
     </section>
   );
