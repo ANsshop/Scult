@@ -20,8 +20,10 @@ Format : `- [NN] hypothèse — raison`. L'humain valide ou corrige.
 - [15] **Signature « Rien ne se sculpte en silence. »** — passe le gate (aucune promesse sur le corps), mais à faire relire avec le reste de l'étiquetage : elle joue sur le nom de la marque.
 - [16] **Mentions du dos du pot** — brouillon réglementaire (`docs/da/05-pot-dos-a-plat.jpg`) : responsable UE à compléter, QR d'analyse du lot, code-barres et logo Triman / info-tri sont des emplacements vides. La mention caféine doit aussi figurer en face avant, près du nom : elle n'est pas encore sur la maquette de face.
 - [17] **Visuels CRI = maquettes générées** — le pot n'existe pas. `public/lifestyle/cri-01.webp` a une répétition abîmée de la phrase du couvercle : à retoucher (recoller l'habillage exact) avant mise en ligne. Les deux bannières hero ont été vérifiées, textes du pot justes.
-- [18] **Collagène et Trio conservés** — recommandation de les sortir du lancement non tranchée ; ils restent au catalogue, CRI passe en tête.
+- [18] **Boutique mono-produit** — tranché le 2026-11-13 : le site ne vend que CRI. Whey, créatine, collagène et Trio restent dans `docs/mock/catalogue.json` mais ne sont plus affichés ni vendus (`STOREFRONT_SLUGS` dans `src/lib/catalog/queries.ts` : leurs fiches renvoient 404, le sitemap, `llms.txt`, la FAQ et la page Méthode ne parlent plus que de CRI). Pour rouvrir une référence : ajouter son slug, puis remettre son contenu.
 - [19] **Stock et poids CRI** fictifs dans le mock (100 unités, 780 g expédié).
+- [20] **Franco à 60 € pour un pot à 49 €** — avec un seul produit, la livraison offerte ne s'atteint qu'à deux pots. À trancher : baisser le seuil, ou vendre un lot de deux.
+- [21] **Textes de l'accueil proposés, pas validés** — titres des slides 2 à 4 (`src/lib/content/hero-slides.ts`) et de la section « La formule », notes par ingrédient (`src/lib/content/formula.ts`). Le « 1,63 € la dose » est calculé (prix ÷ 30 doses) : il suit le prix du socle.
 
 ## Technique
 - [06] Polices auto-hébergées via `next/font/local` (fichiers Fontsource OFL dans `src/fonts/`) plutôt que `next/font/google` : le build ne dépend d'aucun appel réseau (Google Fonts était bloqué dans l'environnement de build). Même rendu.

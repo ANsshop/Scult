@@ -112,6 +112,7 @@ bord du couvercle. Trois encres : noir, bleu, rouge.
 | Slide 3 « en pied », mobile | job | `b3b8a6a7-6ce2-4324-8d2d-df7160f2fcc8` |
 | Slide 4 « nuit, de dos », ordinateur | job | `b05840f8-9b4e-455f-8954-13eda2616f78` |
 | Slide 4 « nuit, de dos », mobile | job | `a194c598-923d-474b-8c69-c1153e92ea01` |
+| Pot seul sur bloc de marbre, 4:5 (carte d'achat de l'accueil) | job | `279ecc37-b18f-42dd-a53b-1d657dbb232e` |
 
 Modèle utilisé : `gpt_image_2_6`, qualité `high`, résolution `2k`.
 
@@ -128,4 +129,19 @@ Quatre slides CRI, textes dans `src/lib/content/hero-slides.ts`, visuels dans
 - **À reprendre** : `hero-3-9x16.webp` garde un chiffre douteux sur la ligne
   verticale des dosages (illisible à la taille d'affichage mobile, visible à
   la loupe). La retouche l'a empiré, l'original est conservé.
+
+## Architecture (accueil mono-produit, 2026-11-13)
+```
+H  Slider plein cadre, 4 scènes CRI — le produit sous quatre angles
+P3 Carte d'achat collante + I2 fiche technique — section 2 « La formule » :
+   prix et bouton au deuxième écran, à côté de la preuve (les dosages)
+I4 Image matière plein cadre — interlude vers la méthode (à reprendre)
+FAQ courte
+Événement typo : « SCULT » dans le footer
+```
+Section 2 (`src/components/site/Offer.tsx`) : bande de réassurance à filets
+sous le hero ; à gauche le pot sur mur bleu, le prix, le prix par dose et le
+bouton, collés pendant que la formule défile à droite ; chaque ligne porte sa
+quantité en display et l'étiquette « Allégation autorisée » ou « Sans
+allégation ». Les quantités viennent de `product-info.ts`, jamais ressaisies.
 

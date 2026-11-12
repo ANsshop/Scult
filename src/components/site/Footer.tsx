@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Corners } from "./Corners";
 
 const COLS = [
-  { title: "Boutique", links: [["CRI · pré-workout", "/produits/cri"], ["Whey isolate", "/produits/whey"], ["Créatine", "/produits/creatine"], ["Collagène marin", "/produits/collagene"], ["Trio Sculpt", "/produits/trio"]] },
+  { title: "Boutique", links: [["CRI · pré-workout", "/produits/cri"], ["La formule", "/#formule"], ["Panier", "/panier"]] },
   { title: "Aide", links: [["Méthode & sources", "/methode"], ["Questions fréquentes", "/faq"], ["Livraison & retours", "/livraison-retours"], ["Nous écrire", "mailto:hello@scult.eu"]] },
   { title: "Légal", links: [["CGV", "/cgv"], ["Mentions légales", "/mentions-legales"], ["Confidentialité", "/confidentialite"]] },
 ];

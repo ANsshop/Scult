@@ -13,7 +13,7 @@ import { formatPrice } from "@/lib/utils";
 const answer = (q: string) => FAQ_ITEMS.find((i) => i.question === q)?.answer ?? "";
 
 export function ProductPage({ product, upsell }: { product: Product; upsell?: Product | null }) {
-  const claim = CLAIMS.find((c) => c.slug === product.slug);
+  const claims = CLAIMS.filter((c) => c.slug === product.slug);
   const info = PRODUCT_INFO[product.slug];
   return (
     <>
@@ -47,13 +47,17 @@ export function ProductPage({ product, upsell }: { product: Product; upsell?: Pr
           )}
           <Reassurance className="mt-8" />
           <div className="mt-10 divide-y border-y">
-            {claim && (
+            {claims.length > 0 && (
               <details className="group py-5" open>
                 <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Ce que l&apos;Europe autorise à dire<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
-                <div className="mt-4 text-[0.95rem] leading-relaxed text-stone">
-                  <p className="text-ink">« {claim.claim} »</p>
-                  <p className="mt-2">{claim.condition}</p>
-                  <p className="mt-2 label normal-case tracking-normal">Source : <a href={claim.url} className="underline" rel="noopener" target="_blank">{claim.source}</a></p>
+                <div className="mt-4 space-y-4 text-[0.95rem] leading-relaxed text-stone">
+                  {claims.map((c) => (
+                    <div key={c.id}>
+                      {c.claim && <p className="text-ink">« {c.claim} »</p>}
+                      <p className={c.claim ? "mt-1" : ""}>{c.condition}</p>
+                    </div>
+                  ))}
+                  <p className="label normal-case tracking-normal">Source : <a href={claims[0].url} className="underline" rel="noopener" target="_blank">Règlement (UE) n° 432/2012, annexe.</a></p>
                 </div>
               </details>
             )}

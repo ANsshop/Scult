@@ -32,13 +32,12 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
-  const upsell = product.slug === "trio" ? null : await getProductBySlug("trio");
   return (
     <>
       <JsonLd data={productJsonLd(product)} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: product.name, path: `/produits/${product.slug}` }])} />
       <Header />
-      <main><ProductPage product={product} upsell={upsell} /></main>
+      <main><ProductPage product={product} /></main>
       <Footer />
     </>
   );

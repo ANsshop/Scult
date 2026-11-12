@@ -7,10 +7,7 @@ import { Wordmark } from "./Wordmark";
 
 export const NAV = [
   { label: "CRI", href: "/produits/cri" },
-  { label: "Whey", href: "/produits/whey" },
-  { label: "Créatine", href: "/produits/creatine" },
-  { label: "Collagène", href: "/produits/collagene" },
-  { label: "Trio", href: "/produits/trio" },
+  { label: "La formule", href: "/#formule" },
   { label: "Méthode", href: "/methode" },
   { label: "FAQ", href: "/faq" },
 ];

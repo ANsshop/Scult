@@ -36,9 +36,19 @@ function toProduct(p: PpProduct): Product | null {
   };
 }
 
+/**
+ * Boutique mono-produit : seuls ces slugs sont vendus, quel que soit le
+ * catalogue de la marque dans le socle. Fiches, sitemap et panier en
+ * découlent. Pour rouvrir une référence, ajouter son slug ici.
+ */
+const STOREFRONT_SLUGS = new Set(["cri"]);
+
 export async function getProducts(): Promise<Product[]> {
   const cat = await getCatalogue();
-  return cat.products.map(toProduct).filter((p): p is Product => p !== null);
+  return cat.products
+    .filter((p) => STOREFRONT_SLUGS.has(p.slug))
+    .map(toProduct)
+    .filter((p): p is Product => p !== null);
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {

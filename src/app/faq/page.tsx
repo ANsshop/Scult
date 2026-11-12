@@ -8,7 +8,7 @@ import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Questions fréquentes",
-  description: "Composition de la whey, de la créatine et du collagène SCULT, délais et tarifs de livraison en Europe, retours, paiement, fabrication.",
+  description: "Composition et dosages de CRI, caféine, picotements, délais et tarifs de livraison en Europe, retours, paiement, fabrication.",
   alternates: { canonical: "/faq" },
 };
 
