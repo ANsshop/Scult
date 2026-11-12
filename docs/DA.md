@@ -106,5 +106,26 @@ bord du couvercle. Trois encres : noir, bleu, rouge.
 | Logo SCULT | media | `f976b2a7-57d9-475a-8565-6e7d4b4d2f39` |
 | Bannière hero ordinateur | job | `79ff2f69-7c43-48b4-8aad-d0bde395110c` |
 | Bannière hero mobile | job | `68978d51-3e04-479f-bf92-b433b6d0f9f1` |
+| Slide 2 « la barre », ordinateur | job | `2cf88359-0063-4855-8fce-2ee32b86a7c1` |
+| Slide 2 « la barre », mobile | job | `5037de77-fa2d-45b0-86ee-daf80daef81a` |
+| Slide 3 « en pied », ordinateur | job | `7b4e1319-25a0-43c9-9fd8-2e7d99adb513` |
+| Slide 3 « en pied », mobile | job | `b3b8a6a7-6ce2-4324-8d2d-df7160f2fcc8` |
+| Slide 4 « nuit, de dos », ordinateur | job | `b05840f8-9b4e-455f-8954-13eda2616f78` |
+| Slide 4 « nuit, de dos », mobile | job | `a194c598-923d-474b-8c69-c1153e92ea01` |
 
 Modèle utilisé : `gpt_image_2_6`, qualité `high`, résolution `2k`.
+
+### Slider du hero (ajouté le 2026-11-13)
+Quatre slides CRI, textes dans `src/lib/content/hero-slides.ts`, visuels dans
+`public/home/hero-<n>-16x9.webp` et `-9x16.webp`. Chaque scène garde le sujet
+à droite et 40 % de mur vide à gauche pour le titre.
+- **Micro-textes** : sur un pot petit dans le cadre, la ligne du couvercle et
+  la ligne verticale des dosages sortent fausses (« CRÉATINE 9 G », un mot
+  manquant). Correctif qui marche : repasser l'image en référence n°1 avec le
+  pot maître en n°2 et « Edit reference image 1. Keep the whole photograph
+  strictly identical. The only change: … must read exactly '…' ». Trois
+  retouches sur quatre ont réussi du premier coup.
+- **À reprendre** : `hero-3-9x16.webp` garde un chiffre douteux sur la ligne
+  verticale des dosages (illisible à la taille d'affichage mobile, visible à
+  la loupe). La retouche l'a empiré, l'original est conservé.
+

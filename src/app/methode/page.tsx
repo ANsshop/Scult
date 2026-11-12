@@ -22,7 +22,7 @@ export default function MethodePage() {
       <Header onBlue />
       <main>
         <section className="grain relative bg-klein text-marble">
-          <Corners tl="Méthode" tr="Règlement (CE) 1924/2006" bl="Sources en bas de page" br="Mis à jour 10/2026" />
+          <Corners className="top-14" tl="Méthode" tr="Règlement (CE) 1924/2006" bl="Sources en bas de page" br="Mis à jour 10/2026" />
           <Container className="py-24 md:py-36">
             <h1 className="display max-w-5xl text-[clamp(2.8rem,9vw,8.5rem)]">Ce qu&apos;on peut dire. Et pas.</h1>
             <p className="mt-8 max-w-2xl text-lg leading-relaxed text-marble/90">

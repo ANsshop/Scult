@@ -64,6 +64,8 @@ body {
   mix-blend-mode: overlay;
 }
 .grain > * { position: relative; z-index: 1; }
+/* Les labels de coin restent en absolu, au-dessus du contenu de la section */
+.grain > .corners { position: absolute; z-index: 2; }
 
 /* Les filets 1 px qui structurent la page en grille */
 .hairline-y { border-left: 1px solid color-mix(in srgb, currentColor 22%, transparent); }
@@ -77,6 +79,10 @@ body {
 
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Barre de progression du slider hero : sa fin déclenche la slide suivante */
+@keyframes hero-progress { from { transform: translateY(-1px) scaleX(0); } to { transform: translateY(-1px) scaleX(1); } }
+.hero-progress { animation: hero-progress 7s linear forwards; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
