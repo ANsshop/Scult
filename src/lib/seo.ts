@@ -18,7 +18,7 @@ export function organizationJsonLd() {
         name: SITE_NAME,
         url: origin,
         logo: `${origin}/brand/logo-black.png`,
-        description: "SCULT fabrique trois poudres nature dans l'Union européenne : whey isolate, créatine monohydrate et collagène marin.",
+        description: "SCULT est une marque européenne de compléments alimentaires en poudre : le pré-workout CRI, et trois poudres nature (whey isolate, créatine monohydrate, collagène marin).",
         email: "hello@scult.eu",
       },
       { "@type": "WebSite", "@id": `${origin}/#website`, name: SITE_NAME, url: origin, inLanguage: "fr-FR", publisher: { "@id": `${origin}/#organization` } },

@@ -13,13 +13,13 @@ const inter = localFont({ src: "../fonts/inter-latin-wght-normal.woff2", variabl
 const mono = localFont({ src: "../fonts/jetbrains-mono-latin-wght-normal.woff2", variable: "--font-mono", weight: "100 800", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "SCULT — Whey, créatine, collagène. Nature, fabriqués en UE.", template: "%s — SCULT" },
+  title: { default: "SCULT — CRI, le pré-workout. Whey, créatine, collagène.", template: "%s — SCULT" },
   description:
-    "Trois poudres nature fabriquées dans l'Union européenne : whey isolate 90 %, créatine Creapure®, collagène marin. Sans édulcorant, lots numérotés. Trio à 79 €, livraison offerte.",
+    "CRI, le pré-workout SCULT : citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose, 30 doses. Et trois poudres nature : whey isolate, créatine, collagène marin. Fabriqués dans l'Union européenne, lots numérotés.",
   metadataBase: new URL(siteOrigin()),
   applicationName: "SCULT",
-  openGraph: { siteName: "SCULT", type: "website", locale: "fr_FR", title: "SCULT — Whey, créatine, collagène. Nature, fabriqués en UE.", description: "Trois poudres nature, fabriquées en UE, lots numérotés. Trio à 79 €, livraison offerte." },
-  twitter: { card: "summary_large_image", title: "SCULT — Whey, créatine, collagène.", description: "Trois poudres nature, fabriquées en UE. Trio à 79 €, livraison offerte." },
+  openGraph: { siteName: "SCULT", type: "website", locale: "fr_FR", title: "SCULT — CRI, le pré-workout.", description: "Citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose. 30 doses, fruits rouges. Fabriqué en UE." },
+  twitter: { card: "summary_large_image", title: "SCULT — CRI, le pré-workout.", description: "Citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose. 30 doses." },
   robots: { index: true, follow: true },
 };
 

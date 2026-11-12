@@ -56,3 +56,55 @@ le wordmark géant comme une inscription gravée.
 - La photo sombre bleu-vert de la ref 2 : la série reste Klein + soleil.
 - Aucun chiffre d'efficacité, aucune allégation santé non autorisée (voir
   `ASSUMPTIONS.md`) : la DA porte la promesse, pas la copy.
+
+
+---
+
+## DA « Cri » — le pré-workout (ajoutée le 2026-11-12)
+
+La gamme nature garde la DA ci-dessus (pots blancs, soleil dur). **CRI a la
+sienne**, plus agressive, et c'est elle qui porte l'accueil. Références dans
+`docs/da/` (planche, personnage, pot, dos à plat).
+
+### Règles photo
+- **Flash direct** type compact 35 mm (Fuji Superia 400), ombre noire portée
+  sur le mur, grain visible. À écrire en premier dans chaque prompt, sinon le
+  modèle repart sur du soleil.
+- **Mur bleu peint** `#1238C7`, peinture légèrement irrégulière. Version nuit :
+  bleu qui tombe au noir sur les bords.
+- **Statue** : marbre ivoire patiné, brun dans les creux, piqûres, cassures,
+  poli brillant seulement sur les reliefs. Jamais de marbre blanc propre.
+- Cadre penché, coupé, trop près. Jamais de salle de sport, de peau humaine
+  ni de halo.
+- Rouge = le strap (poignet droit de la statue, bande du pot) et la pastille.
+  Rien d'autre en rouge.
+
+### Le personnage (une seule statue, partout)
+Mâchoire carrée, nez cassé à la pointe, front plissé, yeux lisses sans iris,
+cheveux en grosses mèches, veine grise sur la joue gauche, **pastille rouge à
+la tempe gauche**, **strap rouge au poignet droit**, drapé noué aux hanches.
+
+### Le pot CRI
+Pot et couvercle ivoire en un seul dessin continu. Visage de la statue en
+trame noire, **CRI** en bleu qui déborde, trois coups de ciseau, strap rouge
+en bande d'inviolabilité, signature « Rien ne se sculpte en silence. » sur le
+bord du couvercle. Trois encres : noir, bleu, rouge.
+- Toujours de face, pot droit, jamais plus qu'un trois-quarts.
+- Le dos est composé en vraie typo (`docs/da/05-pot-dos-a-plat.jpg`), jamais
+  généré.
+- Contrôler les micro-textes à 100 % sur chaque image avant de la publier.
+
+### Références Higgsfield à passer en `medias` (rôle `image_references`)
+| Référence | Type | ID |
+|---|---|---|
+| Pot de face (image maîtresse, à passer en n°1) | job | `3d0c56fb-24dc-465d-99ef-b4a0828ff222` |
+| Pot, vues trois-quarts / dos vierge / dessus | job | `a9563ee9-938e-474b-8095-fc655ff909b7` |
+| Dos du pot avec mentions | media | `cde61717-df7c-48ff-b9c3-c8743cc20f6b` |
+| Personnage, tête et expressions (v3) | job | `8afc6370-6bf2-4823-ac8e-7fbaf753a510` |
+| Personnage, corps et détails (v3) | job | `0294ea8c-6727-4304-a0b4-b76cc5370bd0` |
+| Tête d'origine (planche C) | job | `4199879e-c657-4e53-ab5c-72c80b0aab6a` |
+| Logo SCULT | media | `f976b2a7-57d9-475a-8565-6e7d4b4d2f39` |
+| Bannière hero ordinateur | job | `79ff2f69-7c43-48b4-8aad-d0bde395110c` |
+| Bannière hero mobile | job | `68978d51-3e04-479f-bf92-b433b6d0f9f1` |
+
+Modèle utilisé : `gpt_image_2_6`, qualité `high`, résolution `2k`.

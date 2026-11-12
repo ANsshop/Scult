@@ -6,6 +6,16 @@
  */
 export const CLAIMS = [
   {
+    product: "CRI (pré-workout)",
+    slug: "cri",
+    claim:
+      "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée.",
+    condition:
+      "CRI apporte 3 g de créatine par dose, la quantité journalière visée par l'allégation. Deux autres allégations autorisées s'appliquent, à 100 % des apports de référence par dose : « La vitamine B6 contribue à réduire la fatigue » et « L'acide pantothénique contribue à des performances intellectuelles normales ». Rien n'est affirmé sur la citrulline, la bêta-alanine, la tyrosine, la taurine, la théanine ni la caféine : aucune allégation n'est autorisée pour elles dans un complément alimentaire.",
+    source: "Règlement (UE) n° 432/2012, annexe — entrées « créatine », « vitamine B6 », « acide pantothénique ».",
+    url: "https://eur-lex.europa.eu/eli/reg/2012/432/oj",
+  },
+  {
     product: "Créatine",
     slug: "creatine",
     claim:

@@ -3,6 +3,21 @@ export type FaqItem = { question: string; answer: string };
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
+    question: "Qu'est-ce qu'il y a dans CRI ?",
+    answer:
+      "Par dose de 23 g : L-citrulline 8 g, bêta-alanine 4 g, créatine 3 g, L-tyrosine 2 g, taurine 1 g, L-théanine 200 mg, caféine 150 mg, sodium 500 mg, potassium 300 mg, vitamines B5 et B6 à 100 % des apports de référence. Saveur fruits rouges, avec édulcorant. Le pot fait 690 g, soit 30 doses.",
+  },
+  {
+    question: "Combien de caféine dans CRI, et pour qui est-ce déconseillé ?",
+    answer:
+      "150 mg par dose, une dose par jour maximum. CRI contient de la caféine : il est déconseillé aux enfants, aux adolescents et aux femmes enceintes ou allaitantes. Ne l'associez pas à d'autres sources de caféine.",
+  },
+  {
+    question: "Pourquoi ça picote après avoir pris CRI ?",
+    answer:
+      "La bêta-alanine peut provoquer des picotements passagers sur la peau. La première semaine, commencez par une demi-dose.",
+  },
+  {
     question: "Qu'est-ce qu'il y a dans la whey SCULT ?",
     answer:
       "Un isolat de protéines de lactosérum à 90 % de protéines sur matière sèche, nature : sans sucres ajoutés, sans édulcorant, sans arôme. Le pot fait 750 g, soit 30 doses de 25 g avec la cuillère incluse.",

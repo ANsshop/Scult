@@ -6,6 +6,7 @@ import { Reassurance } from "./Reassurance";
 import { FaqPreview } from "./FaqPreview";
 import { CLAIMS } from "@/lib/content/methode";
 import { FAQ_ITEMS } from "@/lib/content/faq";
+import { PRODUCT_INFO } from "@/lib/content/product-info";
 import type { Product } from "@/lib/catalog/queries";
 import { formatPrice } from "@/lib/utils";
 
@@ -13,6 +14,7 @@ const answer = (q: string) => FAQ_ITEMS.find((i) => i.question === q)?.answer ??
 
 export function ProductPage({ product, upsell }: { product: Product; upsell?: Product | null }) {
   const claim = CLAIMS.find((c) => c.slug === product.slug);
+  const info = PRODUCT_INFO[product.slug];
   return (
     <>
       <Container className="grid gap-10 pb-20 pt-8 md:grid-cols-[1.15fr_1fr] md:gap-16 md:pb-28">
@@ -30,6 +32,9 @@ export function ProductPage({ product, upsell }: { product: Product; upsell?: Pr
             )}
           </p>
           <p className="mt-6 max-w-md leading-relaxed text-stone">{product.description}</p>
+          {info?.caffeineWarning && (
+            <p className="mt-6 border border-ink p-3 text-sm font-medium">{info.caffeineWarning}</p>
+          )}
           <AddToCart product={product} className="mt-8 w-full" />
           {upsell && (
             <Link href={`/produits/${upsell.slug}`} className="group mt-5 flex items-center justify-between border p-4 transition-colors hover:border-klein">
@@ -50,6 +55,37 @@ export function ProductPage({ product, upsell }: { product: Product; upsell?: Pr
                   <p className="mt-2">{claim.condition}</p>
                   <p className="mt-2 label normal-case tracking-normal">Source : <a href={claim.url} className="underline" rel="noopener" target="_blank">{claim.source}</a></p>
                 </div>
+              </details>
+            )}
+            {info && (
+              <details className="group py-5" open>
+                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Composition par dose<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+                <div className="mt-4 text-[0.95rem] leading-relaxed text-stone">
+                  <p className="text-ink">{info.denomination}</p>
+                  <table className="mt-4 w-full text-left tabular-nums">
+                    <thead>
+                      <tr className="label border-b border-ink text-ink"><th className="py-2 font-normal">{info.serving}</th><th className="py-2 text-right font-normal">Quantité</th><th className="py-2 text-right font-normal">% VNR*</th></tr>
+                    </thead>
+                    <tbody>
+                      {info.nutrition.map((n) => (
+                        <tr key={n.name} className="border-b"><td className="py-2 text-ink">{n.name}</td><td className="py-2 text-right">{n.amount}</td><td className="py-2 text-right">{n.nrv ?? "—"}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <p className="mt-2 text-sm">*VNR : valeurs nutritionnelles de référence. — : pas de valeur de référence établie.</p>
+                </div>
+              </details>
+            )}
+            {info && (
+              <details className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Ingrédients<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+                <div className="mt-4 text-[0.95rem] leading-relaxed text-stone"><p>{info.ingredients}</p></div>
+              </details>
+            )}
+            {info && (
+              <details className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Conseils d&apos;utilisation et précautions<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+                <div className="mt-4 text-[0.95rem] leading-relaxed text-stone"><p>{info.usage}</p><p className="mt-3">{info.warnings}</p></div>
               </details>
             )}
             <details className="group py-5">

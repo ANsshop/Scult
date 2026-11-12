@@ -12,9 +12,20 @@ Format : `- [NN] hypothèse — raison`. L'humain valide ou corrige.
 - [04] Packaging généré (pot blanc mat, pastille rouge, mot vertical) : aucun fournisseur consulté. Le visuel précède le produit — à inverser avant vente (la fiche s'aligne sur le sample).
 - [05] Franco à 60 € et port FR 5,90 / EU 8,90 / 12,90 : à aligner sur le transporteur réel.
 
+## CRI — pré-workout (ajouté le 2026-11-12)
+- [11] **Prix 49 € les 30 doses** — proposé, pas validé. À recaler sur le coût de revient du fabricant.
+- [12] **Nom « CRI »** — nom de travail validé en image, pas vérifié à l'INPI pour les compléments alimentaires. À faire avant impression.
+- [13] **Formule cible, pas formule fabricant** — dosages par dose de 23 g issus de la V2 (citrulline 8 g, bêta-alanine 4 g, créatine 3 g, tyrosine 2 g, taurine 1 g, théanine 200 mg, caféine 150 mg, sodium 500 mg, potassium 300 mg, B5 et B6 à 100 % VNR). La **liste d'ingrédients** (ordre, arôme, édulcorant, colorant, anti-agglomérant) est une estimation : elle se remplace par celle du façonnier dans `src/lib/content/product-info.ts`, `public/llms.txt`, la FAQ et le dos du pot.
+- [14] **Saveur « Fruits rouges »** — choix provisoire, une seule saveur au lancement.
+- [15] **Signature « Rien ne se sculpte en silence. »** — passe le gate (aucune promesse sur le corps), mais à faire relire avec le reste de l'étiquetage : elle joue sur le nom de la marque.
+- [16] **Mentions du dos du pot** — brouillon réglementaire (`docs/da/05-pot-dos-a-plat.jpg`) : responsable UE à compléter, QR d'analyse du lot, code-barres et logo Triman / info-tri sont des emplacements vides. La mention caféine doit aussi figurer en face avant, près du nom : elle n'est pas encore sur la maquette de face.
+- [17] **Visuels CRI = maquettes générées** — le pot n'existe pas. `public/lifestyle/cri-01.webp` a une répétition abîmée de la phrase du couvercle : à retoucher (recoller l'habillage exact) avant mise en ligne. Les deux bannières hero ont été vérifiées, textes du pot justes.
+- [18] **Collagène et Trio conservés** — recommandation de les sortir du lancement non tranchée ; ils restent au catalogue, CRI passe en tête.
+- [19] **Stock et poids CRI** fictifs dans le mock (100 unités, 780 g expédié).
+
 ## Technique
 - [06] Polices auto-hébergées via `next/font/local` (fichiers Fontsource OFL dans `src/fonts/`) plutôt que `next/font/google` : le build ne dépend d'aucun appel réseau (Google Fonts était bloqué dans l'environnement de build). Même rendu.
 - [07] `PP_MOCK=1` : aucun appel au socle pendant le test. Les 4 fichiers PP (`client`, `catalog/queries`, `orders/pricing`, `orders/actions`) suivent `docs/PP-API-CONTRACT.md` ; `/api/panier` et `/api/orders` n'ont pas été appelés en réel.
 - [08] Dépôt de commande : le webhook Stripe appelle `POST /api/orders` avec `externalRef = session.id` ; la déduplication côté socle sur `externalRef` est supposée (à vérifier dans `packages/core/src/orders.ts`).
 - [09] Le repo `ANsshop/boutique-template` n'existe pas encore : ce projet en est le premier brouillon (vitrine pure, sans Prisma / admin / auth).
-- [10] Repo `ANsshop/scult` non créé (accès lecture seule) : livraison en zip, pas de preview Vercel.
+- [10] Repo `ANsshop/Scult` : en ligne et public depuis le 2026-10-20. La mise à jour CRI est sur la branche `cri-preworkout`.
