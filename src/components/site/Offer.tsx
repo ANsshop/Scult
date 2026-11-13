@@ -1,17 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
 import { AddToCart } from "@/components/cart/AddToCart";
 import { Container } from "@/components/ui/Container";
 import type { Product } from "@/lib/catalog/queries";
 import { CRI_DOSES, getFormula } from "@/lib/content/formula";
 import { formatPrice } from "@/lib/utils";
+import { Pot3D } from "./Pot3D";
 
 /**
  * Section 2 de l'accueil — simple : la grande carte produit, et à côté la
  * formule réduite à une petite liste.
  *
- * La carte produit est la seule pièce « dessinée » : le pot détouré, penché,
- * avec l'ombre dure du flash, le prix dans sa pastille rouge et le bouton
+ * La carte produit est la seule pièce « dessinée » : le pot en 3D, penché,
+ * qu'on fait tourner à la souris ou au doigt, avec l'ombre dure du flash, le prix dans sa pastille rouge et le bouton
  * d'achat. Le reste est du texte. Mobile : la carte d'abord, la liste ensuite.
  */
 export function Offer({ product }: { product: Product }) {
@@ -30,18 +30,12 @@ export function Offer({ product }: { product: Product }) {
           </p>
           <div className="flex items-center justify-center py-8 md:py-12">
             <div className="relative w-[76%] md:w-[58%]">
-              <Link href={`/produits/${product.slug}`} aria-label={`${product.name} — voir la fiche produit`} className="block">
-                <Image
-                  src="/home/pot-detoure.webp"
-                  alt="Le pot SCULT CRI de face : le mot CRI en bleu sur le visage d'une statue qui hurle, strap rouge autour du couvercle"
-                  width={900}
-                  height={1096}
-                  sizes="(min-width: 768px) 36vw, 76vw"
-                  className="flash-shadow h-auto w-full -rotate-[5deg] transition-transform duration-500 ease-(--ease-scult) hover:-rotate-[2deg]"
-                />
-              </Link>
+              <Pot3D
+                alt="Le pot SCULT CRI de face : le mot CRI en bleu sur le visage d'une statue qui hurle, strap rouge autour du couvercle"
+                sizes="(min-width: 768px) 36vw, 76vw"
+              />
               {/* La pastille : le seul rouge, et c'est le prix */}
-              <p className="absolute -right-[17%] top-[6%] flex h-[6.5rem] w-[6.5rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-ruby text-white outline outline-1 -outline-offset-[5px] outline-white/45 md:h-[7.5rem] md:w-[7.5rem]">
+              <p className="pointer-events-none absolute -right-[17%] top-[6%] flex h-[6.5rem] w-[6.5rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-ruby text-white outline outline-1 -outline-offset-[5px] outline-white/45 md:h-[7.5rem] md:w-[7.5rem]">
                 <span className="display text-[2rem] tabular-nums md:text-[2.3rem]">{formatPrice(product.priceCents)}</span>
                 <span className="label mt-1 !text-[0.6rem]">{CRI_DOSES} doses</span>
               </p>

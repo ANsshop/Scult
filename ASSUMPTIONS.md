@@ -26,6 +26,7 @@ Format : `- [NN] hypothèse — raison`. L'humain valide ou corrige.
 - [21] **Textes de l'accueil proposés, pas validés** — titres des slides 2 à 4 (`src/lib/content/hero-slides.ts`) et de la section « La formule », notes par ingrédient (`src/lib/content/formula.ts`). Le « 1,63 € la dose » est calculé (prix ÷ 30 doses) : il suit le prix du socle.
 
 ## Technique
+- [22] **Dépendance hors liste : `@google/model-viewer`** (et `three`, sa dépendance) — pour le pot 3D à faire tourner dans la carte produit de l'accueil. Chargée seulement à l'approche de la carte, jamais au premier affichage ; sans elle, l'image fixe du pot reste en place.
 - [06] Polices auto-hébergées via `next/font/local` (fichiers Fontsource OFL dans `src/fonts/`) plutôt que `next/font/google` : le build ne dépend d'aucun appel réseau (Google Fonts était bloqué dans l'environnement de build). Même rendu.
 - [07] `PP_MOCK=1` : aucun appel au socle pendant le test. Les 4 fichiers PP (`client`, `catalog/queries`, `orders/pricing`, `orders/actions`) suivent `docs/PP-API-CONTRACT.md` ; `/api/panier` et `/api/orders` n'ont pas été appelés en réel.
 - [08] Dépôt de commande : le webhook Stripe appelle `POST /api/orders` avec `externalRef = session.id` ; la déduplication côté socle sur `externalRef` est supposée (à vérifier dans `packages/core/src/orders.ts`).

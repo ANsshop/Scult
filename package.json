@@ -11,6 +11,7 @@
     "gate": "bash scripts/gate.sh"
   },
   "dependencies": {
+    "@google/model-viewer": "^4.4.0",
     "clsx": "^2.1.1",
     "motion": "^12.40.0",
     "next": "16.2.9",

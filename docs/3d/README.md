@@ -12,6 +12,19 @@ reconstruction automatique à partir d'une photo.
 | `textures/strap.jpg`, `tail.png` | le strap rouge et son bout qui pend |
 | `renders/` | cinq vues de contrôle et `planche.jpg` qui les réunit |
 
+## Sur le site
+
+La carte produit de l'accueil affiche le pot en 3D, à faire tourner à la
+souris ou au doigt (`src/components/site/Pot3D.tsx`). Elle charge
+`public/models/pot-cri.glb`, une version allégée (1,4 Mo, étiquette à 3072 px)
+produite par :
+
+```bash
+bash scripts/3d/build-web.sh
+```
+
+À relancer après toute modification du modèle ou des textures.
+
 ## Refaire le modèle
 
 ```bash
