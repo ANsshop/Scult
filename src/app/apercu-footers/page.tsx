@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/site/Footer";
-import { FooterDalle } from "@/components/site/footers/FooterDalle";
-import { FooterMur } from "@/components/site/footers/FooterMur";
-import { FooterPieds } from "@/components/site/footers/FooterPieds";
+import { FooterFruits } from "@/components/site/footers/FooterFruits";
+import { FooterPot } from "@/components/site/footers/FooterPot";
+import { FooterPoudre } from "@/components/site/footers/FooterPoudre";
 
 /**
  * Page de travail, à supprimer une fois le footer choisi : les propositions
@@ -12,9 +12,9 @@ import { FooterPieds } from "@/components/site/footers/FooterPieds";
 export const metadata: Metadata = { title: "Aperçu des footers", robots: { index: false, follow: false } };
 
 const PROPOSALS = [
-  { n: "1", name: "Le pied de page", note: "Les pieds de la statue sur son socle, la signature en grand.", el: <FooterPieds /> },
-  { n: "2", name: "Le mur", note: "Un panneau arrondi : le mur peint, la craie, SCULT en géant.", el: <FooterMur /> },
-  { n: "3", name: "La dalle", note: "Le footer clair : marbre, craie, strap rouge, SCULT imprimé en bleu.", el: <FooterDalle /> },
+  { n: "1", name: "La poudre", note: "Mur bleu lumineux, nuage de poudre rose, la signature en grand.", el: <FooterPoudre /> },
+  { n: "2", name: "Les fruits rouges", note: "Un panneau arrondi : framboises, groseilles et poudre, SCULT en géant.", el: <FooterFruits /> },
+  { n: "3", name: "La peinture et le pot", note: "Matière de peinture bleue, et le pot qui dépasse du haut du footer.", el: <FooterPot /> },
   { n: "0", name: "L'actuel", note: "Pour comparer : le footer en ligne aujourd'hui.", el: <Footer /> },
 ];
 
@@ -27,7 +27,7 @@ export default function Page() {
             <p className="label">Proposition {p.n} — {p.name}</p>
             <p className="mt-1 text-sm text-marble/70">{p.note}</p>
           </div>
-          <div className="flex h-40 items-end px-5 pb-6 md:px-10">
+          <div className="flex h-48 items-end px-5 pb-6 md:px-10">
             <p className="label text-stone">… fin de la page</p>
           </div>
           {p.el}

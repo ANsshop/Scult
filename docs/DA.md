@@ -194,16 +194,23 @@ décolle du bouton et file en arc jusqu'au compteur du panier, qui rebondit ;
 le bouton passe à « Ajouté ✓ » en bleu, puis le tiroir s'ouvre. Tout est dans
 `src/components/cart/AddToCart.tsx` ; rien ne bouge en mouvement réduit.
 
-**Footer — trois propositions (2026-11-13)**, à comparer sur `/apercu-footers`
-(page de travail, non indexée, à supprimer une fois le choix fait). Composants
-dans `src/components/site/footers/`, fonds dans `public/footer/`, sans aucun
-texte dans les images.
+**Footer — propositions (2026-11-13)**, à comparer sur `/apercu-footers` (page
+de travail, non indexée, à supprimer une fois le choix fait). Composants dans
+`src/components/site/footers/`, fonds dans `public/footer/`, aucun texte dans
+les images.
+
+Premier jet rejeté : pieds de statue coupés, mains de craie sur le mur, strap
+rouge sur le marbre — « on dirait des trucs de film d'horreur ». **À ne plus
+faire en décor** : fragments de corps, empreintes de mains, tissu rouge sur
+fond clair, flash dur avec coins sombres. La statue reste dans les visuels où
+elle tient le produit ; les fonds décoratifs sont lumineux et sans corps.
+
+Deuxième jet, lumineux :
 
 | Proposition | Composant | Fond | Job Higgsfield |
 |---|---|---|---|
-| 1. Le pied de page — les pieds de la statue sur son socle | `FooterPieds` | `pieds.webp` | `75328ea9-055d-4978-ab55-aabc79615527` |
-| 2. Le mur — panneau arrondi, mur peint et mains de craie | `FooterMur` | `mur.webp` | `aa509d92-3a0d-4ef4-848e-07c9aef8a34f` |
-| 3. La dalle — footer clair, marbre et strap rouge | `FooterDalle` | `dalle.webp` | `c8a7a6aa-b032-48ac-b246-efe8ec94199e` |
+| 1. La poudre — nuage de poudre rose sur mur bleu | `FooterPoudre` | `poudre.webp` | `16d77222-020a-42eb-af06-68558d3e13bc` |
+| 2. Les fruits rouges — panneau arrondi, framboises, groseilles, mesure de poudre | `FooterFruits` | `fruits.webp` | `28c7fa4c-6510-4b6e-baf8-9965bdb62362` |
+| 3. La peinture et le pot — matière de peinture bleue, pot détouré qui dépasse | `FooterPot` | `peinture.webp` | `833a3b98-24c1-4c9e-b6f6-c43c9aaeac01` |
 
 Le footer en ligne (`Footer.tsx`) n'a pas changé tant que le choix n'est pas fait.
-
