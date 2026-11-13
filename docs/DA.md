@@ -153,21 +153,20 @@ H  Slider plein cadre, 4 scènes CRI — le produit sous quatre angles
 I4 Image matière plein cadre — interlude vers la méthode (à reprendre)
 FAQ courte
 ```
-**Section 2, `src/components/site/Offer.tsx`.** Première version rejetée le
-jour même (« ultra générique ») : carte produit collante + liste de specs +
-quatre cases de garanties, c'est-à-dire un gabarit. La version retenue part
-des codes du pot :
-- **Échelle typographique** : chaque quantité est écrite à la taille de son
-  poids dans la dose (`--k` = la taille d'un gramme ; « 8G » remplit sa
-  colonne, « 1G » fait un huitième). C'est la preuve et le dessin à la fois.
-- **Le pot en travers de la grille** : détouré (`public/home/pot-detoure.webp`,
-  job `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850`), penché de 5°, ombre dure du
-  flash (`.flash-shadow`), posé sur le « G » du 8 et sur les filets — le
-  geste de la ref 2, où le mot passe derrière le sujet.
-- **Trois colonnes à filets visibles**, ligne de labels mono en tête, titre
-  qui franchit un filet, garanties en pied d'affiche.
-- **Les signes du pot** : trois coups de ciseau sur le 8 (`.chisel`), la
-  phrase du couvercle en bandeau défilant, la pastille rouge qui porte le prix.
-- Le bloc d'achat est un « ticket » à fond plein collé sous le pot.
-Règle à garder pour les sections suivantes : une idée tirée de l'objet ou des
-refs d'abord, le gabarit ensuite — jamais l'inverse.
+**Section 2, `src/components/site/Offer.tsx`.** Trois versions le même jour :
+1. carte collante + liste de specs + cases de garanties à angles droits —
+   rejetée (« ultra générique ») ;
+2. « affiche de la dose » : chiffres à l'échelle à gauche, pot au milieu,
+   noms à droite — rejetée (« ça n'a pas de sens » : la quantité était séparée
+   de son nom par le pot). Seule la carte produit a plu ;
+3. **retenue** : la carte produit au centre, agrandie, les dosages autour.
+   - **Carte produit** : pot détouré (`public/home/pot-detoure.webp`, job
+     `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850`), penché de 5°, ombre dure du
+     flash (`.flash-shadow`), prix dans la pastille rouge, bouton en pilule.
+   - **Dosages** : une carte blanche arrondie par actif, la quantité collée
+     au nom. La créatine, seule à porter une allégation autorisée, est la
+     carte Klein, sur deux rangées.
+   - Bandeau noir défilant avec la phrase du couvercle, entre hero et section.
+Leçons : une idée de mise en page ne vaut que si elle se lit sans effort
+(un chiffre à côté de son nom) ; et l'utilisateur juge d'abord les formes —
+voir « Formes ».
