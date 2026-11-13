@@ -40,6 +40,32 @@ imported = list(bpy.context.selected_objects)
 root = next(o for o in imported if o.parent is None)
 
 
+def net(scene, samples):
+    """Réglages communs de rendu : image nette (filtre de pixel serré, étiquettes
+    en interpolation cubique, débruitage qui respecte la texture) et contrastée."""
+    scene.render.engine = "CYCLES"
+    scene.cycles.samples = int(os.environ.get("SAMPLES", samples))
+    scene.cycles.filter_width = 1.0
+    scene.cycles.use_denoising = True
+    try:
+        scene.cycles.denoiser = "OPENIMAGEDENOISE"
+        scene.cycles.denoising_prefilter = "ACCURATE"
+        scene.cycles.denoising_input_passes = "RGB_ALBEDO_NORMAL"
+    except Exception:
+        pass
+    for mat in bpy.data.materials:
+        if mat.node_tree:
+            for node in mat.node_tree.nodes:
+                if node.type == "TEX_IMAGE":
+                    node.interpolation = "Cubic"
+    scene.view_settings.view_transform = "Standard"
+    try:
+        scene.view_settings.look = os.environ.get("LOOK", "Medium High Contrast")
+    except Exception as err:
+        print("LOOK_KO", err)
+    scene.view_settings.exposure = float(os.environ.get("EXPO", 0))
+
+
 def clone():
     twin = {}
     for o in imported:
@@ -94,7 +120,7 @@ else:
     b.inputs["Base Color"].default_value = (0.9, 0.9, 0.9, 1.0)
     b.inputs["Roughness"].default_value = 0.5
     bg.inputs["Color"].default_value = (1, 1, 1, 1)
-    bg.inputs["Strength"].default_value = 0.4
+    bg.inputs["Strength"].default_value = float(os.environ.get("MONDE", 0.18))
     scene.render.film_transparent = True
     POWER = 1.0
 
@@ -130,8 +156,9 @@ if FOND == "noir":
     light("LGT_contre_d", 16, (0.9, 0.9, 0.55), 0.5)
 else:
     # Sur blanc : une grande lumière douce presque à la verticale — des ombres courtes, sous les pots
-    light("LGT_dessus", 30, (0.25, -0.45, 1.25), 1.1)
-    light("LGT_face", 3, (0.0, -1.2, 0.35), 1.0)
+    # Puissances mesurées : au-delà, le papier brûle et l'étiquette se délave.
+    light("LGT_dessus", float(os.environ.get("DESSUS", 18)), (0.25, -0.45, 1.25), 1.1)
+    light("LGT_face", float(os.environ.get("FACE", 1.6)), (0.0, -1.2, 0.35), 1.0)
 
 cam_data = bpy.data.cameras.new("CAM")
 cam_data.lens = 70 * ZOOM
@@ -144,13 +171,10 @@ con = cam.constraints.new("TRACK_TO")
 con.target, con.track_axis, con.up_axis = aim, "TRACK_NEGATIVE_Z", "UP_Y"
 scene.camera = cam
 
-scene.render.engine = "CYCLES"
-scene.cycles.samples = 128
-scene.cycles.use_denoising = True
+net(scene, 256)
 scene.render.resolution_x, scene.render.resolution_y = W, H_PX
 scene.render.image_settings.file_format = "PNG"
 scene.render.image_settings.color_mode = "RGBA"
-scene.view_settings.view_transform = "Standard"
 scene.render.filepath = OUT
 bpy.ops.render.render(write_still=True)
 print("TRIO_OK", OUT)

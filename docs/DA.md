@@ -301,8 +301,8 @@ petits »). Les trois pots sont serrés en grappe (un penché derrière, un
 debout, un couché devant) pour remplir le cadre ; texte à l'encre et bouton
 noir. `render_trio.py … blanc` rend pots et ombres sur fond transparent, posés
 ensuite sur du blanc pur — un sol blanc éclairé pour de vrai a la même clarté
-que le papier des pots, ils s'y fondent. Fichiers : `section3-trio-16x9.webp`
-et `section3-trio-4x5.webp`.
+que le papier des pots, ils s'y fondent. Fichiers : `section3-trio-net-16x9.webp`
+et `section3-trio-net-4x5.webp` (refaits avec la lumière corrigée, voir plus bas).
 **Panier** : deux pots ajoutés à l'unité deviennent automatiquement un pack
 (`applyBundle` dans `CartProvider.tsx`) ; le client paie le prix du pack quel
 que soit le chemin.
@@ -320,3 +320,29 @@ coups : composer la ligne dans la vraie police (JetBrains Mono 600, étroitisée
 à 70 %), effacer l'ancienne en reconstituant le papier rangée par rangée, et
 poser la nouvelle en fusion « multiply ».
 
+
+**Lumière des rendus 3D : ni brûlée ni molle** (2026-11-13) — retour sur les
+premiers rendus : « pas net, trop clair ». Cause : des lampes trop fortes, le
+papier ivoire saturait au blanc et l'étiquette se délavait. Réglages communs
+aux trois scripts (`net()` dans `build_pot.py`, `render_trio.py`,
+`render_gamme.py`) : puissances baissées (soleil 1,5 au lieu de 1,9 ; sur
+blanc, lumière du dessus 18 au lieu de 30 et ciel 0,18 au lieu de 0,4),
+contraste « Medium High Contrast », filtre de pixel serré (1,0), étiquettes en
+interpolation cubique, 128 à 256 échantillons. Repère : le papier doit rester
+ivoire, jamais blanc pur, et le grain doit se voir.
+
+## Les goûts (concept, 2026-11-13)
+
+Même pot, même maquette, même feuille produit. Deux choses changent par goût :
+la **pastille de goût** en face avant et, au dos, la ligne « Saveur … » et la
+**liste d'ingrédients** (arôme et colorant). Trois goûts : fruits rouges
+(l'actuel), **cassis framboise**, **ice tea pêche**.
+
+- `scripts/3d/gouts.mjs` fabrique l'étiquette de chaque goût à partir des
+  sources (`docs/3d/sources/`) : textes recomposés en vraie police, donc
+  exacts ; seule la photo de la pastille est générée (Higgsfield, jobs
+  `2fd85da1-71c4-4e79-8f46-b7a1aceacc2b` cassis framboise et
+  `9909c590-d721-4bbd-87ef-e5c860bfd929` ice tea pêche).
+- `build_pot.py … all wrap-<goût>.jpg pot-cri-<goût>` sort le modèle 3D.
+- `render_gamme.py` rend les pots côte à côte : `docs/3d/renders/gamme.jpg`.
+- Pas encore sur le site : à valider d'abord (voir ASSUMPTIONS [25]).

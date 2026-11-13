@@ -4,6 +4,10 @@ Usage (depuis la racine du repo) :
   /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup \
       --python scripts/3d/build_pot.py -- docs/3d/textures docs/3d [vues]
 
+  Deux arguments de plus déclinent le pot par goût (étiquettes produites par
+  scripts/3d/gouts.mjs) : le fichier d'étiquette et le nom des sorties, par
+  exemple `… all wrap-ice-tea-peche.jpg pot-cri-ice-tea-peche`.
+
   vues : "all" (défaut) rend les cinq vues de contrôle, "none" n'en rend aucune,
          "turntable" rend aussi 48 images de rotation dans docs/3d/turntable/.
 
@@ -25,6 +29,9 @@ argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 TEX = os.path.abspath(argv[0] if len(argv) > 0 else "docs/3d/textures")
 OUT = os.path.abspath(argv[1] if len(argv) > 1 else "docs/3d")
 VIEWS = argv[2] if len(argv) > 2 else "all"
+WRAP = argv[3] if len(argv) > 3 else "wrap.jpg"   # l'étiquette : wrap.jpg (fruits rouges) ou wrap-<goût>.jpg
+NAME = argv[4] if len(argv) > 4 else "pot-cri"    # nom des fichiers produits
+SHOT = "pot" if NAME == "pot-cri" else NAME      # préfixe des rendus de contrôle
 
 # --- Dimensions -----------------------------------------------------------
 R = 0.0540        # rayon du corps
@@ -153,7 +160,7 @@ for j in range(SEG):
 paper = material("POT_papier", "paper.jpg", rough=0.66)
 body = new_object(
     "POT_corps", verts, faces, uvs,
-    [material("POT_etiquette", "wrap.jpg", rough=0.62), material("POT_dessus", "lid-top.jpg", rough=0.62), paper],
+    [material("POT_etiquette", WRAP, rough=0.62), material("POT_dessus", "lid-top.jpg", rough=0.62), paper],
     fmats,
 )
 
@@ -231,7 +238,7 @@ for o in parts + [root]:
     o.select_set(True)
 bpy.context.view_layer.objects.active = body
 bpy.ops.export_scene.gltf(
-    filepath=os.path.join(OUT, "pot-cri.glb"), export_format="GLB", use_selection=True,
+    filepath=os.path.join(OUT, NAME + ".glb"), export_format="GLB", use_selection=True,
     export_apply=True, export_image_format="AUTO", export_yup=True,
 )
 
@@ -254,7 +261,33 @@ except Exception:
     pass
 bg = next(n for n in world.node_tree.nodes if n.type == "BACKGROUND")
 bg.inputs["Color"].default_value = (0.55, 0.6, 0.75, 1.0)
-bg.inputs["Strength"].default_value = 0.2
+bg.inputs["Strength"].default_value = 0.12
+
+
+def net(scene, samples):
+    """Réglages communs de rendu : image nette (filtre de pixel serré, étiquettes
+    en interpolation cubique, débruitage qui respecte la texture) et contrastée."""
+    scene.render.engine = "CYCLES"
+    scene.cycles.samples = int(os.environ.get("SAMPLES", samples))
+    scene.cycles.filter_width = 1.0
+    scene.cycles.use_denoising = True
+    try:
+        scene.cycles.denoiser = "OPENIMAGEDENOISE"
+        scene.cycles.denoising_prefilter = "ACCURATE"
+        scene.cycles.denoising_input_passes = "RGB_ALBEDO_NORMAL"
+    except Exception:
+        pass
+    for mat in bpy.data.materials:
+        if mat.node_tree:
+            for node in mat.node_tree.nodes:
+                if node.type == "TEX_IMAGE":
+                    node.interpolation = "Cubic"
+    scene.view_settings.view_transform = "Standard"
+    try:
+        scene.view_settings.look = os.environ.get("LOOK", "Medium High Contrast")
+    except Exception as err:
+        print("LOOK_KO", err)
+    scene.view_settings.exposure = float(os.environ.get("EXPO", 0))
 
 
 def light(name, kind, energy, location, rotation, **kw):
@@ -268,8 +301,9 @@ def light(name, kind, energy, location, rotation, **kw):
     return obj
 
 
-light("LGT_soleil", "SUN", 1.9, (0.5, -1.0, 1.0), (math.radians(52), 0, math.radians(28)), angle=math.radians(1.2))
-light("LGT_debouche", "AREA", 5.0, (-0.7, -0.6, 0.35), (math.radians(78), 0, math.radians(-50)), size=0.9)
+# Puissances mesurées : au-delà, le papier brûle et l'étiquette se délave.
+light("LGT_soleil", "SUN", 1.5, (0.5, -1.0, 1.0), (math.radians(52), 0, math.radians(28)), angle=math.radians(1.2))
+light("LGT_debouche", "AREA", 3.2, (-0.7, -0.6, 0.35), (math.radians(78), 0, math.radians(-50)), size=0.9)
 
 
 def camera(name, location, target, lens):
@@ -289,14 +323,11 @@ def camera(name, location, target, lens):
 cam_main = camera("CAM_face", (0.0, -0.62, 0.105), (0.0, 0.0, 0.068), 85)
 cam_top = camera("CAM_dessus", (0.0, -0.30, 0.50), (0.0, 0.0, 0.085), 85)
 
-scene.render.engine = "CYCLES"
-scene.cycles.samples = 72
-scene.cycles.use_denoising = True
+net(scene, 128)
 scene.render.resolution_x, scene.render.resolution_y = 1000, 1200
 scene.render.image_settings.file_format = "PNG"
-scene.view_settings.view_transform = "Standard"
 
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, "pot-cri.blend"))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, NAME + ".blend"))
 
 
 def render(name, cam, angle_deg):
@@ -307,15 +338,15 @@ def render(name, cam, angle_deg):
 
 
 if VIEWS in ("all", "turntable"):
-    render("pot-face.png", cam_main, 0)
-    render("pot-trois-quarts-gauche.png", cam_main, 38)
-    render("pot-trois-quarts-droit.png", cam_main, -38)
-    render("pot-dos.png", cam_main, 180)
-    render("pot-dessus.png", cam_top, 0)
+    render(SHOT + "-face.png", cam_main, 0)
+    render(SHOT + "-trois-quarts-gauche.png", cam_main, 38)
+    render(SHOT + "-trois-quarts-droit.png", cam_main, -38)
+    render(SHOT + "-dos.png", cam_main, 180)
+    render(SHOT + "-dessus.png", cam_top, 0)
 if VIEWS == "turntable":
     scene.render.resolution_x, scene.render.resolution_y = 720, 864
     scene.cycles.samples = 40
     for f in range(48):
         render(os.path.join("..", "turntable", f"pot-{f:02d}.png"), cam_main, -360 * f / 48)
 
-print("POT_OK", os.path.join(OUT, "pot-cri.glb"))
+print("POT_OK", os.path.join(OUT, NAME + ".glb"))

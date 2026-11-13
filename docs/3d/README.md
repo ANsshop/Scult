@@ -10,7 +10,8 @@ reconstruction automatique à partir d'une photo.
 | `textures/wrap.jpg` | l'étiquette à plat, tout le tour du pot (4096 × 1652) : face au centre, dos sur la couture |
 | `textures/lid-top.jpg` | le dessus du couvercle, avec le logo |
 | `textures/strap.jpg`, `tail.png` | le strap rouge et son bout qui pend |
-| `renders/` | cinq vues de contrôle et `planche.jpg` qui les réunit |
+| `pot-cri-<goût>.glb` / `.blend` | le même pot, étiquette cassis framboise ou ice tea pêche |
+| `renders/` | cinq vues de contrôle par pot, une `planche` par pot et `gamme.jpg` (les trois goûts) |
 
 ## Sur le site
 
@@ -34,6 +35,31 @@ bash scripts/3d/build-web.sh
 
 Environ deux minutes. Remplacer `all` par `none` pour ne pas rendre d'images,
 ou par `turntable` pour sortir en plus 48 images de rotation.
+
+## Les goûts
+
+Un pot par goût : seule l'étiquette change (pastille de goût en face, ligne
+« Saveur … » et ingrédients au dos).
+
+```bash
+node scripts/3d/gouts.mjs                       # étiquettes : textures/wrap-<goût>.jpg et dos-<goût>.jpg
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup \
+  --python scripts/3d/build_pot.py -- docs/3d/textures docs/3d all wrap-ice-tea-peche.jpg pot-cri-ice-tea-peche
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup \
+  --python scripts/3d/render_gamme.py -- docs/3d/renders/gamme.png \
+  docs/3d/pot-cri-cassis-framboise.glb docs/3d/pot-cri.glb docs/3d/pot-cri-ice-tea-peche.glb
+```
+
+Ajouter un goût : une entrée dans `GOUTS` (`scripts/3d/gouts.mjs`) et une
+photo `sources/gouts/<goût>.jpg`. Les sources de l'étiquette sont dans
+`sources/` (`face.jpg`, `dos.jpg`, `papier.jpg`, la police du dos).
+
+## Lumière des rendus
+
+Les trois scripts de rendu partagent les mêmes réglages (`net()`) : lampes
+modérées pour que le papier reste ivoire, contraste relevé, filtre de pixel
+serré. Les puissances se règlent sans toucher au code : `SOLEIL`, `DEBOUCHE`,
+`MONDE` (gamme), `DESSUS`, `FACE`, `MONDE` (trio), `SAMPLES`, `EXPO`, `LOOK`.
 
 ## Ce qui est exact, ce qui ne l'est pas
 
