@@ -21,7 +21,8 @@ export const metadata: Metadata = {
   applicationName: "SCULT",
   openGraph: { siteName: "SCULT", type: "website", locale: "fr_FR", title: "SCULT — CRI, le pré-workout.", description: "Citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose. 30 doses, fruits rouges. Fabriqué en UE." },
   twitter: { card: "summary_large_image", title: "SCULT — CRI, le pré-workout.", description: "Citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose. 30 doses." },
-  robots: { index: true, follow: true },
+  // Les aperçus Vercel se partagent par lien mais ne doivent pas sortir dans les moteurs de recherche.
+  robots: process.env.VERCEL ? { index: false, follow: false } : { index: true, follow: true },
 };
 
 /** Le pack proposé dans le panier quand il contient CRI à l'unité. Prix lus dans le catalogue. */
