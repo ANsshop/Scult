@@ -24,7 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: p.seoTitle ?? `${p.name} ${price}`,
     description: p.seoDescription ?? p.description.slice(0, 155),
     alternates: { canonical: `/produits/${p.slug}` },
-    openGraph: { title: `${p.name} — ${price}`, description: p.seoDescription ?? undefined, images: p.images[0] ? [{ url: p.images[0].url }] : undefined },
+    // Un openGraph défini ici remplace celui du layout, image comprise : on redonne le visuel de partage du site.
+    openGraph: { title: `${p.name} — ${price}`, description: p.seoDescription ?? undefined, images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630 }] },
   };
 }
 
