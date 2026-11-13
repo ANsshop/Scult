@@ -24,9 +24,35 @@ type Ctx = {
 
 const CartContext = createContext<Ctx | null>(null);
 
+/** Le pack d'un produit : `units` exemplaires de `fromSku` valent un `item` (moins cher). */
+export type BundleRule = { fromSku: string; units: number; item: Omit<CartItem, "quantity"> };
+
+/**
+ * Applique l'offre pack : dès que le panier contient `units` exemplaires du
+ * produit à l'unité, ils sont remplacés par un pack — que le client ait choisi
+ * le pack ou ajouté les pots un par un, il paie le même prix. Un pot en trop
+ * reste à l'unité.
+ */
+function applyBundle(items: CartItem[], rule?: BundleRule | null): CartItem[] {
+  if (!rule) return items;
+  const single = items.find((i) => i.sku === rule.fromSku);
+  if (!single || single.quantity < rule.units) return items;
+  const packs = Math.floor(single.quantity / rule.units);
+  const left = single.quantity % rule.units;
+  const rest = items.flatMap((i) => (i.sku !== rule.fromSku ? [i] : left > 0 ? [{ ...i, quantity: left }] : []));
+  const hit = rest.find((i) => i.sku === rule.item.sku);
+  if (hit) return rest.map((i) => (i.sku === rule.item.sku ? { ...i, quantity: Math.min(MAX_QUANTITY, i.quantity + packs) } : i));
+  return [...rest, { ...rule.item, quantity: Math.min(MAX_QUANTITY, packs) }];
+}
+
 /** Panier indexé par SKU : c'est la clé que /api/panier et /api/orders comprennent. */
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+export function CartProvider({ children, bundle }: { children: React.ReactNode; bundle?: BundleRule | null }) {
+  const [raw, setRaw] = useState<CartItem[]>([]);
+  // Toute modification du panier passe par l'offre pack.
+  const setItems = useCallback((update: CartItem[] | ((prev: CartItem[]) => CartItem[])) => {
+    setRaw((prev) => applyBundle(typeof update === "function" ? update(prev) : update, bundle));
+  }, [bundle]);
+  const items = raw;
   const [hydrated, setHydrated] = useState(false);
   const [isOpen, setOpen] = useState(false);
 
@@ -51,10 +77,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return [...prev, { ...item, quantity: Math.min(MAX_QUANTITY, quantity) }];
     });
     if (options?.open !== false) setOpen(true);
-  }, []);
+  }, [setItems]);
   const setQuantity = useCallback((sku: string, quantity: number) => {
     setItems((prev) => (quantity <= 0 ? prev.filter((i) => i.sku !== sku) : prev.map((i) => (i.sku === sku ? { ...i, quantity: Math.min(MAX_QUANTITY, quantity) } : i))));
-  }, []);
+  }, [setItems]);
   const swap = useCallback((fromSku: string, quantity: number, item: Omit<CartItem, "quantity">) => {
     setItems((prev) => {
       const rest = prev.flatMap((i) => (i.sku !== fromSku ? [i] : i.quantity > quantity ? [{ ...i, quantity: i.quantity - quantity }] : []));
@@ -62,9 +88,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (hit) return rest.map((i) => (i.sku === item.sku ? { ...i, quantity: Math.min(MAX_QUANTITY, i.quantity + 1) } : i));
       return [...rest, { ...item, quantity: 1 }];
     });
-  }, []);
-  const remove = useCallback((sku: string) => setItems((prev) => prev.filter((i) => i.sku !== sku)), []);
-  const clear = useCallback(() => setItems([]), []);
+  }, [setItems]);
+  const remove = useCallback((sku: string) => setItems((prev) => prev.filter((i) => i.sku !== sku)), [setItems]);
+  const clear = useCallback(() => setItems([]), [setItems]);
   const openCart = useCallback(() => setOpen(true), []);
   const closeCart = useCallback(() => setOpen(false), []);
 

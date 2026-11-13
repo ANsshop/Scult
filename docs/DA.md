@@ -295,3 +295,15 @@ ont une flèche qui se retourne, plus de « + » (`ui/ToggleArrow.tsx`) ;
 l'encart « pack » du panier est balayé par le même reflet que les boutons, à
 l'apparition puis toutes les 4,5 s (`.card-shine`).
 
+**Slide 3, version retenue (2026-11-13, fin)** — le trio sur **fond blanc**,
+pots **cadrés gros** (le noir « ne matchait pas », puis « les pots sont trop
+petits »). Les trois pots sont serrés en grappe (un penché derrière, un
+debout, un couché devant) pour remplir le cadre ; texte à l'encre et bouton
+noir. `render_trio.py … blanc` rend pots et ombres sur fond transparent, posés
+ensuite sur du blanc pur — un sol blanc éclairé pour de vrai a la même clarté
+que le papier des pots, ils s'y fondent. Fichiers : `section3-trio-16x9.webp`
+et `section3-trio-4x5.webp`.
+**Panier** : deux pots ajoutés à l'unité deviennent automatiquement un pack
+(`applyBundle` dans `CartProvider.tsx`) ; le client paie le prix du pack quel
+que soit le chemin.
+

@@ -47,7 +47,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="fr" className={`${display.variable} ${inter.variable} ${mono.variable} h-full`}>
       <body className="min-h-full flex flex-col">
         <JsonLd data={organizationJsonLd()} />
-        <CartProvider>
+        <CartProvider bundle={upsell ? { fromSku: upsell.fromSku, units: upsell.units, item: upsell.item } : null}>
           {children}
           <CartDrawer upsell={upsell} />
         </CartProvider>
