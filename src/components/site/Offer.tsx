@@ -40,7 +40,7 @@ export function Offer({ product }: { product: Product }) {
       </div>
 
       <Container>
-        <div className="relative md:border-x" style={scale}>
+        <div className="relative md:my-10 md:rounded-card md:border" style={scale}>
           {/* Les deux filets verticaux de l'affiche */}
           <div aria-hidden className="pointer-events-none absolute inset-y-0 left-1/3 hidden border-l md:block" />
           <div aria-hidden className="pointer-events-none absolute inset-y-0 left-2/3 hidden border-l md:block" />
@@ -84,15 +84,15 @@ export function Offer({ product }: { product: Product }) {
                   </p>
                 </div>
                 {/* Le ticket : fond plein, pour que les filets de l'affiche ne traversent pas le texte */}
-                <div className="mt-8 border border-ink bg-marble">
+                <div className="mt-8 rounded-card border border-ink bg-marble p-2">
                   <AddToCart product={product} className="w-full" />
-                  <p className="label flex justify-between border-b px-4 py-3 text-stone">
+                  <p className="label mt-2 flex justify-between border-b px-3 py-3 text-stone">
                     <span>690 g · {CRI_DOSES} doses</span>
                     <span className="text-ink">{perDose} la dose</span>
                   </p>
-                  {formula.caffeineWarning && <p className="px-4 pt-3 text-[0.8rem] leading-snug text-stone">{formula.caffeineWarning}</p>}
-                  <Link href={`/produits/${product.slug}`} className="label inline-block px-4 pb-4 pt-3 underline underline-offset-4 hover:text-klein">
-                    La fiche complète : ingrédients, précautions →
+                  {formula.caffeineWarning && <p className="px-3 pt-3 text-[0.8rem] leading-snug text-stone">{formula.caffeineWarning}</p>}
+                  <Link href={`/produits/${product.slug}`} className="label inline-block px-3 pb-3 pt-3 underline underline-offset-4 hover:text-klein">
+                    Voir la fiche complète →
                   </Link>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export function Offer({ product }: { product: Product }) {
           <ul aria-label="Garanties" className="grid md:grid-cols-3">
             {REASSURANCE_ITEMS.map(([title, text], i) => (
               <li key={title} className={`py-5 md:py-6 ${i ? "border-t md:border-t-0 md:pl-8" : "md:pl-5"} md:pr-5`}>
-                <p className="label flex items-center gap-2"><span aria-hidden className="h-1.5 w-1.5 bg-ruby" />{title}</p>
+                <p className="label flex items-center gap-2"><span aria-hidden className="h-1.5 w-1.5 rounded-full bg-ruby" />{title}</p>
                 <p className="mt-2 text-sm leading-snug text-stone">{text}</p>
               </li>
             ))}

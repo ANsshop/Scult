@@ -25,16 +25,16 @@ export function CartDrawer() {
             <ul className="divide-y">
               {items.map((i) => (
                 <li key={i.sku} className="flex gap-4 py-5">
-                  <div className="relative h-20 w-16 shrink-0 bg-klein">
+                  <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-chip bg-klein">
                     {i.image && <Image src={i.image} alt="" fill sizes="64px" className="object-cover" />}
                   </div>
                   <div className="flex-1">
                     <Link href={`/produits/${i.slug}`} onClick={closeCart} className="font-medium hover:underline">{i.name}</Link>
                     <p className="mt-1 text-sm text-stone">{formatPrice(i.priceCents)}</p>
                     <div className="mt-2 flex items-center gap-3 text-sm">
-                      <button type="button" onClick={() => setQuantity(i.sku, i.quantity - 1)} className="h-7 w-7 border">−</button>
+                      <button type="button" onClick={() => setQuantity(i.sku, i.quantity - 1)} className="h-7 w-7 rounded-full border">−</button>
                       <span className="tabular-nums">{i.quantity}</span>
-                      <button type="button" onClick={() => setQuantity(i.sku, i.quantity + 1)} className="h-7 w-7 border">+</button>
+                      <button type="button" onClick={() => setQuantity(i.sku, i.quantity + 1)} className="h-7 w-7 rounded-full border">+</button>
                       <button type="button" onClick={() => remove(i.sku)} className="ml-auto label hover:text-ruby">Retirer</button>
                     </div>
                   </div>

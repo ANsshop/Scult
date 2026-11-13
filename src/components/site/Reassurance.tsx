@@ -12,7 +12,7 @@ export function Reassurance({ className = "" }: { className?: string }) {
     <ul aria-label="Garanties" className={`space-y-3 ${className}`}>
       {REASSURANCE_ITEMS.map(([t, b]) => (
         <li key={t} className="flex gap-3 text-sm">
-          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-ruby" />
+          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-ruby" />
           <p><strong className="font-medium">{t}.</strong> <span className="text-stone">{b}</span></p>
         </li>
       ))}

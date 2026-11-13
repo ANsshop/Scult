@@ -33,9 +33,9 @@ export default function MethodePage() {
 
         <section className="border-b">
           <Container className="py-20 md:py-28">
-            <div className="grid gap-px border bg-ink/15 lg:grid-cols-2">
+            <div className="grid gap-4 lg:grid-cols-2">
               {CLAIMS.map((c) => (
-                <article key={c.id} className="flex flex-col bg-marble p-6 md:p-8">
+                <article key={c.id} className="flex flex-col rounded-card border p-6 md:p-8">
                   <p className={`label ${c.claim ? "text-ruby" : "text-stone"}`}>{c.ingredient}</p>
                   <p className="display mt-5 text-[1.6rem] leading-[1.05]">{c.claim ? `« ${c.claim} »` : "Aucune allégation autorisée. On n'écrit rien."}</p>
                   <p className="mt-5 text-[0.95rem] leading-relaxed text-stone">{c.condition}</p>
@@ -51,7 +51,7 @@ export default function MethodePage() {
 
         <section className="border-b">
           <Container className="grid gap-10 py-20 md:grid-cols-2 md:gap-16 md:py-28">
-            <div className="relative aspect-[4/5] bg-klein">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-card bg-klein">
               <Image src="/products/cri-02.webp" alt="Dos du pot SCULT CRI : tableau nutritionnel, liste d'ingrédients, conseils d'utilisation et précautions d'emploi" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
             </div>
             <div className="md:py-10">

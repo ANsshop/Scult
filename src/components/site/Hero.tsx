@@ -103,7 +103,7 @@ export function Hero() {
 
         {/* Commandes : sous le visuel sur mobile, en bas de la colonne texte sur ordinateur */}
         <div className="absolute left-5 right-5 top-[calc(76svh+1.25rem)] z-10 flex items-center gap-4 md:left-10 md:right-auto md:top-auto md:bottom-16">
-          <button type="button" onClick={() => go(index - 1)} aria-label="Slide précédente" className="label flex h-8 w-8 items-center justify-center border border-marble/40 hover:bg-marble hover:text-ink">←</button>
+          <button type="button" onClick={() => go(index - 1)} aria-label="Slide précédente" className="label flex h-9 w-9 items-center justify-center rounded-full border border-marble/40 hover:bg-marble hover:text-ink">←</button>
           <div className="flex items-center gap-1.5">
             {slides.map((s, i) => (
               <button
@@ -126,7 +126,7 @@ export function Hero() {
               </button>
             ))}
           </div>
-          <button type="button" onClick={() => go(index + 1)} aria-label="Slide suivante" className="label flex h-8 w-8 items-center justify-center border border-marble/40 hover:bg-marble hover:text-ink">→</button>
+          <button type="button" onClick={() => go(index + 1)} aria-label="Slide suivante" className="label flex h-9 w-9 items-center justify-center rounded-full border border-marble/40 hover:bg-marble hover:text-ink">→</button>
           <span className="label tabular-nums text-marble/85" aria-live="polite">{pad(index + 1)} / {pad(count)}</span>
         </div>
       </div>

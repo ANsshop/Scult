@@ -23,6 +23,22 @@ Si un visuel ou un composant dérive, on le ramène ici.
   +0.12em — les « coins » de la ref 2 (`SCULT · 2026 · EU · LOT 001`).
 - Courant : **Inter** 16–18 px, interligne 1.6.
 
+## Formes (décidé le 2026-11-13)
+
+**Rien de carré.** Boutons en pilule, cartes et visuels à coins arrondis,
+puces rondes. Le rayon vient du pot : bords arrondis, pastille ronde,
+cartouche « fruits rouges ». Trois tokens dans `app/globals.css`, et aucun
+rayon en dur ailleurs :
+
+| Token | Valeur | Usage |
+|---|---|---|
+| `--radius-btn` (`rounded-btn`) | 999px | tous les boutons |
+| `--radius-card` (`rounded-card`) | 1.5rem | cartes, visuels, grands blocs |
+| `--radius-chip` (`rounded-chip`) | 0.75rem | champs, vignettes, encadrés |
+
+Les filets fins de la grille restent droits : ce sont des lignes, pas des
+cartes.
+
 ## Rythme
 
 Blocs pleine largeur alternés bleu / marbre. Filets 1 px `ink/20` qui

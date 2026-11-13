@@ -15,6 +15,12 @@
   --font-mono: var(--font-mono), ui-monospace, "SF Mono", monospace;
 
   --ease-scult: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Formes : rien de carré. Le rayon vient du pot (bords arrondis, pastille
+     ronde, cartouche « fruits rouges »). Trois valeurs, à régler ici. */
+  --radius-btn: 999px;    /* boutons : pilule */
+  --radius-card: 1.5rem;  /* cartes, visuels, grands blocs */
+  --radius-chip: 0.75rem; /* petits éléments : champs, vignettes, encadrés */
 }
 
 :root {
@@ -74,6 +80,7 @@ body {
   height: 2.75rem; width: 100%;
   border: 1px solid color-mix(in srgb, var(--color-ink) 25%, transparent);
   background: #fff; padding-inline: 0.875rem; font-size: 0.9rem; outline: none;
+  border-radius: var(--radius-chip);
 }
 .input:focus { border-color: var(--color-klein); }
 

@@ -17,7 +17,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
         <Container className="max-w-2xl py-16 md:py-24">
           <p className="label text-stone">Commande</p>
           <h1 className="display mt-4 text-[clamp(2.4rem,7vw,5rem)]">Presque fini.</h1>
-          {annule && <p className="mt-6 border border-ruby p-4 text-sm">Paiement annulé. Votre panier est conservé.</p>}
+          {annule && <p className="mt-6 rounded-chip border border-ruby p-4 text-sm">Paiement annulé. Votre panier est conservé.</p>}
           <CheckoutForm vatRate={vatRate} />
         </Container>
       </main>

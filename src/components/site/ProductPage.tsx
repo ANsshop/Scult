@@ -27,17 +27,17 @@ export function ProductPage({ product, upsell }: { product: Product; upsell?: Pr
             {product.compareAtCents && product.compareAtCents > product.priceCents && (
               <>
                 <span className="text-stone line-through tabular-nums">{formatPrice(product.compareAtCents)}</span>
-                <span className="label bg-ruby px-2 py-0.5 text-white">−{Math.round((1 - product.priceCents / product.compareAtCents) * 100)} %</span>
+                <span className="label rounded-full bg-ruby px-2.5 py-0.5 text-white">−{Math.round((1 - product.priceCents / product.compareAtCents) * 100)} %</span>
               </>
             )}
           </p>
           <p className="mt-6 max-w-md leading-relaxed text-stone">{product.description}</p>
           {info?.caffeineWarning && (
-            <p className="mt-6 border border-ink p-3 text-sm font-medium">{info.caffeineWarning}</p>
+            <p className="mt-6 rounded-chip border border-ink px-4 py-3 text-sm font-medium">{info.caffeineWarning}</p>
           )}
           <AddToCart product={product} className="mt-8 w-full" />
           {upsell && (
-            <Link href={`/produits/${upsell.slug}`} className="group mt-5 flex items-center justify-between border p-4 transition-colors hover:border-klein">
+            <Link href={`/produits/${upsell.slug}`} className="group mt-5 flex items-center justify-between rounded-card border p-4 transition-colors hover:border-klein">
               <span>
                 <span className="block font-medium">{upsell.name}</span>
                 <span className="mt-0.5 block text-sm text-stone">{formatPrice(upsell.priceCents)}{upsell.compareAtCents ? ` au lieu de ${formatPrice(upsell.compareAtCents)}` : ""} · livraison offerte</span>

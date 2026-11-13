@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-const base = "inline-flex h-12 items-center justify-center gap-2 px-6 label !text-[0.75rem] font-medium transition-colors";
+const base = "inline-flex h-12 items-center justify-center gap-2 rounded-btn px-7 label !text-[0.75rem] font-medium transition-colors";
 const variants = {
   ink: "bg-ink text-marble hover:bg-klein",
   marble: "bg-marble text-ink hover:bg-white",
