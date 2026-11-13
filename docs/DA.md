@@ -130,9 +130,9 @@ bord du couvercle. Trois encres : noir, bleu, rouge.
 | Slide 4 « nuit, de dos », mobile | job | `a194c598-923d-474b-8c69-c1153e92ea01` |
 | Pot seul sur bloc de marbre, 4:5 (carte d'achat de l'accueil) | job | `279ecc37-b18f-42dd-a53b-1d657dbb232e` |
 | Pot détouré, fond transparent (carte produit de l'accueil) | job | `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850` |
-| Section 3, proposition « le visage » (en ligne) | job | `1c87e9ae-3bb9-45cc-ba47-97addce1e56f` |
+| Section 3, « le visage » (en ligne, slide 2) | job | `1c87e9ae-3bb9-45cc-ba47-97addce1e56f` |
 | Section 3, proposition « la craie » (prête) | job | `e67df17b-b3be-4de2-bc9c-310c5c12be76` |
-| Section 3, proposition « la dose » (petits textes du pot à retoucher) | job | `a02a4ec3-0a49-4b6c-82ea-ff973265aca8` |
+| Section 3, « la dose » : pot ouvert et poudre rose (en ligne, slide 1 ; textes corrigés en deux retouches) | job | `c6bd6638-65d8-4213-8e78-d1ed04d488c3` |
 
 Modèle utilisé : `gpt_image_2_6`, qualité `high`, résolution `2k`.
 
@@ -183,4 +183,9 @@ garanties tiennent en une ligne sous le bouton.
 (ancienne DA) est remplacée par un grand panneau arrondi. Trois visuels
 proposés, tous en 16:9, sujet à droite : le visage (retenu par défaut), la
 craie, la dose. Sur mobile l'image passe au-dessus du texte dans la même carte.
+
+**Section 3 en slider (2026-11-13, nuit)** : deux slides dans le même panneau
+arrondi — 1. le pot ouvert et la mesure de poudre (« Mode d'emploi »), 2. le
+visage (« La méthode »). Flèches en pilule, défilement automatique comme le
+hero. Pour ajouter une slide : le tableau `SLIDES` de `Statue.tsx`.
 
