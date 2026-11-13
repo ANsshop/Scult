@@ -1,6 +1,7 @@
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Hero } from "@/components/site/Hero";
+import { Marquee } from "@/components/site/Marquee";
 import { Offer } from "@/components/site/Offer";
 import { Statue } from "@/components/site/Statue";
 import { FaqPreview } from "@/components/site/FaqPreview";
@@ -17,6 +18,7 @@ export default async function Home() {
       <Header onBlue />
       <main>
         <Hero />
+        <Marquee />
         {cri && <Offer product={cri} />}
         <Statue />
         <FaqPreview />
