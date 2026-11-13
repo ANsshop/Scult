@@ -93,6 +93,13 @@ body {
 /* Bandeau sous le hero : la ligne au contour (le glissement suit le défilement, voir Marquee.tsx) */
 .text-outline { color: transparent; -webkit-text-stroke: 1.5px var(--color-ink); }
 
+/* Questions en accordéon : la réponse se déplie en douceur là où le navigateur sait animer vers `auto` */
+@supports (interpolate-size: allow-keywords) {
+  .faq-item { interpolate-size: allow-keywords; }
+  .faq-item::details-content { block-size: 0; overflow: clip; opacity: 0; transition: block-size 0.35s var(--ease-scult), opacity 0.3s ease, content-visibility 0.35s allow-discrete; }
+  .faq-item[open]::details-content { block-size: auto; opacity: 1; }
+}
+
 /* Barre de progression du slider hero : sa fin déclenche la slide suivante */
 @keyframes hero-progress { from { transform: translateY(-1px) scaleX(0); } to { transform: translateY(-1px) scaleX(1); } }
 .hero-progress { animation: hero-progress 7s linear forwards; }
