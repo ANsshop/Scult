@@ -209,3 +209,13 @@ Rejeté en route, à ne pas refaire :
 Non retenues mais jugées correctes : un nuage de poudre rose
 (job `16d77222-020a-42eb-af06-68558d3e13bc`) et un tapis de fruits rouges
 (job `28c7fa4c-6510-4b6e-baf8-9965bdb62362`), réutilisables ailleurs.
+
+## Le pot en 3D (2026-11-13)
+
+Un modèle construit dans Blender par `scripts/3d/build_pot.py` : solide de
+révolution, étiquette à plat enroulée, strap et pastilles en volume. Fichiers
+et limites dans `docs/3d/README.md`. Il sert de référence pour tous les angles
+du pot : les textes y sont justes par construction, là où une image générée
+les réinvente à chaque fois. Étiquette à plat : job Higgsfield
+`1c7e4ae5-1b39-4484-acfc-ac367e2d82b2`.
+

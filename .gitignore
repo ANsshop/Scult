@@ -52,3 +52,8 @@ next-env.d.ts
 # ts
 *.tsbuildinfo
 next-env.d.ts
+
+# rendus bruts du modèle 3D (les JPEG de contrôle sont versionnés)
+docs/3d/renders/*.png
+docs/3d/turntable/
+docs/3d/*.blend1
