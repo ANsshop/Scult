@@ -51,6 +51,21 @@ export async function getProducts(): Promise<Product[]> {
     .filter((p): p is Product => p !== null);
 }
 
+/**
+ * Le pack proposé sur la fiche d'un produit (« pack de 2 »). C'est un produit
+ * à part entière dans le socle — son prix vient de là, comme les autres — mais
+ * il n'a pas de page à lui : il se choisit sur la fiche du produit d'origine.
+ */
+const BUNDLE_OF: Record<string, string> = { cri: "cri-duo" };
+
+export async function getBundleFor(slug: string): Promise<Product | null> {
+  const bundleSlug = BUNDLE_OF[slug];
+  if (!bundleSlug) return null;
+  const cat = await getCatalogue();
+  const found = cat.products.find((p) => p.slug === bundleSlug);
+  return found ? toProduct(found) : null;
+}
+
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const all = await getProducts();
   return all.find((p) => p.slug === slug) ?? null;

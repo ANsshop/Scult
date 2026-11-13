@@ -16,7 +16,7 @@ const SLIDES: Slide[] = [
     cta: { label: "Voir la fiche complète", href: "/produits/cri" },
     image: "/home/section3-pot-ouvert.webp",
     alt: "La main de marbre de la statue verse une mesure de poudre rose dans le pot SCULT CRI ouvert, le couvercle posé à côté",
-    position: "72% 50%",
+    position: "52% 50%",
   },
   {
     id: "methode",
@@ -25,7 +25,7 @@ const SLIDES: Slide[] = [
     cta: { label: "Lire la méthode", href: "/methode" },
     image: "/home/section3-visage.webp",
     alt: "Gros plan sur le visage de la statue de marbre qui hurle, la pierre ruisselante, devant un mur bleu",
-    position: "94% 50%",
+    position: "58% 50%",
   },
   {
     id: "lot",
@@ -35,7 +35,7 @@ const SLIDES: Slide[] = [
     image: "/home/section3-pots-fond-noir.webp",
     alt: "Un mur de pots SCULT CRI serrés les uns contre les autres, cadrés en diagonale",
     position: "50% 50%",
-    // Le visuel (pots sur fond noir) remplit tout le cadre, sans voile : le texte est posé directement dessus.
+    // Le visuel remplit tout le cadre (pas de mur bleu vide à gauche) : l'ombre du texte est plus marquée.
     full: true,
   },
 ];
@@ -45,8 +45,10 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
  * Section 3 de l'accueil : un grand panneau arrondi en slider. Chaque slide
- * porte un visuel, une phrase et un lien. Ordinateur : le texte tient dans
- * le mur bleu à gauche du sujet. Mobile : l'image au-dessus, le texte dessous.
+ * porte un visuel, une phrase et un lien. Le texte est posé sur le côté
+ * gauche du visuel, sur ordinateur comme sur mobile (cadrage resserré : voir
+ * `position`, qui garde le sujet à droite du texte). Aucun voile ni dégradé
+ * derrière le texte : seule une ombre portée le détache de l'image.
  * Même mécanique que le hero : la fin de la barre de progression appelle la
  * slide suivante, pause au survol, rien d'automatique en mouvement réduit.
  */
@@ -61,7 +63,7 @@ export function Statue() {
     <section className="border-b" aria-roledescription="carrousel" aria-label="La marque">
       <Container className="py-6 md:py-10">
         <div
-          className="relative grid overflow-hidden rounded-card bg-klein text-marble md:h-[78svh]"
+          className="relative grid aspect-[4/5] overflow-hidden rounded-card bg-klein text-marble md:aspect-auto md:h-[78svh]"
           onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
           onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
           onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
@@ -84,7 +86,7 @@ export function Statue() {
                 inert={!active}
                 className={`relative col-start-1 row-start-1 transition-opacity duration-700 ease-(--ease-scult) ${active ? "opacity-100" : "pointer-events-none opacity-0"}`}
               >
-                <div className="relative aspect-[5/4] md:absolute md:inset-0 md:aspect-auto">
+                <div className="absolute inset-0">
                   <Image
                     src={s.image}
                     alt={s.alt}
@@ -93,13 +95,11 @@ export function Statue() {
                     style={{ "--pos": s.position } as React.CSSProperties}
                     className="object-cover object-(--pos) md:object-[100%_50%]"
                   />
-                  {/* Le voile bleu de lisibilité — pas sur les visuels `full`, laissés tels quels */}
-                  {!s.full && <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-klein to-transparent md:inset-0 md:h-auto md:bg-gradient-to-r md:from-klein/60 md:via-klein/10" />}
                 </div>
-                <div className={`relative p-6 pb-8 pt-4 md:absolute md:inset-y-0 md:left-0 md:flex md:w-[46%] md:flex-col md:justify-center md:p-12 ${s.full ? "md:[text-shadow:0_2px_3px_rgb(11_11_15/0.9),0_0_26px_rgb(11_11_15/0.85)]" : ""}`}>
+                <div className={`absolute inset-y-0 left-0 flex w-[62%] flex-col justify-center p-5 md:w-[46%] md:p-12 ${s.full ? "[text-shadow:0_2px_3px_rgb(11_11_15/0.9),0_0_26px_rgb(11_11_15/0.85)]" : "[text-shadow:0_1px_2px_rgb(11_11_15/0.55),0_0_22px_rgb(11_11_15/0.45)]"}`}>
                   <p className="label text-marble/85">{s.label}</p>
-                  <p className="display mt-4 text-[clamp(2rem,4.2vw,4rem)]">{s.title}</p>
-                  <ButtonLink href={s.cta.href} variant="marble" className="mt-7 self-start [text-shadow:none]">{s.cta.label}</ButtonLink>
+                  <p className="display mt-3 text-[clamp(1.4rem,4.2vw,4rem)] md:mt-4">{s.title}</p>
+                  <ButtonLink href={s.cta.href} variant="marble" className="mt-5 !h-10 self-start whitespace-nowrap !px-5 [text-shadow:none] md:mt-7 md:!h-12 md:!px-7">{s.cta.label}</ButtonLink>
                 </div>
               </div>
             );

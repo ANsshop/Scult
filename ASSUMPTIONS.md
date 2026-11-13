@@ -23,6 +23,7 @@ Format : `- [NN] hypothèse — raison`. L'humain valide ou corrige.
 - [18] **Boutique mono-produit** — tranché le 2026-11-13 : le site ne vend que CRI. Whey, créatine, collagène et Trio restent dans `docs/mock/catalogue.json` mais ne sont plus affichés ni vendus (`STOREFRONT_SLUGS` dans `src/lib/catalog/queries.ts` : leurs fiches renvoient 404, le sitemap, `llms.txt`, la FAQ et la page Méthode ne parlent plus que de CRI). Pour rouvrir une référence : ajouter son slug, puis remettre son contenu.
 - [19] **Stock et poids CRI** fictifs dans le mock (100 unités, 780 g expédié).
 - [20] **Franco à 60 € pour un pot à 49 €** — avec un seul produit, la livraison offerte ne s'atteint qu'à deux pots. À trancher : baisser le seuil, ou vendre un lot de deux.
+- [23] **Pack de 2 à −15 %** (ajouté le 2026-11-13) — 83,30 € au lieu de 98 €, proposé sur la fiche CRI. Dans le mock c'est le produit `cri-duo` (SKU `SCULT-CRI-690-FR-X2`, `unitCount` 2). **À créer à l'identique dans le socle** avant mise en ligne : le prix est lu là-bas, et le lien fiche → pack est dans `BUNDLE_OF` (`src/lib/catalog/queries.ts`). Il dépasse le franco de 60 € : c'est la réponse à l'hypothèse [20]. Stock, poids et prix restent à valider.
 - [21] **Textes de l'accueil proposés, pas validés** — titres des slides 2 à 4 (`src/lib/content/hero-slides.ts`) et de la section « La formule », notes par ingrédient (`src/lib/content/formula.ts`). Le « 1,63 € la dose » est calculé (prix ÷ 30 doses) : il suit le prix du socle.
 
 ## Technique

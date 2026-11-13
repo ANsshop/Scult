@@ -74,6 +74,47 @@
       ]
     },
     {
+      "id": "0199f000-0000-7000-8000-00000000a006",
+      "name": "CRI — pack de 2",
+      "slug": "cri-duo",
+      "description": "Deux pots de CRI, pré-workout saveur fruits rouges : 2 × 690 g, soit 60 doses. 83,30 € au lieu de 98 €. Livraison offerte.",
+      "imageUrl": "/products/cri-01.webp",
+      "category": {
+        "slug": "packs",
+        "name": "Packs"
+      },
+      "seo": {
+        "title": "CRI — pack de 2 pots, 60 doses",
+        "description": "Deux pots de CRI, 2 × 690 g, 60 doses. 83,30 € au lieu de 98 €, livraison offerte."
+      },
+      "images": [
+        {
+          "url": "/products/cri-01.webp",
+          "alt": "Pot SCULT CRI vu de face : le nom CRI en bleu imprimé sur le visage d'une statue qui hurle, strap rouge autour du couvercle",
+          "width": 1344,
+          "height": 1680
+        }
+      ],
+      "faqs": [],
+      "variants": [
+        {
+          "id": "0199f000-0000-7000-8000-00000000b006",
+          "sku": "SCULT-CRI-690-FR-X2",
+          "name": "2 × 690 g · Fruits rouges",
+          "priceCents": 8330,
+          "compareAtCents": 9800,
+          "stock": 50,
+          "available": true,
+          "preorder": {
+            "allowed": false,
+            "eta": null
+          },
+          "weightGrams": 1560,
+          "unitCount": 2
+        }
+      ]
+    },
+    {
       "id": "0199f000-0000-7000-8000-00000000a001",
       "name": "Whey isolate",
       "slug": "whey",

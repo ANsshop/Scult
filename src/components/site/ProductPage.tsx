@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { AddToCart } from "@/components/cart/AddToCart";
+import { PurchaseOptions } from "@/components/cart/PurchaseOptions";
 import { ProductGallery } from "./ProductGallery";
 import { Reassurance } from "./Reassurance";
 import { FaqPreview } from "./FaqPreview";
@@ -12,7 +11,7 @@ import { formatPrice } from "@/lib/utils";
 
 const answer = (q: string) => FAQ_ITEMS.find((i) => i.question === q)?.answer ?? "";
 
-export function ProductPage({ product, upsell }: { product: Product; upsell?: Product | null }) {
+export function ProductPage({ product, bundle }: { product: Product; bundle?: Product | null }) {
   const claims = CLAIMS.filter((c) => c.slug === product.slug);
   const info = PRODUCT_INFO[product.slug];
   return (
@@ -35,16 +34,7 @@ export function ProductPage({ product, upsell }: { product: Product; upsell?: Pr
           {info?.caffeineWarning && (
             <p className="mt-6 rounded-chip border border-ink px-4 py-3 text-sm font-medium">{info.caffeineWarning}</p>
           )}
-          <AddToCart product={product} className="mt-8 w-full" />
-          {upsell && (
-            <Link href={`/produits/${upsell.slug}`} className="group mt-5 flex items-center justify-between rounded-card border p-4 transition-colors hover:border-klein">
-              <span>
-                <span className="block font-medium">{upsell.name}</span>
-                <span className="mt-0.5 block text-sm text-stone">{formatPrice(upsell.priceCents)}{upsell.compareAtCents ? ` au lieu de ${formatPrice(upsell.compareAtCents)}` : ""} · livraison offerte</span>
-              </span>
-              <span aria-hidden className="text-klein transition-transform group-hover:translate-x-1">→</span>
-            </Link>
-          )}
+          <PurchaseOptions single={product} bundle={bundle ?? null} />
           <Reassurance className="mt-8" />
           <div className="mt-10 divide-y border-y">
             {claims.length > 0 && (
