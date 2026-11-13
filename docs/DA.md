@@ -261,3 +261,14 @@ ASSUMPTIONS [23]. Piège revu deux fois ce jour-là : la règle globale
 enfants en `relative` — utiliser une ombre (`shadow-[0_0_0_2px_…]`) pour un
 contour coloré, et ne pas poser `.grain` sur un bloc à enfants en absolu.
 
+**Slider du bas, état au 2026-11-13 (nuit)** — pleine largeur, bord à bord,
+sans coins arrondis ni marges (essai demandé par l'utilisateur). Trois
+slides : la dose, la performance, le mur de pots ; la slide du visage qui
+hurle a été retirée (« j'aime pas »). Une slide peut porter une version
+verticale 4:5 pour téléphone (`imageMobile`) : recadrer une image 16:9 dans un
+panneau vertical ne laisse pas la place au texte, au sujet et au pot. Celle
+de la performance : `public/home/section3-barre-4x5.webp`, job Higgsfield
+`45c7f186-432f-47e9-889b-ddf168814b4b`, accent de « BÊTA » corrigé à la main.
+**Image de partage** : `src/app/opengraph-image.jpg`, composée à partir du
+hero (statue + pot), du logo et de la signature.
+
