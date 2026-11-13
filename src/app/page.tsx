@@ -3,7 +3,6 @@ import { Footer } from "@/components/site/Footer";
 import { Hero } from "@/components/site/Hero";
 import { Marquee } from "@/components/site/Marquee";
 import { Offer } from "@/components/site/Offer";
-import { Performance } from "@/components/site/Performance";
 import { Statue } from "@/components/site/Statue";
 import { FaqPreview } from "@/components/site/FaqPreview";
 import { getProductBySlug } from "@/lib/catalog/queries";
@@ -21,7 +20,6 @@ export default async function Home() {
         <Hero />
         <Marquee />
         {cri && <Offer product={cri} />}
-        <Performance />
         <Statue />
         <FaqPreview />
       </main>

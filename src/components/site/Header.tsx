@@ -8,7 +8,6 @@ import { Wordmark } from "./Wordmark";
 export const NAV = [
   { label: "CRI", href: "/produits/cri" },
   { label: "La formule", href: "/#formule" },
-  { label: "Performance", href: "/#performance" },
   { label: "Méthode", href: "/methode" },
   { label: "FAQ", href: "/faq" },
 ];

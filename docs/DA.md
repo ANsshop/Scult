@@ -247,12 +247,12 @@ en cache (`next/image`) ; renommer le fichier.
   il reste sous l'image.
 
 **Discours performance (2026-11-13)** — demandé « plus appuyé ». Il passe par
-les allégations autorisées, jamais par des verbes de promesse : section
-`Performance.tsx` sur l'accueil (panneau noir arrondi, quatre thèmes —
-capacités physiques, muscle, énergie, fatigue — chacun avec l'allégation mot
-pour mot, l'ingrédient et la dose, à côté du visuel de la barre), premier
-texte du hero, bandeau, FAQ, `llms.txt`, page Méthode et fiche produit (tous
-alimentés par `lib/content/methode.ts`). Voir ASSUMPTIONS [24].
+les allégations autorisées, jamais par des verbes de promesse : une slide
+« Performance » dans le slider du bas (accroche + allégation créatine mot pour
+mot), le premier texte du hero, le bandeau, la FAQ, `llms.txt`, la page
+Méthode et la fiche produit (alimentées par `lib/content/methode.ts`). Une
+section noire dédiée sur l'accueil a été essayée puis retirée (« fait
+tache ») : pas de section supplémentaire pour ce message. Voir ASSUMPTIONS [24].
 
 **Vente (2026-11-13)** — pack de 2 à −15 % : cartes illustrées sur la fiche
 (`PurchaseOptions.tsx`), encart dans le panier (`CartDrawer.tsx`). Voir
