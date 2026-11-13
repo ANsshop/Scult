@@ -111,6 +111,17 @@ body {
 :is(a:hover, a:focus-visible) > .logo-shine .logo-corps,
 .logo-shine:hover .logo-corps { animation: logo-corps 1.1s ease-in-out; }
 
+/* Le même reflet sur les boutons : une bande de lumière les traverse au survol,
+   découpée par la forme en pilule. Sa teinte se règle par bouton avec --btn-reflet. */
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: ""; position: absolute; inset-block: 0; left: 0; width: 45%; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--btn-reflet, rgb(255 255 255 / 0.5)), transparent);
+  transform: translateX(-140%) skewX(-24deg);
+}
+@keyframes btn-reflet { from { transform: translateX(-140%) skewX(-24deg); } to { transform: translateX(280%) skewX(-24deg); } }
+.btn-shine:is(:hover, :focus-visible):not(:disabled)::after { animation: btn-reflet 0.9s cubic-bezier(0.45, 0, 0.55, 1); }
+
 /* Barre de progression du slider hero : sa fin déclenche la slide suivante */
 @keyframes hero-progress { from { transform: translateY(-1px) scaleX(0); } to { transform: translateY(-1px) scaleX(1); } }
 .hero-progress { animation: hero-progress 7s linear forwards; }

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-const base = "inline-flex h-12 items-center justify-center gap-2 rounded-btn px-7 label !text-[0.75rem] font-medium transition-colors";
+const base = "btn-shine inline-flex h-12 items-center justify-center gap-2 rounded-btn px-7 label !text-[0.75rem] font-medium transition-colors";
 const variants = {
   ink: "bg-ink text-marble hover:bg-klein",
-  marble: "bg-marble text-ink hover:bg-white",
+  // bouton clair : un reflet blanc ne se verrait pas, il est bleuté
+  marble: "bg-marble text-ink hover:bg-white [--btn-reflet:rgb(18_56_199/0.26)]",
   outline: "border border-current text-current hover:bg-ink hover:text-marble hover:border-ink",
 };
 
