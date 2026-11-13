@@ -5,11 +5,10 @@ import { Container } from "@/components/ui/Container";
 import type { Product } from "@/lib/catalog/queries";
 import { CRI_DOSES, getFormula } from "@/lib/content/formula";
 import { formatPrice } from "@/lib/utils";
-import { Reassurance } from "./Reassurance";
 
 /**
- * Section 2 de l'accueil — simple : la carte produit d'un côté, la formule
- * en liste de l'autre.
+ * Section 2 de l'accueil — simple : la grande carte produit, et à côté la
+ * formule réduite à une petite liste.
  *
  * La carte produit est la seule pièce « dessinée » : le pot détouré, penché,
  * avec l'ombre dure du flash, le prix dans sa pastille rouge et le bouton
@@ -22,22 +21,22 @@ export function Offer({ product }: { product: Product }) {
 
   return (
     <section id="formule" className="scroll-mt-14 border-b">
-      <Container className="grid gap-12 py-14 md:grid-cols-2 md:items-center md:gap-20 md:py-24">
+      <Container className="grid gap-10 py-14 md:grid-cols-[1.55fr_1fr] md:items-center md:gap-16 md:py-24">
         {/* La carte produit */}
-        <div className="relative flex flex-col rounded-card bg-white p-5 md:p-8">
+        <div className="relative flex flex-col rounded-card bg-white p-5 md:p-10">
           <p className="label flex justify-between text-stone">
             <span>CRI · Lot 001</span>
             <span>690 g · {CRI_DOSES} doses</span>
           </p>
-          <div className="flex items-center justify-center py-8 md:py-10">
-            <div className="relative w-[72%] md:w-[68%]">
+          <div className="flex items-center justify-center py-8 md:py-12">
+            <div className="relative w-[76%] md:w-[58%]">
               <Link href={`/produits/${product.slug}`} aria-label={`${product.name} — voir la fiche produit`} className="block">
                 <Image
                   src="/home/pot-detoure.webp"
                   alt="Le pot SCULT CRI de face : le mot CRI en bleu sur le visage d'une statue qui hurle, strap rouge autour du couvercle"
                   width={900}
                   height={1096}
-                  sizes="(min-width: 768px) 32vw, 70vw"
+                  sizes="(min-width: 768px) 36vw, 76vw"
                   className="flash-shadow h-auto w-full -rotate-[5deg] transition-transform duration-500 ease-(--ease-scult) hover:-rotate-[2deg]"
                 />
               </Link>
@@ -50,34 +49,30 @@ export function Offer({ product }: { product: Product }) {
           </div>
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="display text-[2.25rem] leading-none">{product.name}</p>
+              <p className="display text-[2.25rem] leading-none md:text-[3.25rem]">{product.name}</p>
               <p className="label mt-2 text-stone">Pré-workout · fruits rouges</p>
             </div>
             <p className="label text-right text-stone">{perDose}<br />la dose</p>
           </div>
           <AddToCart product={product} className="mt-5 !h-14 w-full" />
-          {formula.caffeineWarning && <p className="mt-4 text-[0.8rem] leading-snug text-stone">{formula.caffeineWarning}</p>}
+          <p className="label mt-4 text-center leading-relaxed text-stone">Livraison Europe 2–8 jours · Retour 14 jours · Paiement Stripe</p>
+          {formula.caffeineWarning && <p className="mt-3 text-center text-[0.8rem] leading-snug text-stone">{formula.caffeineWarning}</p>}
         </div>
 
-        {/* La formule, en liste */}
+        {/* La formule : une petite liste, rien d'autre */}
         <div>
           <p className="label text-stone">La formule · par dose de 23 g</p>
-          <h2 className="display mt-4 text-[clamp(2rem,3.6vw,3.25rem)]">Ce qu&apos;il y a dedans.</h2>
-          <dl className="mt-8 border-t">
+          <dl className="mt-5 border-t">
             {formula.main.map((line) => (
-              <div key={line.name} className="flex items-baseline justify-between gap-6 border-b py-3.5">
+              <div key={line.name} className="flex items-baseline justify-between gap-6 border-b py-2.5 text-[0.95rem]">
                 <dt>{line.name}</dt>
                 <dd className="font-medium tabular-nums">{line.amount}</dd>
               </div>
             ))}
           </dl>
-          <p className="mt-4 text-sm leading-relaxed text-stone">
-            Et aussi : {formula.rest.map((l) => `${l.name.toLowerCase().replace("vitamine b", "vitamine B")} ${l.amount}`).join(", ")}.
-          </p>
-          <Link href={`/produits/${product.slug}`} className="label mt-6 inline-block underline underline-offset-4 hover:text-klein">
+          <Link href={`/produits/${product.slug}`} className="label mt-5 inline-block underline underline-offset-4 hover:text-klein">
             Voir la fiche complète →
           </Link>
-          <Reassurance className="mt-10" />
         </div>
       </Container>
     </section>

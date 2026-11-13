@@ -129,6 +129,10 @@ bord du couvercle. Trois encres : noir, bleu, rouge.
 | Slide 4 « nuit, de dos », ordinateur | job | `b05840f8-9b4e-455f-8954-13eda2616f78` |
 | Slide 4 « nuit, de dos », mobile | job | `a194c598-923d-474b-8c69-c1153e92ea01` |
 | Pot seul sur bloc de marbre, 4:5 (carte d'achat de l'accueil) | job | `279ecc37-b18f-42dd-a53b-1d657dbb232e` |
+| Pot détouré, fond transparent (carte produit de l'accueil) | job | `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850` |
+| Section 3, proposition « le visage » (en ligne) | job | `1c87e9ae-3bb9-45cc-ba47-97addce1e56f` |
+| Section 3, proposition « la craie » (prête) | job | `e67df17b-b3be-4de2-bc9c-310c5c12be76` |
+| Section 3, proposition « la dose » (petits textes du pot à retoucher) | job | `a02a4ec3-0a49-4b6c-82ea-ff973265aca8` |
 
 Modèle utilisé : `gpt_image_2_6`, qualité `high`, résolution `2k`.
 
@@ -150,7 +154,7 @@ Quatre slides CRI, textes dans `src/lib/content/hero-slides.ts`, visuels dans
 ```
 H  Slider plein cadre, 4 scènes CRI — le produit sous quatre angles
    Section 2 : carte produit + formule en liste, prix et bouton au deuxième écran
-I4 Image matière plein cadre — interlude vers la méthode (à reprendre)
+   Section 3 : grand visuel arrondi (le visage qui hurle) + phrase + lien méthode
 FAQ courte
 ```
 **Section 2, `src/components/site/Offer.tsx`.** Trois versions le même jour :
@@ -170,3 +174,13 @@ FAQ courte
 Leçons : l'utilisateur a aimé une seule chose dans tout ça, la carte produit ;
 le reste devait rester du texte. Ne pas habiller ce qui n'a pas besoin de
 l'être — et voir « Formes » pour les angles.
+
+**Section 2, réglage du 2026-11-13 (soir)** : carte produit agrandie
+(colonnes 1,55 / 1), formule réduite à une petite liste et un lien ; les
+garanties tiennent en une ligne sous le bouton.
+
+**Section 3, `src/components/site/Statue.tsx`** : l'image de poudre blanche
+(ancienne DA) est remplacée par un grand panneau arrondi. Trois visuels
+proposés, tous en 16:9, sujet à droite : le visage (retenu par défaut), la
+craie, la dose. Sur mobile l'image passe au-dessus du texte dans la même carte.
+
