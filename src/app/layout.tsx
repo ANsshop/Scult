@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { CartProvider } from "@/components/cart/CartProvider";
-import { CartDrawer } from "@/components/cart/CartDrawer";
+import { CartDrawer, type CartUpsell } from "@/components/cart/CartDrawer";
+import { getBundleFor, getProductBySlug } from "@/lib/catalog/queries";
 import { JsonLd } from "@/components/site/JsonLd";
 import { organizationJsonLd, siteOrigin } from "@/lib/seo";
 import "./globals.css";
@@ -23,14 +24,31 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+/** Le pack proposé dans le panier quand il contient CRI à l'unité. Prix lus dans le catalogue. */
+async function cartUpsell(): Promise<CartUpsell | null> {
+  try {
+    const [single, bundle] = await Promise.all([getProductBySlug("cri"), getBundleFor("cri")]);
+    if (!single || !bundle || !bundle.inStock) return null;
+    return {
+      fromSku: single.variant.sku,
+      unitPriceCents: single.priceCents,
+      units: bundle.variant.unitCount,
+      item: { sku: bundle.variant.sku, slug: single.slug, name: bundle.name, priceCents: bundle.priceCents, image: bundle.images[0]?.url ?? null },
+    };
+  } catch {
+    return null; // catalogue indisponible : le panier marche sans la proposition
+  }
+}
+
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const upsell = await cartUpsell();
   return (
     <html lang="fr" className={`${display.variable} ${inter.variable} ${mono.variable} h-full`}>
       <body className="min-h-full flex flex-col">
         <JsonLd data={organizationJsonLd()} />
         <CartProvider>
           {children}
-          <CartDrawer />
+          <CartDrawer upsell={upsell} />
         </CartProvider>
       </body>
     </html>

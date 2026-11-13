@@ -13,6 +13,8 @@ type Ctx = {
   /** `open: false` : ajoute sans ouvrir le tiroir (le bouton l'ouvre lui-même après son animation). */
   add: (item: Omit<CartItem, "quantity">, quantity?: number, options?: { open?: boolean }) => void;
   setQuantity: (sku: string, quantity: number) => void;
+  /** Retire `quantity` exemplaires de `fromSku` et ajoute un `item` à la place (un pot → un pack). */
+  swap: (fromSku: string, quantity: number, item: Omit<CartItem, "quantity">) => void;
   remove: (sku: string) => void;
   clear: () => void;
   isOpen: boolean;
@@ -53,6 +55,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const setQuantity = useCallback((sku: string, quantity: number) => {
     setItems((prev) => (quantity <= 0 ? prev.filter((i) => i.sku !== sku) : prev.map((i) => (i.sku === sku ? { ...i, quantity: Math.min(MAX_QUANTITY, quantity) } : i))));
   }, []);
+  const swap = useCallback((fromSku: string, quantity: number, item: Omit<CartItem, "quantity">) => {
+    setItems((prev) => {
+      const rest = prev.flatMap((i) => (i.sku !== fromSku ? [i] : i.quantity > quantity ? [{ ...i, quantity: i.quantity - quantity }] : []));
+      const hit = rest.find((i) => i.sku === item.sku);
+      if (hit) return rest.map((i) => (i.sku === item.sku ? { ...i, quantity: Math.min(MAX_QUANTITY, i.quantity + 1) } : i));
+      return [...rest, { ...item, quantity: 1 }];
+    });
+  }, []);
   const remove = useCallback((sku: string) => setItems((prev) => prev.filter((i) => i.sku !== sku)), []);
   const clear = useCallback(() => setItems([]), []);
   const openCart = useCallback(() => setOpen(true), []);
@@ -62,8 +72,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     items,
     count: items.reduce((n, i) => n + i.quantity, 0),
     subtotalCents: items.reduce((n, i) => n + i.priceCents * i.quantity, 0),
-    add, setQuantity, remove, clear, isOpen, openCart, closeCart,
-  }), [items, add, setQuantity, remove, clear, isOpen, openCart, closeCart]);
+    add, setQuantity, swap, remove, clear, isOpen, openCart, closeCart,
+  }), [items, add, setQuantity, swap, remove, clear, isOpen, openCart, closeCart]);
 
   return <CartContext value={value}>{children}</CartContext>;
 }
