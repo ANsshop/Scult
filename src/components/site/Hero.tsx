@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { HERO_SLIDES } from "@/lib/content/hero-slides";
@@ -22,9 +22,19 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * avec `prefers-reduced-motion` (les animations y sont coupées).
  */
 export function Hero() {
-  const slides = HERO_SLIDES;
+  // Sur téléphone, les slides marquées `desktopOnly` sont retirées (après l'affichage initial).
+  const [phone, setPhone] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => setPhone(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  const slides = useMemo(() => (phone ? HERO_SLIDES.filter((s) => !s.desktopOnly) : HERO_SLIDES), [phone]);
   const count = slides.length;
-  const [index, setIndex] = useState(0);
+  const [current, setIndex] = useState(0);
+  const index = Math.min(current, count - 1); // si la liste raccourcit, on reste sur une slide qui existe
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const touchX = useRef<number | null>(null);

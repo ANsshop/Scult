@@ -16,6 +16,8 @@ export type HeroSlide = {
   position?: { desktop?: string; mobile?: string };
   /** Slide de nuit : le voile de lisibilité passe du bleu à l'encre. */
   dark?: boolean;
+  /** Slide absente sur téléphone (moins de 768 px de large). */
+  desktopOnly?: boolean;
 };
 
 export const HERO_SLIDES: HeroSlide[] = [
@@ -49,6 +51,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   },
   {
     id: "pot",
+    desktopOnly: true,
     label: "30 doses · 690 g · fruits rouges",
     title: "Un pot. Trente séances.",
     text: "Une dose de 23 g dans 400 ml d'eau fraîche, 20 à 30 minutes avant l'entraînement. Une seule saveur, une dose par jour maximum.",
