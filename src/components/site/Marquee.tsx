@@ -82,7 +82,7 @@ export function Marquee() {
   }, []);
 
   return (
-    <section aria-label="En bref" className="overflow-hidden border-b py-6 md:py-9">
+    <section aria-label="En bref" className="overflow-hidden bg-white py-6 md:py-9">
       <Row items={ROW_1} rowRef={row1} />
       <div className="mt-2 md:mt-3">
         <Row items={ROW_2} outline rowRef={row2} />

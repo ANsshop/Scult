@@ -85,7 +85,7 @@ export function OfferScroll({ product, lines, doses, caffeineWarning }: { produc
   const current = step > 0 ? lines[step - 1] : null;
 
   return (
-    <section id="formule" className="scroll-mt-14 border-b">
+    <section id="formule" className="scroll-mt-14 border-b bg-white">
       <div ref={wrap} className={calm ? "" : "h-[250svh]"}>
         <div className={`px-3 pb-3 pt-[4.25rem] md:px-5 md:pb-5 ${calm ? "" : "sticky top-0 h-svh"}`}>
           <div className="relative flex h-full flex-col overflow-hidden rounded-card bg-white px-5 py-5 md:px-10 md:py-7">

@@ -3,6 +3,16 @@
 import Image from "next/image";
 import { createElement, useEffect, useRef, useState } from "react";
 
+/** Le navigateur sait-il afficher de la 3D ? Sinon on garde l'image fixe, sans charger la visionneuse. */
+function hasWebGL(): boolean {
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Le pot en 3D.
  *
@@ -35,7 +45,7 @@ export function Pot3D({
   useEffect(() => {
     setCalm(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     const el = box.current;
-    if (!el) return;
+    if (!el || !hasWebGL()) return;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
@@ -55,8 +65,13 @@ export function Pot3D({
       setShown(true);
       onReady?.(el);
     };
+    const onError = () => setShown(false); // le modèle n'a pas pu s'afficher : l'image fixe revient
     el.addEventListener("load", onLoad);
-    return () => el.removeEventListener("load", onLoad);
+    el.addEventListener("error", onError);
+    return () => {
+      el.removeEventListener("load", onLoad);
+      el.removeEventListener("error", onError);
+    };
   }, [ready, onReady]);
 
   return (
