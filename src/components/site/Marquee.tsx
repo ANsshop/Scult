@@ -7,11 +7,18 @@ import { useEffect, useRef } from "react";
  * seconde au contour. Il ne défile pas tout seul : il glisse avec le
  * défilement de la page — la ligne 1 part à gauche quand on descend, la
  * ligne 2 à droite, et l'inverse quand on remonte. Les points rouges
- * reprennent la pastille du pot. Tout ce qui est écrit ici est déjà vrai
- * ailleurs sur le site (fiche, FAQ, livraison) : rien d'inventé.
+ * reprennent la pastille du pot. Le texte vise l'entraînement, dans les
+ * limites du règlement 1924/2006 : des dosages, le moment de prise, une
+ * allégation autorisée — jamais de promesse d'effet (scripts/gate.sh).
  */
-const ROW_1 = ["Dosages écrits sur le pot", "Lot numéroté", "Fabriqué dans l'UE", "30 doses", "Fruits rouges"];
-const ROW_2 = ["Livraison offerte dès 60 €", "Europe en 2 à 8 jours", "Retour 14 jours", "Paiement Stripe"];
+const ROW_1 = ["Pré-workout", "8 g de citrulline", "4 g de bêta-alanine", "3 g de créatine", "150 mg de caféine"];
+const ROW_2 = [
+  "Rien ne se sculpte en silence",
+  "20 à 30 minutes avant la séance",
+  // Allégation autorisée, mot pour mot (règlement (UE) n° 432/2012) — ne pas la raccourcir.
+  "La vitamine B6 contribue à réduire la fatigue",
+  "Une dose, 400 ml d'eau",
+];
 
 /** Pixels de glissement par pixel de page défilé. */
 const SPEED = 0.55;
