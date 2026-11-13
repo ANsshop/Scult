@@ -13,7 +13,7 @@ const SLIDES: Slide[] = [
     label: "Mode d'emploi",
     title: "Une dose. 400 ml d'eau. 20 à 30 minutes avant.",
     cta: { label: "Voir la fiche", href: "/produits/cri" },
-    image: "/home/section3-pot-ouvert.webp",
+    image: "/home/section3-dose-16x9.webp",
     imageMobile: "/home/section3-dose-4x5.webp",
     alt: "La main de marbre de la statue verse une mesure de poudre rose dans le pot SCULT CRI ouvert, le couvercle posé à côté",
     position: "50% 50%",

@@ -132,7 +132,7 @@ bord du couvercle. Trois encres : noir, bleu, rouge.
 | Pot détouré, fond transparent (carte produit de l'accueil) | job | `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850` |
 | Section 3, « le visage » (en ligne, slide 2) | job | `1c87e9ae-3bb9-45cc-ba47-97addce1e56f` |
 | Section 3, proposition « la craie » (prête) | job | `e67df17b-b3be-4de2-bc9c-310c5c12be76` |
-| Section 3, « la dose » : pot ouvert et poudre rose (en ligne, slide 1 ; textes corrigés en deux retouches) | job | `c6bd6638-65d8-4213-8e78-d1ed04d488c3` |
+| Section 3, « la dose », 16:9 en 4k : pot ouvert, couvercle conforme (dessus uni, logo, pastille) | job | `cf9653cb-7b7e-4f33-ac32-b07d0a205fa9` |
 
 Modèle utilisé : `gpt_image_2_6`, qualité `high`, résolution `2k`.
 
@@ -306,4 +306,17 @@ et `section3-trio-4x5.webp`.
 **Panier** : deux pots ajoutés à l'unité deviennent automatiquement un pack
 (`applyBundle` dans `CartProvider.tsx`) ; le client paie le prix du pack quel
 que soit le chemin.
+
+**Couvercle : le dessus est uni** (2026-11-13) — sur la feuille produit
+(`docs/da/04-pot-feuille-reference.jpg`, vue « dessus »), le dessus du
+couvercle est en papier ivoire uni, avec le logo SCULT et une pastille rouge ;
+seul le bord porte la phrase. La première version de la slide « dose »
+montrait un couvercle au dessus illustré : refaite. À préciser dans tout
+prompt où le couvercle est posé à plat (« the top of the lid is plain ivory,
+only the SCULT wordmark and one red seal dot »).
+**Micro-textes : les recomposer plutôt que les faire retoucher.** Une retouche
+IA d'une zone abîme souvent la ligne de dosages. Méthode qui marche à tous les
+coups : composer la ligne dans la vraie police (JetBrains Mono 600, étroitisée
+à 70 %), effacer l'ancienne en reconstituant le papier rangée par rangée, et
+poser la nouvelle en fusion « multiply ».
 
