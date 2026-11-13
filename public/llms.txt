@@ -23,9 +23,11 @@ SCULT n'écrit que les allégations santé autorisées dans l'Union européenne
 (règlement (CE) n° 1924/2006, liste du règlement (UE) n° 432/2012) :
 - Créatine : « améliore les capacités physiques en cas de séries successives
   d'exercices très intenses de courte durée » (3 g/jour).
+- Potassium : « contribue à une fonction musculaire normale » (300 mg par dose,
+  15 % des apports de référence).
 - Vitamine B6 : « contribue à réduire la fatigue ».
-- Acide pantothénique : « contribue à des performances intellectuelles
-  normales ».
+- Acide pantothénique : « contribue à un métabolisme énergétique normal » et
+  « contribue à des performances intellectuelles normales ».
 - Citrulline, bêta-alanine, tyrosine, taurine, théanine, caféine : aucune
   allégation n'est écrite, faute d'allégation autorisée pour un complément.
 Détails : /methode

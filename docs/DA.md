@@ -246,3 +246,18 @@ en cache (`next/image`) ; renommer le fichier.
   posé directement sur les pots (ombre portée sur les lettres), sur téléphone
   il reste sous l'image.
 
+**Discours performance (2026-11-13)** — demandé « plus appuyé ». Il passe par
+les allégations autorisées, jamais par des verbes de promesse : section
+`Performance.tsx` sur l'accueil (panneau noir arrondi, quatre thèmes —
+capacités physiques, muscle, énergie, fatigue — chacun avec l'allégation mot
+pour mot, l'ingrédient et la dose, à côté du visuel de la barre), premier
+texte du hero, bandeau, FAQ, `llms.txt`, page Méthode et fiche produit (tous
+alimentés par `lib/content/methode.ts`). Voir ASSUMPTIONS [24].
+
+**Vente (2026-11-13)** — pack de 2 à −15 % : cartes illustrées sur la fiche
+(`PurchaseOptions.tsx`), encart dans le panier (`CartDrawer.tsx`). Voir
+ASSUMPTIONS [23]. Piège revu deux fois ce jour-là : la règle globale
+`* { border-color }` écrase `border-<couleur>` et `.grain > *` passe les
+enfants en `relative` — utiliser une ombre (`shadow-[0_0_0_2px_…]`) pour un
+contour coloré, et ne pas poser `.grain` sur un bloc à enfants en absolu.
+

@@ -15,8 +15,9 @@ const ROW_1 = ["Pré-workout", "8 g de citrulline", "4 g de bêta-alanine", "3 g
 const ROW_2 = [
   "Rien ne se sculpte en silence",
   "20 à 30 minutes avant la séance",
-  // Allégation autorisée, mot pour mot (règlement (UE) n° 432/2012) — ne pas la raccourcir.
+  // Allégations autorisées, mot pour mot (règlement (UE) n° 432/2012) — ne pas les raccourcir.
   "La vitamine B6 contribue à réduire la fatigue",
+  "Le potassium contribue à une fonction musculaire normale",
   "Une dose, 400 ml d'eau",
 ];
 

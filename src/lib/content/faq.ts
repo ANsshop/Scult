@@ -20,7 +20,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Est-ce que CRI fait vraiment quelque chose ?",
     answer:
-      "Nous n'écrivons que ce que l'Union européenne autorise. Pour la créatine (3 g par dose), la vitamine B6 et l'acide pantothénique, des allégations existent et sont citées sur la page Méthode. Pour la citrulline, la bêta-alanine, la tyrosine, la taurine, la théanine et la caféine, aucune allégation n'est autorisée dans un complément alimentaire : nous donnons leur quantité par dose, sans promesse.",
+      "Nous n'écrivons que ce que l'Union européenne autorise. Pour la créatine (3 g par dose), le potassium, la vitamine B6 et l'acide pantothénique, des allégations existent et sont citées sur la page Méthode : capacités physiques lors de séries d'exercices très intenses, fonction musculaire, métabolisme énergétique, réduction de la fatigue. Pour la citrulline, la bêta-alanine, la tyrosine, la taurine, la théanine et la caféine, aucune allégation n'est autorisée dans un complément alimentaire : nous donnons leur quantité par dose, sans promesse.",
   },
   {
     question: "Quels sont les délais et tarifs de livraison ?",

@@ -25,7 +25,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     id: "cri",
     label: "CRI · le pré-workout SCULT",
     title: "Rien ne se sculpte en silence.",
-    text: "Citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose. 30 doses, fruits rouges. Les dosages sur le pot, le lot dessous.",
+    text: "3 g de créatine par dose : la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. Avec citrulline 8 g, bêta-alanine 4 g et caféine 150 mg.",
     cta: { label: "Découvrir CRI · 49 €", href: "/produits/cri" },
     secondary: { label: "Ce qu'on peut dire, et pas", href: "/methode" },
     image: {
