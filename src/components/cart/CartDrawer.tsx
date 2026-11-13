@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useCart } from "./CartProvider";
+import { PotStack } from "./PotStack";
 import { ButtonLink } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping";
@@ -50,8 +50,9 @@ export function CartDrawer({ upsell }: { upsell?: CartUpsell | null }) {
             <ul className="divide-y">
               {items.map((i) => (
                 <li key={i.sku} className="flex gap-4 py-5">
-                  <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-chip bg-klein">
-                    {i.image && <Image src={i.image} alt="" fill sizes="64px" className="object-cover" />}
+                  <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-chip bg-klein">
+                    {/* Le pot sur le mur bleu ; deux pots pour le pack */}
+                    <PotStack count={upsell && i.sku === upsell.item.sku ? upsell.units : 1} className={upsell && i.sku === upsell.item.sku ? "h-[76%] w-[84%]" : "h-[80%]"} />
                   </div>
                   <div className="flex-1">
                     <Link href={`/produits/${i.slug}`} onClick={closeCart} className="font-medium hover:underline">{i.name}</Link>
@@ -69,18 +70,22 @@ export function CartDrawer({ upsell }: { upsell?: CartUpsell | null }) {
           )}
         </div>
         {offer && upsell && (
-          <div className="mx-6 mb-5 rounded-card bg-klein p-5 text-marble">
-            <p className="label flex items-center gap-2"><span className="rounded-full bg-ruby px-2.5 py-0.5 text-white">−{offer.percent} %</span>Pack de {upsell.units}</p>
-            <p className="display mt-3 text-[1.35rem] leading-[0.95]">
-              {offer.taken < upsell.units ? `Ajoutez un ${upsell.units === 2 ? "2ᵉ" : "autre"} pot.` : `Passez au pack de ${upsell.units}.`}
-            </p>
-            <p className="mt-2 text-sm leading-snug text-marble/90">
+          <div className="group relative mx-6 mb-5 overflow-hidden rounded-card bg-klein p-5 text-marble">
+            {/* Les deux pots du pack, à droite de l'encart */}
+            <PotStack count={upsell.units} className="pointer-events-none !absolute -right-2 top-4 h-32 w-40" />
+            <div className="relative max-w-[62%]">
+              <p className="label flex items-center gap-2 whitespace-nowrap"><span className="rounded-full bg-ruby px-2.5 py-0.5 text-white">−{offer.percent} %</span>Pack de {upsell.units}</p>
+              <p className="display mt-3 text-[1.35rem] leading-[0.95]">
+                {offer.taken < upsell.units ? `Ajoutez un ${upsell.units === 2 ? "2ᵉ" : "autre"} pot.` : `Passez au pack de ${upsell.units}.`}
+              </p>
+            </div>
+            <p className="relative mt-3 max-w-[62%] text-sm leading-snug text-marble/90">
               {formatPrice(upsell.item.priceCents)} au lieu de {formatPrice(upsell.units * upsell.unitPriceCents)} : vous économisez {formatPrice(offer.saving)}{offer.freeShipping ? ", et la livraison est offerte" : ""}.
             </p>
             <button
               type="button"
               onClick={() => swap(upsell.fromSku, offer.taken, upsell.item)}
-              className="btn-shine label mt-4 flex h-11 w-full items-center justify-center rounded-btn bg-marble !text-[0.75rem] font-medium text-ink transition-colors hover:bg-white [--btn-reflet:rgb(18_56_199/0.26)]"
+              className="btn-shine label relative mt-4 flex h-11 w-full items-center justify-center rounded-btn bg-marble !text-[0.75rem] font-medium text-ink transition-colors hover:bg-white [--btn-reflet:rgb(18_56_199/0.26)]"
             >
               {offer.delta > 0 ? `Passer au pack · +${formatPrice(offer.delta)}` : `Passer au pack · −${formatPrice(-offer.delta)}`}
             </button>

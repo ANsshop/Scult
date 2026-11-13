@@ -1,14 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import type { Product } from "@/lib/catalog/queries";
 import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 import { AddToCart } from "./AddToCart";
+import { PotStack } from "./PotStack";
 
-/** Le pot détouré, pour les vignettes des deux choix. */
-const POT = "/home/pot-mini.webp";
 /** Doses par pot : sert seulement à afficher le prix par dose. */
 const DOSES_PER_UNIT = 30;
 
@@ -47,14 +45,7 @@ export function PurchaseOptions({ single, bundle }: { single: Product; bundle: P
                 <input type="radio" name="quantite" value={key} checked={on} onChange={() => setChoice(key)} className="sr-only" />
                 {/* La vignette : le ou les pots sur le mur bleu, avec l'ombre dure du flash */}
                 <span className="relative flex h-36 items-center justify-center overflow-hidden bg-klein md:h-40">
-                  {units > 1 ? (
-                    <span className="relative block h-[82%] w-[70%]">
-                      <Image src={POT} alt="" width={200} height={244} className="flash-shadow absolute left-0 top-[4%] h-[88%] w-auto -rotate-[9deg] transition-transform duration-500 group-hover:-rotate-[12deg]" />
-                      <Image src={POT} alt="" width={200} height={244} className="flash-shadow absolute right-0 top-[10%] h-[92%] w-auto rotate-[7deg] transition-transform duration-500 group-hover:rotate-[10deg]" />
-                    </span>
-                  ) : (
-                    <Image src={POT} alt="" width={200} height={244} className="flash-shadow h-[78%] w-auto -rotate-[5deg] transition-transform duration-500 group-hover:-rotate-[2deg]" />
-                  )}
+                  <PotStack count={units} className={units > 1 ? "h-[82%] w-[70%]" : "h-[78%]"} />
                   {off > 0 && <span className="label absolute right-3 top-3 z-10 whitespace-nowrap rounded-full bg-ruby px-2.5 py-1 text-white">−{off} %</span>}
                   <span aria-hidden className={`absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-full shadow-[0_0_0_2px_var(--color-marble)] transition-colors ${on ? "bg-marble" : "bg-transparent"}`}>
                     <span className={`h-2.5 w-2.5 rounded-full bg-klein transition-transform ${on ? "scale-100" : "scale-0"}`} />

@@ -49,19 +49,4 @@ export const HERO_SLIDES: HeroSlide[] = [
     },
     position: { mobile: "50% 100%" },
   },
-  {
-    id: "pot",
-    desktopOnly: true,
-    label: "30 doses · 690 g · fruits rouges",
-    title: "Un pot. Trente séances.",
-    text: "Une dose de 23 g dans 400 ml d'eau fraîche, 20 à 30 minutes avant l'entraînement. Une seule saveur, une dose par jour maximum.",
-    cta: { label: "Commander CRI · 49 €", href: "/produits/cri" },
-    secondary: { label: "Livraison & retours", href: "/livraison-retours" },
-    image: {
-      desktop: "/home/hero-3-16x9.webp",
-      mobile: "/home/hero-3-9x16.webp",
-      alt: "La statue de marbre debout, poings serrés, vue d'en bas, un pot SCULT CRI posé à ses pieds sur un socle de pierre",
-    },
-    position: { mobile: "50% 45%" },
-  },
 ];
