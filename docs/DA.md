@@ -194,23 +194,18 @@ décolle du bouton et file en arc jusqu'au compteur du panier, qui rebondit ;
 le bouton passe à « Ajouté ✓ » en bleu, puis le tiroir s'ouvre. Tout est dans
 `src/components/cart/AddToCart.tsx` ; rien ne bouge en mouvement réduit.
 
-**Footer — propositions (2026-11-13)**, à comparer sur `/apercu-footers` (page
-de travail, non indexée, à supprimer une fois le choix fait). Composants dans
-`src/components/site/footers/`, fonds dans `public/footer/`, aucun texte dans
-les images.
+**Footer (2026-11-13)** — `src/components/site/Footer.tsx`. Retenu après deux
+séries de propositions : bleu uni avec un grain léger, le pot détouré en très
+grand en arrière-plan (penché, coupé par le bord), le mot SCULT réduit, la
+signature, le bouton « Commander », les liens et la mention dans la moitié
+gauche. Sur mobile le pot passe sous le texte.
 
-Premier jet rejeté : pieds de statue coupés, mains de craie sur le mur, strap
-rouge sur le marbre — « on dirait des trucs de film d'horreur ». **À ne plus
-faire en décor** : fragments de corps, empreintes de mains, tissu rouge sur
-fond clair, flash dur avec coins sombres. La statue reste dans les visuels où
-elle tient le produit ; les fonds décoratifs sont lumineux et sans corps.
-
-Deuxième jet, lumineux :
-
-| Proposition | Composant | Fond | Job Higgsfield |
-|---|---|---|---|
-| 1. La poudre — nuage de poudre rose sur mur bleu | `FooterPoudre` | `poudre.webp` | `16d77222-020a-42eb-af06-68558d3e13bc` |
-| 2. Les fruits rouges — panneau arrondi, framboises, groseilles, mesure de poudre | `FooterFruits` | `fruits.webp` | `28c7fa4c-6510-4b6e-baf8-9965bdb62362` |
-| 3. La peinture et le pot — matière de peinture bleue, pot détouré qui dépasse | `FooterPot` | `peinture.webp` | `833a3b98-24c1-4c9e-b6f6-c43c9aaeac01` |
-
-Le footer en ligne (`Footer.tsx`) n'a pas changé tant que le choix n'est pas fait.
+Rejeté en route, à ne pas refaire :
+- pieds de statue coupés, mains de craie sur le mur, strap rouge sur marbre —
+  « on dirait des trucs de film d'horreur ». Pas de fragments de corps,
+  d'empreintes ni d'ambiance sombre dans les décors ;
+- la matière de peinture bleue en vagues derrière le pot ;
+- le mot SCULT en géant (il doit rester discret à côté du pot).
+Non retenues mais jugées correctes : un nuage de poudre rose
+(job `16d77222-020a-42eb-af06-68558d3e13bc`) et un tapis de fruits rouges
+(job `28c7fa4c-6510-4b6e-baf8-9965bdb62362`), réutilisables ailleurs.
