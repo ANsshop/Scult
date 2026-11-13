@@ -122,6 +122,17 @@ body {
 @keyframes btn-reflet { from { transform: translateX(-140%) skewX(-24deg); } to { transform: translateX(280%) skewX(-24deg); } }
 .btn-shine:is(:hover, :focus-visible):not(:disabled)::after { animation: btn-reflet 0.9s cubic-bezier(0.45, 0, 0.55, 1); }
 
+/* Le reflet des boutons, sur un bloc entier (l'encart « pack » du panier) : il le
+   traverse à l'apparition, puis toutes les 4,5 s, pour attirer l'œil sans survol. */
+.card-shine { position: relative; overflow: hidden; }
+.card-shine::after {
+  content: ""; position: absolute; inset-block: 0; left: 0; width: 40%; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.3), transparent);
+  transform: translateX(-140%) skewX(-24deg);
+  animation: card-reflet 4.5s cubic-bezier(0.45, 0, 0.55, 1) 0.5s infinite;
+}
+@keyframes card-reflet { 0% { transform: translateX(-140%) skewX(-24deg); } 26%, 100% { transform: translateX(320%) skewX(-24deg); } }
+
 /* Barre de progression du slider hero : sa fin déclenche la slide suivante */
 @keyframes hero-progress { from { transform: translateY(-1px) scaleX(0); } to { transform: translateY(-1px) scaleX(1); } }
 .hero-progress { animation: hero-progress 7s linear forwards; }

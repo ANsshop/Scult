@@ -5,7 +5,7 @@ import { useCallback, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 
 /** Les slides de la section 3. Visuels 16:9, sujet à droite, mur bleu vide à gauche pour le texte. */
-type Slide = { id: string; label: string; title: string; text?: string; cta: { label: string; href: string }; image: string; /** Version verticale (4:5) pour téléphone ; sinon l'image large est recadrée avec `position`. */ imageMobile?: string; alt: string; position: string; full?: boolean };
+type Slide = { id: string; label: string; title: string; text?: string; cta: { label: string; href: string }; image: string; /** Version verticale (4:5) pour téléphone ; sinon l'image large est recadrée avec `position`. */ imageMobile?: string; alt: string; position: string; /** Visuel sur fond noir : sur téléphone le texte passe en haut, au-dessus des pots. */ dark?: boolean };
 
 const SLIDES: Slide[] = [
   {
@@ -35,11 +35,13 @@ const SLIDES: Slide[] = [
     label: "Lot 001 · 690 g · 30 doses",
     title: "Lot 001. Numéroté sur chaque pot.",
     cta: { label: "Commander CRI · 49 €", href: "/produits/cri" },
-    image: "/home/section3-pots-fond-noir.webp",
-    alt: "Un mur de pots SCULT CRI serrés les uns contre les autres, cadrés en diagonale",
+    image: "/home/section3-trio-noir-16x9.webp",
+    imageMobile: "/home/section3-trio-noir-4x5.webp",
+    alt: "Trois pots SCULT CRI sur un sol noir brillant, l'un debout, les deux autres penché et couché, avec leurs reflets",
     position: "50% 50%",
-    // Le visuel remplit tout le cadre (pas de mur bleu vide à gauche) : l'ombre du texte est plus marquée.
-    full: true,
+    // Visuel sur fond noir (rendu depuis le modèle 3D, scripts/3d/render_trio.py). Sur téléphone
+    // les pots sont en bas du cadre : le texte se place au-dessus plutôt que sur le côté.
+    dark: true,
   },
 ];
 
@@ -66,7 +68,7 @@ export function Statue() {
     <section className="border-b" aria-roledescription="carrousel" aria-label="La marque">
         {/* Pleine largeur, bord à bord : ni marges ni coins arrondis */}
         <div
-          className="relative grid aspect-[4/5] overflow-hidden bg-klein text-marble md:aspect-auto md:h-[86svh]"
+          className="relative grid aspect-[4/5] overflow-hidden bg-ink text-marble md:aspect-auto md:h-[86svh]"
           onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
           onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
           onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
@@ -101,7 +103,7 @@ export function Statue() {
                   />
                   <Image src={s.image} alt="" fill sizes="100vw" className="hidden object-cover object-[100%_50%] md:block" />
                 </div>
-                <div className={`absolute inset-y-0 left-0 flex ${s.imageMobile ? "w-[49%]" : "w-[58%]"} flex-col justify-center p-5 md:w-[46%] md:py-12 md:pr-12 md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] ${s.full ? "[text-shadow:0_2px_3px_rgb(11_11_15/0.9),0_0_26px_rgb(11_11_15/0.85)]" : "[text-shadow:0_1px_2px_rgb(11_11_15/0.55),0_0_22px_rgb(11_11_15/0.45)]"}`}>
+                <div className={`absolute inset-y-0 left-0 flex flex-col p-5 md:justify-center md:py-12 md:pr-8 md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] ${s.dark ? "w-[78%] justify-start pt-[4.75rem] md:w-[36%]" : `justify-center md:w-[46%] [text-shadow:0_1px_2px_rgb(11_11_15/0.55),0_0_22px_rgb(11_11_15/0.45)] ${s.imageMobile ? "w-[49%]" : "w-[58%]"}`}`}>
                   <p className="label text-marble/85">{s.label}</p>
                   <p className="display mt-3 text-[clamp(1.4rem,4.2vw,4rem)] md:mt-4">{s.title}</p>
                   {s.text && <p className="mt-3 max-w-md text-[0.74rem] leading-snug text-marble/95 md:mt-5 md:text-[1.05rem] md:leading-relaxed">{s.text}</p>}

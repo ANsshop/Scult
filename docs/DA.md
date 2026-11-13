@@ -284,3 +284,14 @@ allégation ». Cela remplace l'idée de départ de la page Méthode.
 Slide « dose » : version verticale téléphone `section3-dose-4x5.webp`, job
 Higgsfield `4ccf52dc-e25f-4d1a-9454-3b00c532ac24`, accent corrigé à la main.
 
+**Slide 3 du slider du bas : « le trio sur fond noir » (2026-11-13)** —
+d'après une référence fournie par l'utilisateur (trois pots sur un sol noir
+miroir). Remplace le mur de pots. Rendu depuis le modèle 3D par
+`scripts/3d/render_trio.py` : un pot debout, un penché, un couché, reflets au
+sol, fond noir ; une version 16:9 (groupe à droite, texte à gauche) et une 4:5
+pour téléphone (pots en bas, texte au-dessus). Aucun crédit, textes exacts.
+**Détails d'interface** : les blocs dépliables (FAQ, rubriques de la fiche)
+ont une flèche qui se retourne, plus de « + » (`ui/ToggleArrow.tsx`) ;
+l'encart « pack » du panier est balayé par le même reflet que les boutons, à
+l'apparition puis toutes les 4,5 s (`.card-shine`).
+

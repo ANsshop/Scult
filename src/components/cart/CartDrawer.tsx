@@ -70,7 +70,7 @@ export function CartDrawer({ upsell }: { upsell?: CartUpsell | null }) {
           )}
         </div>
         {offer && upsell && (
-          <div className="group relative mx-6 mb-5 overflow-hidden rounded-card bg-klein p-5 text-marble">
+          <div className="card-shine group mx-6 mb-5 rounded-card bg-klein p-5 text-marble">
             {/* Les deux pots du pack, à droite de l'encart */}
             <PotStack count={upsell.units} className="pointer-events-none !absolute -right-2 top-4 h-32 w-40" />
             <div className="relative max-w-[62%]">

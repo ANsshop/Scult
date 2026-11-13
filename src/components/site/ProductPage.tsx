@@ -3,6 +3,7 @@ import { PurchaseOptions } from "@/components/cart/PurchaseOptions";
 import { ProductGallery } from "./ProductGallery";
 import { Reassurance } from "./Reassurance";
 import { FaqPreview } from "./FaqPreview";
+import { ToggleArrow } from "@/components/ui/ToggleArrow";
 import { CLAIMS } from "@/lib/content/methode";
 import { FAQ_ITEMS } from "@/lib/content/faq";
 import { PRODUCT_INFO } from "@/lib/content/product-info";
@@ -39,7 +40,7 @@ export function ProductPage({ product, bundle }: { product: Product; bundle?: Pr
           <div className="mt-10 divide-y border-y">
             {claims.length > 0 && (
               <details className="group py-5" open>
-                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Performance<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Performance<ToggleArrow /></summary>
                 <div className="mt-4 space-y-4 text-[0.95rem] leading-relaxed text-stone">
                   {claims.map((c) => (
                     <div key={c.id}>
@@ -53,7 +54,7 @@ export function ProductPage({ product, bundle }: { product: Product; bundle?: Pr
             )}
             {info && (
               <details className="group py-5" open>
-                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Composition par dose<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Composition par dose<ToggleArrow /></summary>
                 <div className="mt-4 text-[0.95rem] leading-relaxed text-stone">
                   <p className="text-ink">{info.denomination}</p>
                   <table className="mt-4 w-full text-left tabular-nums">
@@ -72,22 +73,22 @@ export function ProductPage({ product, bundle }: { product: Product; bundle?: Pr
             )}
             {info && (
               <details className="group py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Ingrédients<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Ingrédients<ToggleArrow /></summary>
                 <div className="mt-4 text-[0.95rem] leading-relaxed text-stone"><p>{info.ingredients}</p></div>
               </details>
             )}
             {info && (
               <details className="group py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Conseils d&apos;utilisation et précautions<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+                <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Conseils d&apos;utilisation et précautions<ToggleArrow /></summary>
                 <div className="mt-4 text-[0.95rem] leading-relaxed text-stone"><p>{info.usage}</p><p className="mt-3">{info.warnings}</p></div>
               </details>
             )}
             <details className="group py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Livraison &amp; retours<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+              <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Livraison &amp; retours<ToggleArrow /></summary>
               <div className="mt-4 text-[0.95rem] leading-relaxed text-stone"><p>{answer("Quels sont les délais et tarifs de livraison ?")}</p><p className="mt-3">{answer("Puis-je retourner un pot ?")}</p></div>
             </details>
             <details className="group py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Fabrication<span className="text-klein group-open:rotate-45 transition-transform">+</span></summary>
+              <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Fabrication<ToggleArrow /></summary>
               <div className="mt-4 text-[0.95rem] leading-relaxed text-stone"><p>{answer("Où sont fabriqués les produits ?")}</p></div>
             </details>
           </div>
