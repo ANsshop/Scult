@@ -27,7 +27,7 @@ const SLIDES: Slide[] = [
     cta: { label: "Commander CRI · 49 €", href: "/produits/cri" },
     image: "/home/hero-2-16x9.webp",
     alt: "Le poing de marbre de la statue, strap rouge au poignet, serre une barre couverte de craie à côté d'un pot SCULT CRI",
-    position: "34% 50%",
+    position: "20% 50%",
   },
   {
     id: "methode",
@@ -102,7 +102,7 @@ export function Statue() {
                     src={s.image}
                     alt={s.alt}
                     fill
-                    sizes="(min-width: 1360px) 1280px, 100vw"
+                    sizes="(min-width: 1360px) 1280px, (min-width: 768px) 100vw, 200vw"
                     style={{ "--pos": s.position } as React.CSSProperties}
                     className="object-cover object-(--pos) md:object-[100%_50%]"
                   />
