@@ -194,3 +194,16 @@ décolle du bouton et file en arc jusqu'au compteur du panier, qui rebondit ;
 le bouton passe à « Ajouté ✓ » en bleu, puis le tiroir s'ouvre. Tout est dans
 `src/components/cart/AddToCart.tsx` ; rien ne bouge en mouvement réduit.
 
+**Footer — trois propositions (2026-11-13)**, à comparer sur `/apercu-footers`
+(page de travail, non indexée, à supprimer une fois le choix fait). Composants
+dans `src/components/site/footers/`, fonds dans `public/footer/`, sans aucun
+texte dans les images.
+
+| Proposition | Composant | Fond | Job Higgsfield |
+|---|---|---|---|
+| 1. Le pied de page — les pieds de la statue sur son socle | `FooterPieds` | `pieds.webp` | `75328ea9-055d-4978-ab55-aabc79615527` |
+| 2. Le mur — panneau arrondi, mur peint et mains de craie | `FooterMur` | `mur.webp` | `aa509d92-3a0d-4ef4-848e-07c9aef8a34f` |
+| 3. La dalle — footer clair, marbre et strap rouge | `FooterDalle` | `dalle.webp` | `c8a7a6aa-b032-48ac-b246-efe8ec94199e` |
+
+Le footer en ligne (`Footer.tsx`) n'a pas changé tant que le choix n'est pas fait.
+
