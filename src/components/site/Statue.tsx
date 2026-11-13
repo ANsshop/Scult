@@ -12,10 +12,11 @@ const SLIDES: Slide[] = [
     id: "dose",
     label: "Mode d'emploi",
     title: "Une dose. 400 ml d'eau. 20 à 30 minutes avant.",
-    cta: { label: "Voir la fiche complète", href: "/produits/cri" },
+    cta: { label: "Voir la fiche", href: "/produits/cri" },
     image: "/home/section3-pot-ouvert.webp",
+    imageMobile: "/home/section3-dose-4x5.webp",
     alt: "La main de marbre de la statue verse une mesure de poudre rose dans le pot SCULT CRI ouvert, le couvercle posé à côté",
-    position: "52% 50%",
+    position: "50% 50%",
   },
   {
     // Le message performance : une accroche, et l'allégation autorisée qui la fonde, citée mot pour mot.

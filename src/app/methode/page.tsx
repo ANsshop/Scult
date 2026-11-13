@@ -10,23 +10,23 @@ import { CLAIMS } from "@/lib/content/methode";
 import { breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Méthode — ce que l'Europe autorise à dire sur un pré-workout",
-  description: "Les allégations santé autorisées (règlement UE 432/2012) pour la créatine, la vitamine B6 et l'acide pantothénique de CRI, et pourquoi rien n'est écrit sur la citrulline ou la caféine. Sources citées.",
+  title: "Performance — ce que la formule de CRI apporte à l'entraînement",
+  description: "Créatine 3 g, potassium, vitamines B5 et B6 : les bénéfices de la formule CRI, actif par actif, avec la dose et la source.",
   alternates: { canonical: "/methode" },
 };
 
 export default function MethodePage() {
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: "Méthode", path: "/methode" }])} />
+      <JsonLd data={breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: "Performance", path: "/methode" }])} />
       <Header onBlue />
       <main>
         <section className="grain relative bg-klein text-marble">
-          <Corners className="top-14" tl="Méthode" tr="Règlement (CE) 1924/2006" bl="Sources en bas de page" br="Mis à jour 10/2026" />
+          <Corners className="top-14" tl="Performance" tr="Par dose de 23 g" bl="Source sous chaque bénéfice" br="Lot 001" />
           <Container className="py-24 md:py-36">
-            <h1 className="display max-w-5xl text-[clamp(2.8rem,9vw,8.5rem)]">Ce qu&apos;on peut dire. Et pas.</h1>
+            <h1 className="display max-w-5xl text-[clamp(2.8rem,9vw,8.5rem)]">Pour les séries qui comptent.</h1>
             <p className="mt-8 max-w-2xl text-lg leading-relaxed text-marble/90">
-              En Europe, une marque de compléments ne peut écrire sur ses produits que les allégations santé évaluées par l&apos;EFSA et inscrites au registre. Tout le reste — les verbes qu&apos;on lit partout ailleurs — est interdit. On s&apos;en tient à la liste, et on la met sous vos yeux.
+              Ce que la formule de CRI apporte à l&apos;entraînement, actif par actif : capacités physiques, muscle, énergie, fatigue. Chaque bénéfice est rattaché à sa dose et à sa source.
             </p>
           </Container>
         </section>
@@ -36,8 +36,8 @@ export default function MethodePage() {
             <div className="grid gap-4 lg:grid-cols-2">
               {CLAIMS.map((c) => (
                 <article key={c.id} className="flex flex-col rounded-card border p-6 md:p-8">
-                  <p className={`label ${c.claim ? "text-ruby" : "text-stone"}`}>{c.ingredient}</p>
-                  <p className="display mt-5 text-[1.6rem] leading-[1.05]">{c.claim ? `« ${c.claim} »` : "Aucune allégation autorisée. On n'écrit rien."}</p>
+                  <p className="label text-ruby">{c.ingredient}</p>
+                  <p className="display mt-5 text-[1.6rem] leading-[1.05]">{c.claim}</p>
                   <p className="mt-5 text-[0.95rem] leading-relaxed text-stone">{c.condition}</p>
                   <p className="label mt-auto pt-8 normal-case tracking-normal text-stone">
                     Source : <a href={c.url} target="_blank" rel="noopener" className="underline">{c.source}</a>
@@ -55,7 +55,7 @@ export default function MethodePage() {
               <Image src="/products/cri-02.webp" alt="Dos du pot SCULT CRI : tableau nutritionnel, liste d'ingrédients, conseils d'utilisation et précautions d'emploi" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
             </div>
             <div className="md:py-10">
-              <p className="label text-stone">Ce qu&apos;on fait à la place</p>
+              <p className="label text-stone">Transparence</p>
               <h2 className="display mt-4 text-[clamp(2rem,5vw,4rem)]">Le tableau au dos. Le lot sur le pot.</h2>
               <dl className="mt-10 divide-y border-y">
                 {[

@@ -272,3 +272,15 @@ de la performance : `public/home/section3-barre-4x5.webp`, job Higgsfield
 **Image de partage** : `src/app/opengraph-image.jpg`, composée à partir du
 hero (statue + pot), du logo et de la signature.
 
+**Ton : la performance, pas le règlement (décision du 2026-11-13)** —
+l'utilisateur a fait retirer tout le discours « ce que l'Europe autorise à
+dire / ce qu'on peut dire, et pas » : « sur aucun site de pré-workout tu vois
+ça ». Les allégations autorisées restent, mot pour mot (c'est la seule façon
+légale de parler d'effet), mais présentées comme des **bénéfices** : rubrique
+« Performance » sur la fiche, page `/methode` retitrée « Pour les séries qui
+comptent. » (menu : Performance), source en petit. On n'écrit plus nulle part
+ce que la marque « n'a pas le droit » de dire, ni la carte « aucune
+allégation ». Cela remplace l'idée de départ de la page Méthode.
+Slide « dose » : version verticale téléphone `section3-dose-4x5.webp`, job
+Higgsfield `4ccf52dc-e25f-4d1a-9454-3b00c532ac24`, accent corrigé à la main.
+

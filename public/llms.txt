@@ -17,19 +17,16 @@
 - CRI, pack de 2 pots — 83,30 € au lieu de 98 € (−15 %) : 2 × 690 g, soit 60
   doses, livraison offerte. Se choisit sur la fiche de CRI. URL : /produits/cri
 
-## Ce que la marque affirme (et pas)
+## Bénéfices
 
-SCULT n'écrit que les allégations santé autorisées dans l'Union européenne
-(règlement (CE) n° 1924/2006, liste du règlement (UE) n° 432/2012) :
-- Créatine : « améliore les capacités physiques en cas de séries successives
-  d'exercices très intenses de courte durée » (3 g/jour).
-- Potassium : « contribue à une fonction musculaire normale » (300 mg par dose,
-  15 % des apports de référence).
-- Vitamine B6 : « contribue à réduire la fatigue ».
-- Acide pantothénique : « contribue à un métabolisme énergétique normal » et
-  « contribue à des performances intellectuelles normales ».
-- Citrulline, bêta-alanine, tyrosine, taurine, théanine, caféine : aucune
-  allégation n'est écrite, faute d'allégation autorisée pour un complément.
+Par dose de CRI (allégations de santé du règlement (UE) n° 432/2012) :
+- Créatine, 3 g : « améliore les capacités physiques en cas de séries
+  successives d'exercices très intenses de courte durée ».
+- Potassium, 300 mg (15 % des apports de référence) : « contribue à une
+  fonction musculaire normale ».
+- Acide pantothénique, 6 mg : « contribue à un métabolisme énergétique normal »
+  et « contribue à des performances intellectuelles normales ».
+- Vitamine B6, 1,4 mg : « contribue à réduire la fatigue ».
 Détails : /methode
 
 ## Livraison (Europe)

@@ -27,7 +27,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     title: "Rien ne se sculpte en silence.",
     text: "3 g de créatine par dose : la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. Avec citrulline 8 g, bêta-alanine 4 g et caféine 150 mg.",
     cta: { label: "Découvrir CRI · 49 €", href: "/produits/cri" },
-    secondary: { label: "Ce qu'on peut dire, et pas", href: "/methode" },
+    secondary: { label: "Voir la formule", href: "/#formule" },
     image: {
       desktop: "/home/hero-16x9.webp",
       mobile: "/home/hero-9x16.webp",

@@ -5,7 +5,7 @@ import { Wordmark } from "./Wordmark";
 
 const COLS = [
   { title: "Boutique", links: [["CRI · pré-workout", "/produits/cri"], ["La formule", "/#formule"], ["Panier", "/panier"]] },
-  { title: "Aide", links: [["Méthode & sources", "/methode"], ["Questions fréquentes", "/faq"], ["Livraison & retours", "/livraison-retours"], ["Nous écrire", "mailto:hello@scult.eu"]] },
+  { title: "Aide", links: [["Performance & sources", "/methode"], ["Questions fréquentes", "/faq"], ["Livraison & retours", "/livraison-retours"], ["Nous écrire", "mailto:hello@scult.eu"]] },
   { title: "Légal", links: [["CGV", "/cgv"], ["Mentions légales", "/mentions-legales"], ["Confidentialité", "/confidentialite"]] },
 ];
 

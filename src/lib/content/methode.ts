@@ -1,9 +1,9 @@
 /**
- * Page Méthode — l'actif AEO. Une seule règle : on cite, on n'invente pas.
- * Les allégations ci-dessous sont celles du registre européen (règlement
- * (CE) n° 1924/2006, liste des allégations autorisées, règlement (UE)
- * n° 432/2012). Rien d'autre n'est écrit sur ce que CRI « fait ».
- * `claim: null` = aucune allégation autorisée : on le dit, on n'écrit rien.
+ * Les bénéfices de CRI, tels qu'on les écrit sur le site. Chaque phrase est
+ * une allégation de santé du registre européen (règlement (UE) n° 432/2012),
+ * citée mot pour mot et rattachée à un actif et à sa dose — c'est ce qui
+ * permet de parler de performance. On les présente comme des bénéfices, avec
+ * la source en petit ; jamais comme « ce qu'on a le droit de dire ».
  */
 const REG_432 = "https://eur-lex.europa.eu/eli/reg/2012/432/oj";
 
@@ -12,7 +12,7 @@ export type Claim = {
   /** Produit concerné — la fiche produit affiche les allégations de son slug. */
   slug: string;
   ingredient: string;
-  claim: string | null;
+  claim: string;
   condition: string;
   source: string;
   url: string;
@@ -25,7 +25,7 @@ export const CLAIMS: Claim[] = [
     ingredient: "Créatine · 3 g par dose",
     claim:
       "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée.",
-    condition: "CRI apporte 3 g de créatine par dose, la quantité journalière visée par l'allégation.",
+    condition: "3 g de créatine par dose : la quantité journalière associée à ce bénéfice.",
     source: "Règlement (UE) n° 432/2012, annexe — entrée « créatine ».",
     url: REG_432,
   },
@@ -34,7 +34,7 @@ export const CLAIMS: Claim[] = [
     slug: "cri",
     ingredient: "Potassium · 300 mg par dose",
     claim: "Le potassium contribue à une fonction musculaire normale.",
-    condition: "CRI apporte 300 mg de potassium par dose, soit 15 % des apports de référence : le seuil à partir duquel un produit est « source de potassium ».",
+    condition: "300 mg de potassium par dose, soit 15 % des apports de référence.",
     source: "Règlement (UE) n° 432/2012, annexe — entrée « potassium ».",
     url: REG_432,
   },
@@ -43,7 +43,7 @@ export const CLAIMS: Claim[] = [
     slug: "cri",
     ingredient: "Acide pantothénique (vitamine B5) · 6 mg par dose",
     claim: "L'acide pantothénique contribue à un métabolisme énergétique normal.",
-    condition: "CRI apporte 6 mg d'acide pantothénique par dose, soit 100 % des apports de référence.",
+    condition: "6 mg d'acide pantothénique par dose, soit 100 % des apports de référence.",
     source: "Règlement (UE) n° 432/2012, annexe — entrée « acide pantothénique ».",
     url: REG_432,
   },
@@ -52,7 +52,7 @@ export const CLAIMS: Claim[] = [
     slug: "cri",
     ingredient: "Vitamine B6 · 1,4 mg par dose",
     claim: "La vitamine B6 contribue à réduire la fatigue.",
-    condition: "CRI apporte 1,4 mg de vitamine B6 par dose, soit 100 % des apports de référence.",
+    condition: "1,4 mg de vitamine B6 par dose, soit 100 % des apports de référence.",
     source: "Règlement (UE) n° 432/2012, annexe — entrée « vitamine B6 ».",
     url: REG_432,
   },
@@ -61,18 +61,8 @@ export const CLAIMS: Claim[] = [
     slug: "cri",
     ingredient: "Acide pantothénique (vitamine B5) · 6 mg par dose",
     claim: "L'acide pantothénique contribue à des performances intellectuelles normales.",
-    condition: "CRI apporte 6 mg d'acide pantothénique par dose, soit 100 % des apports de référence.",
+    condition: "6 mg d'acide pantothénique par dose, soit 100 % des apports de référence.",
     source: "Règlement (UE) n° 432/2012, annexe — entrée « acide pantothénique ».",
-    url: REG_432,
-  },
-  {
-    id: "sans-allegation",
-    slug: "cri",
-    ingredient: "Citrulline, bêta-alanine, tyrosine, taurine, théanine, caféine",
-    claim: null,
-    condition:
-      "Rien n'est affirmé sur la citrulline, la bêta-alanine, la tyrosine, la taurine, la théanine ni la caféine : aucune allégation n'est autorisée pour elles dans un complément alimentaire. On donne leur quantité par dose, rien d'autre.",
-    source: "Règlement (UE) n° 432/2012, annexe — aucune entrée pour ces substances.",
     url: REG_432,
   },
 ];

@@ -18,9 +18,9 @@ export const FAQ_ITEMS: FaqItem[] = [
       "La bêta-alanine peut provoquer des picotements passagers sur la peau. La première semaine, commencez par une demi-dose.",
   },
   {
-    question: "Est-ce que CRI fait vraiment quelque chose ?",
+    question: "Qu'est-ce que CRI apporte à l'entraînement ?",
     answer:
-      "Nous n'écrivons que ce que l'Union européenne autorise. Pour la créatine (3 g par dose), le potassium, la vitamine B6 et l'acide pantothénique, des allégations existent et sont citées sur la page Méthode : capacités physiques lors de séries d'exercices très intenses, fonction musculaire, métabolisme énergétique, réduction de la fatigue. Pour la citrulline, la bêta-alanine, la tyrosine, la taurine, la théanine et la caféine, aucune allégation n'est autorisée dans un complément alimentaire : nous donnons leur quantité par dose, sans promesse.",
+      "CRI apporte 3 g de créatine par dose : la créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. Le potassium contribue à une fonction musculaire normale, l'acide pantothénique à un métabolisme énergétique normal, et la vitamine B6 contribue à réduire la fatigue. Le détail, actif par actif, est sur la page Performance.",
   },
   {
     question: "Quels sont les délais et tarifs de livraison ?",
