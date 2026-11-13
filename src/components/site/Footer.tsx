@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
+import { Wordmark } from "./Wordmark";
 
 const COLS = [
   { title: "Boutique", links: [["CRI · pré-workout", "/produits/cri"], ["La formule", "/#formule"], ["Panier", "/panier"]] },
@@ -30,7 +31,7 @@ export function Footer() {
         <div className="md:max-w-[50%]">
           {/* Sur mobile, ce bloc laisse la place du pot à droite et fait sa hauteur */}
           <div className="min-h-[70vw] pr-[42vw] md:min-h-0 md:pr-0">
-            <p aria-hidden className="display select-none text-[clamp(2.5rem,7.5vw,6.5rem)] leading-[0.8]">Scult</p>
+            <Link href="/" aria-label="SCULT — accueil" className="inline-block"><Wordmark className="h-[clamp(2rem,4.8vw,4.25rem)] w-auto" /></Link>
             <p className="display mt-6 text-[clamp(1.35rem,2.4vw,2.25rem)] md:mt-8">Rien ne se sculpte en silence.</p>
             <ButtonLink href="/produits/cri" variant="marble" className="mt-6 !px-5 md:mt-7 md:!px-7">Commander · 49 €</ButtonLink>
           </div>

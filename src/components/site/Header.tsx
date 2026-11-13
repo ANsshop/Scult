@@ -44,7 +44,7 @@ export function Header({ onBlue = false }: { onBlue?: boolean }) {
   return (
     <header className={`${position} z-40 transition-colors duration-300 ${tone} ${surface}`}>
       <div className="mx-auto flex h-14 max-w-[1360px] items-center justify-between px-5 md:px-10">
-        <Link href="/" aria-label="SCULT — accueil" className="flex items-center"><Wordmark className="h-4 w-auto" /></Link>
+        <Link href="/" aria-label="SCULT — accueil" className="flex items-center"><Wordmark className="h-[1.15rem] w-auto" /></Link>
         <nav aria-label="Navigation principale" className="hidden items-center gap-6 md:flex">
           {NAV.map((n) => <Link key={n.href} href={n.href} className="label hover:underline underline-offset-4">{n.label}</Link>)}
         </nav>
