@@ -4,17 +4,28 @@ import Image from "next/image";
 import { createElement, useEffect, useRef, useState } from "react";
 
 /**
- * Le pot en 3D, à faire tourner à la souris ou au doigt.
+ * Le pot en 3D.
  *
  * L'image fixe reste affichée tant que le modèle n'est pas prêt (et pour
- * toujours si le navigateur n'a pas de 3D) : la carte ne montre jamais de
- * vide. La visionneuse (@google/model-viewer) et le modèle
- * (public/models/pot-cri.glb, 1,4 Mo) ne se chargent qu'à l'approche de la
- * carte. Le pot ne tourne qu'horizontalement, sans zoom, pour ne pas
- * retenir le défilement de la page ; un léger balancement et une petite main
- * indiquent qu'on peut le saisir.
+ * toujours si le navigateur n'a pas de 3D) : on ne montre jamais de vide. La
+ * visionneuse (@google/model-viewer) et le modèle (public/models/pot-cri.glb,
+ * 1,4 Mo) ne se chargent qu'à l'approche du bloc.
+ *
+ * `interactive` : on fait tourner le pot à la souris ou au doigt. Sans, le
+ * pot ne capte aucun geste (la page défile par-dessus) et c'est le parent qui
+ * le tourne, via l'élément reçu dans `onReady`.
  */
-export function Pot3D({ alt, sizes }: { alt: string; sizes: string }) {
+export function Pot3D({
+  alt,
+  sizes,
+  interactive = true,
+  onReady,
+}: {
+  alt: string;
+  sizes: string;
+  interactive?: boolean;
+  onReady?: (viewer: HTMLElement) => void;
+}) {
   const box = useRef<HTMLDivElement>(null);
   const viewer = useRef<HTMLElement>(null);
   const [ready, setReady] = useState(false);   // la visionneuse est chargée
@@ -31,7 +42,7 @@ export function Pot3D({ alt, sizes }: { alt: string; sizes: string }) {
         io.disconnect();
         import("@google/model-viewer").then(() => setReady(true)).catch(() => { /* pas de 3D : l'image reste */ });
       },
-      { rootMargin: "400px" },
+      { rootMargin: "600px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -40,10 +51,13 @@ export function Pot3D({ alt, sizes }: { alt: string; sizes: string }) {
   useEffect(() => {
     const el = viewer.current;
     if (!ready || !el) return;
-    const onLoad = () => setShown(true);
+    const onLoad = () => {
+      setShown(true);
+      onReady?.(el);
+    };
     el.addEventListener("load", onLoad);
     return () => el.removeEventListener("load", onLoad);
-  }, [ready]);
+  }, [ready, onReady]);
 
   return (
     <div ref={box} className="relative aspect-[900/1096] -rotate-[5deg]">
@@ -60,13 +74,11 @@ export function Pot3D({ alt, sizes }: { alt: string; sizes: string }) {
           ref: viewer,
           src: "/models/pot-cri.glb",
           alt,
-          "camera-controls": "",
-          "disable-zoom": "",
-          "disable-pan": "",
-          "touch-action": "pan-y",
-          "interaction-prompt": calm ? "none" : "auto",
+          ...(interactive ? { "camera-controls": "", "disable-zoom": "", "disable-pan": "", "touch-action": "pan-y" } : {}),
+          "interaction-prompt": interactive && !calm ? "auto" : "none",
           "interaction-prompt-style": "wiggle",
           "interaction-prompt-threshold": "1800",
+          "interpolation-decay": "70",
           "camera-orbit": "0deg 84deg 120%",
           "min-camera-orbit": "auto 66deg auto",
           "max-camera-orbit": "auto 96deg auto",
@@ -75,7 +87,7 @@ export function Pot3D({ alt, sizes }: { alt: string; sizes: string }) {
           "tone-mapping": "neutral",
           exposure: "1.05",
           "shadow-intensity": "0",
-          class: `flash-shadow absolute -inset-[14%] cursor-grab transition-opacity duration-500 active:cursor-grabbing ${shown ? "opacity-100" : "opacity-0"}`,
+          class: `flash-shadow absolute -inset-[14%] transition-opacity duration-500 ${interactive ? "cursor-grab active:cursor-grabbing" : "pointer-events-none"} ${shown ? "opacity-100" : "opacity-0"}`,
           style: { width: "128%", height: "128%", background: "transparent", "--poster-color": "transparent", "--progress-bar-color": "transparent" },
         })}
     </div>

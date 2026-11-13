@@ -219,3 +219,13 @@ du pot : les textes y sont justes par construction, là où une image générée
 les réinvente à chaque fois. Étiquette à plat : job Higgsfield
 `1c7e4ae5-1b39-4484-acfc-ac367e2d82b2`.
 
+**Section 2 en défilement 3D (essai du 2026-11-13, nuit)** —
+`src/components/site/OfferScroll.tsx`. La section fait 250 svh et son contenu
+reste collé : le pot 3D, au centre de l'écran dans une grande carte blanche,
+fait un tour complet pendant qu'on défile (82 % du parcours), les sept dosages
+apparaissent un à un de part et d'autre, puis le pot revient de face et le
+bouton d'achat se dévoile. La pastille de prix est visible dès le début. Sur
+mobile : un dosage à la fois sous le pot, bouton d'achat toujours en bas. En
+mouvement réduit, rien n'est collé et tout est affiché d'emblée. Le pot ne se
+saisit plus à la main dans cette section (la page défile par-dessus).
+
