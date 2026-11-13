@@ -10,7 +10,8 @@ type Ctx = {
   items: CartItem[];
   count: number;
   subtotalCents: number;
-  add: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
+  /** `open: false` : ajoute sans ouvrir le tiroir (le bouton l'ouvre lui-même après son animation). */
+  add: (item: Omit<CartItem, "quantity">, quantity?: number, options?: { open?: boolean }) => void;
   setQuantity: (sku: string, quantity: number) => void;
   remove: (sku: string) => void;
   clear: () => void;
@@ -41,13 +42,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch { /* plein ou bloqué */ }
   }, [items, hydrated]);
 
-  const add = useCallback((item: Omit<CartItem, "quantity">, quantity = 1) => {
+  const add = useCallback((item: Omit<CartItem, "quantity">, quantity = 1, options?: { open?: boolean }) => {
     setItems((prev) => {
       const hit = prev.find((i) => i.sku === item.sku);
       if (hit) return prev.map((i) => (i.sku === item.sku ? { ...i, quantity: Math.min(MAX_QUANTITY, i.quantity + quantity) } : i));
       return [...prev, { ...item, quantity: Math.min(MAX_QUANTITY, quantity) }];
     });
-    setOpen(true);
+    if (options?.open !== false) setOpen(true);
   }, []);
   const setQuantity = useCallback((sku: string, quantity: number) => {
     setItems((prev) => (quantity <= 0 ? prev.filter((i) => i.sku !== sku) : prev.map((i) => (i.sku === sku ? { ...i, quantity: Math.min(MAX_QUANTITY, quantity) } : i))));

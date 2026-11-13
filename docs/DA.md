@@ -152,7 +152,7 @@ Quatre slides CRI, textes dans `src/lib/content/hero-slides.ts`, visuels dans
 
 ## Architecture (accueil mono-produit, 2026-11-13)
 ```
-H  Slider plein cadre, 4 scènes CRI — le produit sous quatre angles
+H  Slider plein cadre, 3 scènes CRI (la slide de nuit a été retirée le 2026-11-13)
    Section 2 : carte produit + formule en liste, prix et bouton au deuxième écran
    Section 3 : grand visuel arrondi (le visage qui hurle) + phrase + lien méthode
 FAQ courte
@@ -188,4 +188,9 @@ craie, la dose. Sur mobile l'image passe au-dessus du texte dans la même carte.
 arrondi — 1. le pot ouvert et la mesure de poudre (« Mode d'emploi »), 2. le
 visage (« La méthode »). Flèches en pilule, défilement automatique comme le
 hero. Pour ajouter une slide : le tableau `SLIDES` de `Statue.tsx`.
+
+**Ajout au panier (2026-11-13)** : un petit pot (`public/home/pot-mini.webp`)
+décolle du bouton et file en arc jusqu'au compteur du panier, qui rebondit ;
+le bouton passe à « Ajouté ✓ » en bleu, puis le tiroir s'ouvre. Tout est dans
+`src/components/cart/AddToCart.tsx` ; rien ne bouge en mouvement réduit.
 

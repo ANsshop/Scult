@@ -61,19 +61,4 @@ export const HERO_SLIDES: HeroSlide[] = [
     },
     position: { mobile: "50% 45%" },
   },
-  {
-    id: "methode",
-    label: "Méthode · règlement (CE) 1924/2006",
-    title: "Ce qu'on peut dire. Et pas.",
-    text: "On n'écrit que les allégations autorisées en Europe, avec leur source. Le reste, on ne l'écrit pas.",
-    cta: { label: "Lire la méthode", href: "/methode" },
-    secondary: { label: "Découvrir CRI · 49 €", href: "/produits/cri" },
-    image: {
-      desktop: "/home/hero-4-16x9.webp",
-      mobile: "/home/hero-4-9x16.webp",
-      alt: "La statue de marbre vue de dos, de nuit, la tête filée par le flash, derrière un pot SCULT CRI net posé sur un bloc de marbre",
-    },
-    position: { mobile: "50% 50%" },
-    dark: true,
-  },
 ];
