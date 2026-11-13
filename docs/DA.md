@@ -149,7 +149,7 @@ Quatre slides CRI, textes dans `src/lib/content/hero-slides.ts`, visuels dans
 ## Architecture (accueil mono-produit, 2026-11-13)
 ```
 H  Slider plein cadre, 4 scènes CRI — le produit sous quatre angles
-★  « L'affiche de la dose » — section 2, prix et bouton au deuxième écran
+   Section 2 : carte produit + formule en liste, prix et bouton au deuxième écran
 I4 Image matière plein cadre — interlude vers la méthode (à reprendre)
 FAQ courte
 ```
@@ -159,14 +159,14 @@ FAQ courte
 2. « affiche de la dose » : chiffres à l'échelle à gauche, pot au milieu,
    noms à droite — rejetée (« ça n'a pas de sens » : la quantité était séparée
    de son nom par le pot). Seule la carte produit a plu ;
-3. **retenue** : la carte produit au centre, agrandie, les dosages autour.
-   - **Carte produit** : pot détouré (`public/home/pot-detoure.webp`, job
-     `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850`), penché de 5°, ombre dure du
-     flash (`.flash-shadow`), prix dans la pastille rouge, bouton en pilule.
-   - **Dosages** : une carte blanche arrondie par actif, la quantité collée
-     au nom. La créatine, seule à porter une allégation autorisée, est la
-     carte Klein, sur deux rangées.
-   - Bandeau noir défilant avec la phrase du couvercle, entre hero et section.
-Leçons : une idée de mise en page ne vaut que si elle se lit sans effort
-(un chiffre à côté de son nom) ; et l'utilisateur juge d'abord les formes —
-voir « Formes ».
+3. la carte produit au centre et les dosages autour, en cartes arrondies —
+   rejetée (« j'aime pas du tout ») ;
+4. **retenue : simple.** Deux colonnes. D'un côté la carte produit, seule
+   pièce dessinée : pot détouré (`public/home/pot-detoure.webp`, job
+   `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850`), penché de 5°, ombre dure du flash
+   (`.flash-shadow`), prix dans la pastille rouge, bouton en pilule. De
+   l'autre, un titre, la liste des sept dosages (nom à gauche, quantité à
+   droite), le lien vers la fiche et les trois garanties.
+Leçons : l'utilisateur a aimé une seule chose dans tout ça, la carte produit ;
+le reste devait rester du texte. Ne pas habiller ce qui n'a pas besoin de
+l'être — et voir « Formes » pour les angles.
