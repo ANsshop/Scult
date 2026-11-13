@@ -1,80 +1,31 @@
-import type { CSSProperties, ReactNode } from "react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Wordmark } from "@/components/site/Wordmark";
 
 /**
- * Page de travail, à supprimer une fois le logo choisi : les pistes de logo
- * l'une sous l'autre, chacune en grand sur clair et sur bleu, en petit dans une
- * barre de navigation, et en icône. Non indexée, absente du sitemap et du menu.
+ * Page de travail, à supprimer une fois le logo choisi : les pistes de logo en
+ * volume (rendues en 3D par scripts/3d/render_logo.py), chacune sur clair, sur
+ * bleu et dans une barre de navigation. Non indexée, absente du sitemap.
  */
 export const metadata: Metadata = { title: "Aperçu des logos", robots: { index: false, follow: false } };
 
-/** Trois coups de ciseau découpés dans le mot (vrai trou, le fond passe au travers). */
-const CHISEL: CSSProperties = {
-  WebkitMaskImage:
-    "linear-gradient(155deg, #000 0 36%, transparent 36% 38.6%, #000 38.6% 47%, transparent 47% 49.4%, #000 49.4% 58%, transparent 58% 60.4%, #000 60.4%)",
-  maskImage:
-    "linear-gradient(155deg, #000 0 36%, transparent 36% 38.6%, #000 38.6% 47%, transparent 47% 49.4%, #000 49.4% 58%, transparent 58% 60.4%, #000 60.4%)",
+const IMG = {
+  marbre: { src: "/logo-apercu/marbre.webp", w: 1400, h: 351, alt: "SCULT en lettres de marbre" },
+  laque: { src: "/logo-apercu/laque.webp", w: 1400, h: 343, alt: "SCULT en lettres bleues laquées, avec un point de cire rouge" },
+  sceau: { src: "/logo-apercu/sceau.webp", w: 700, h: 720, alt: "Cachet de cire rouge frappé d'un S" },
 };
+type Key = keyof typeof IMG;
 
-type Variant = "pastille" | "ciseau" | "italique" | "plaque" | "actuel";
-
-/** `knock` : la couleur du fond, pour les lettres « percées » de la plaque. */
-function Logo({ variant, knock = "var(--color-marble)" }: { variant: Variant; knock?: string }) {
-  switch (variant) {
-    case "pastille":
-      return (
-        <span className="display inline-flex items-baseline leading-none">
-          Scult
-          <span aria-hidden className="ml-[0.07em] inline-block h-[0.2em] w-[0.2em] rounded-full bg-ruby" />
-        </span>
-      );
-    case "ciseau":
-      return <span className="display inline-block leading-none" style={CHISEL}>Scult</span>;
-    case "italique":
-      return (
-        <span className="display inline-block origin-left leading-none" style={{ transform: "skewX(-12deg) scaleX(0.8)", letterSpacing: "-0.055em", marginRight: "-0.55em" }}>
-          Scult
-        </span>
-      );
-    case "plaque":
-      return (
-        <span className="inline-flex items-center rounded-full bg-current px-[0.34em] py-[0.13em] leading-none">
-          <span className="display text-[0.62em]" style={{ color: knock }}>Scult</span>
-        </span>
-      );
-    default:
-      return <Wordmark className="h-[0.72em] w-auto" />;
-  }
+function Pic({ k, className }: { k: Key; className: string }) {
+  const i = IMG[k];
+  return <Image src={i.src} alt={i.alt} width={i.w} height={i.h} className={className} />;
 }
 
-function Icon({ variant }: { variant: Variant }) {
-  const box = "flex h-16 w-16 items-center justify-center overflow-hidden rounded-[18px]";
-  switch (variant) {
-    case "pastille":
-      return <span className={`${box} bg-klein text-marble`}><span className="display inline-flex items-baseline text-[2.6rem] leading-none">S<span className="ml-[0.05em] inline-block h-[0.22em] w-[0.22em] rounded-full bg-ruby" /></span></span>;
-    case "ciseau":
-      return <span className={`${box} bg-klein text-marble`}><span className="display text-[3rem] leading-none" style={CHISEL}>S</span></span>;
-    case "italique":
-      return <span className={`${box} bg-klein text-marble`}><span className="display text-[3rem] leading-none" style={{ transform: "skewX(-12deg) scaleX(0.85)" }}>S</span></span>;
-    case "plaque":
-      return <span className={`${box} bg-marble`}><span className="flex h-11 w-11 items-center justify-center rounded-full bg-klein"><span className="display text-[1.9rem] leading-none text-marble">S</span></span></span>;
-    default:
-      return <span className={`${box} bg-klein text-marble`}><svg viewBox="0 0 96 120" className="h-8 w-auto" fill="currentColor"><rect x="0" y="0" width="96" height="24" /><rect x="0" y="0" width="24" height="72" /><rect x="0" y="48" width="96" height="24" /><rect x="72" y="48" width="24" height="72" /><rect x="0" y="96" width="96" height="24" /></svg></span>;
-  }
-}
-
-const PROPOSALS: { n: string; variant: Variant; name: string; note: string }[] = [
-  { n: "1", variant: "pastille", name: "La pastille", note: "Le mot en lettres pleines, fermé par le point rouge — la pastille du pot, et le point final de la signature." },
-  { n: "2", variant: "ciseau", name: "Le ciseau", note: "Le mot griffé de trois coups de ciseau, comme « CRI » sur le pot." },
-  { n: "3", variant: "italique", name: "L'italique", note: "Serré et penché, dans le mouvement du mot « CRI »." },
-  { n: "4", variant: "plaque", name: "La plaque", note: "Le mot percé dans une pilule pleine, comme les boutons du site." },
-  { n: "0", variant: "actuel", name: "L'actuel", note: "Pour comparer : le logo en blocs d'aujourd'hui." },
+const PROPOSALS: { n: string; name: string; note: string; word: Key; seal?: boolean }[] = [
+  { n: "1", name: "Le marbre", note: "Le mot taillé dans le marbre de la statue : veines, piqûres, arêtes adoucies.", word: "marbre" },
+  { n: "2", name: "Le marbre et le sceau", note: "Le même mot, signé d'un cachet de cire rouge frappé d'un S — la pastille du pot devient l'emblème.", word: "marbre", seal: true },
+  { n: "3", name: "La laque", note: "Le mot en bleu laqué, brillant, fermé par un point de cire rouge.", word: "laque" },
 ];
-
-function Stage({ className, children }: { className: string; children: ReactNode }) {
-  return <div className={`flex min-h-56 items-center justify-center px-6 py-10 text-[clamp(3.5rem,9vw,7.5rem)] ${className}`}>{children}</div>;
-}
 
 export default function Page() {
   return (
@@ -85,24 +36,54 @@ export default function Page() {
             <p className="label">Piste {p.n} — {p.name}</p>
             <p className="mt-1 text-sm text-marble/70">{p.note}</p>
           </div>
-          <div className="grid md:grid-cols-2">
-            <Stage className="bg-marble text-ink"><Logo variant={p.variant} knock="var(--color-marble)" /></Stage>
-            <Stage className="bg-klein text-marble"><Logo variant={p.variant} knock="var(--color-klein)" /></Stage>
+          <div className="grid md:grid-cols-3">
+            {["bg-klein", "bg-marble", "bg-ink"].map((bg) => (
+              <div key={bg} className={`flex min-h-64 items-center justify-center gap-5 px-8 py-12 ${bg}`}>
+                {p.seal && <Pic k="sceau" className="flash-shadow h-auto w-[22%]" />}
+                <Pic k={p.word} className={`flash-shadow h-auto ${p.seal ? "w-[68%]" : "w-[82%]"}`} />
+              </div>
+            ))}
           </div>
-          <div className="grid items-center gap-6 bg-white px-5 py-6 md:grid-cols-[1fr_auto] md:px-10">
-            {/* En situation : la barre de navigation */}
-            <div className="flex h-14 items-center justify-between rounded-full bg-klein px-6 text-marble">
-              <span className="text-[1.5rem]"><Logo variant={p.variant} knock="var(--color-klein)" /></span>
-              <span className="label hidden gap-6 sm:flex"><span>CRI</span><span>La formule</span><span>Méthode</span><span>FAQ</span></span>
-              <span className="label">Panier</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Icon variant={p.variant} />
-              <span className="label text-stone">Icône</span>
-            </div>
+          {/* En situation : la barre de navigation, sur bleu et sur clair */}
+          <div className="grid gap-4 bg-white px-5 py-6 md:grid-cols-2 md:px-10">
+            {[["bg-klein text-marble", ""], ["bg-marble text-ink", ""]].map(([cls], i) => (
+              <div key={i} className={`flex h-14 items-center justify-between rounded-full px-6 ${cls}`}>
+                <span className="flex items-center gap-2">
+                  {p.seal && <Pic k="sceau" className="h-8 w-8" />}
+                  <Pic k={p.word} className="h-6 w-auto" />
+                </span>
+                <span className="label hidden gap-6 sm:flex"><span>CRI</span><span>La formule</span><span>Méthode</span></span>
+                <span className="label">Panier</span>
+              </div>
+            ))}
           </div>
         </section>
       ))}
+
+      <section className="border-b border-ink">
+        <div className="bg-ink px-5 py-4 text-marble md:px-10">
+          <p className="label">Le sceau seul</p>
+          <p className="mt-1 text-sm text-marble/70">En icône d&apos;onglet, en avatar, en pastille sur un visuel.</p>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-10 bg-marble px-8 py-12">
+          <Pic k="sceau" className="flash-shadow h-48 w-48" />
+          <span className="flex h-24 w-24 items-center justify-center rounded-[26px] bg-klein"><Pic k="sceau" className="h-[4.5rem] w-[4.5rem]" /></span>
+          <Pic k="sceau" className="h-12 w-12" />
+          <Pic k="sceau" className="h-6 w-6" />
+        </div>
+      </section>
+
+      <section>
+        <div className="bg-ink px-5 py-4 text-marble md:px-10">
+          <p className="label">Piste 0 — L&apos;actuel</p>
+          <p className="mt-1 text-sm text-marble/70">Pour comparer : le logo en blocs d&apos;aujourd&apos;hui.</p>
+        </div>
+        <div className="grid md:grid-cols-3">
+          <div className="flex min-h-48 items-center justify-center bg-klein text-marble"><Wordmark className="h-14 w-auto" /></div>
+          <div className="flex min-h-48 items-center justify-center bg-marble text-ink"><Wordmark className="h-14 w-auto" /></div>
+          <div className="flex min-h-48 items-center justify-center bg-ink text-marble"><Wordmark className="h-14 w-auto" /></div>
+        </div>
+      </section>
     </main>
   );
 }
