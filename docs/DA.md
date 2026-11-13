@@ -229,3 +229,12 @@ mobile : un dosage à la fois sous le pot, bouton d'achat toujours en bas. En
 mouvement réduit, rien n'est collé et tout est affiché d'emblée. Le pot ne se
 saisit plus à la main dans cette section (la page défile par-dessus).
 
+**Slide « mur de pots » (2026-11-13)** — troisième slide de la section 3,
+d'après une référence fournie par l'utilisateur (pots serrés en diagonale).
+Rendue depuis le modèle 3D par `scripts/3d/render_pattern.py`, pas générée :
+les textes sont justes sur chaque pot et ça ne coûte aucun crédit. Pots sur
+fond noir (les interstices), texte sur voile bleu à gauche — l'utilisateur a
+écarté le fond bleu derrière les pots, puis le fond noir derrière le texte.
+Piège rencontré : remplacer une image sans changer son nom laisse l'ancienne
+en cache (`next/image`) ; renommer le fichier.
+
