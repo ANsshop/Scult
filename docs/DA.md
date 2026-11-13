@@ -238,3 +238,11 @@ fond noir (les interstices), texte sur voile bleu à gauche — l'utilisateur a
 Piège rencontré : remplacer une image sans changer son nom laisse l'ancienne
 en cache (`next/image`) ; renommer le fichier.
 
+**Décisions du 2026-11-13 (fin de session)**
+- **Logo : on garde le wordmark en blocs actuel.** Sept pistes ont été
+  montrées (quatre à plat, trois en volume) et écartées ; rien n'en est
+  conservé dans le repo. Ne pas rouvrir le sujet sans demande.
+- **Slide « mur de pots »** : plus de voile bleu ; sur ordinateur le texte est
+  posé directement sur les pots (ombre portée sur les lettres), sur téléphone
+  il reste sous l'image.
+

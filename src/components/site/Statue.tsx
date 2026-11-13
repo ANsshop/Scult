@@ -35,7 +35,7 @@ const SLIDES: Slide[] = [
     image: "/home/section3-pots-fond-noir.webp",
     alt: "Un mur de pots SCULT CRI serrés les uns contre les autres, cadrés en diagonale",
     position: "50% 50%",
-    // Le visuel (pots sur fond noir) remplit tout le cadre : un voile bleu plein à gauche porte le texte.
+    // Le visuel (pots sur fond noir) remplit tout le cadre, sans voile : le texte est posé directement dessus.
     full: true,
   },
 ];
@@ -93,19 +93,13 @@ export function Statue() {
                     style={{ "--pos": s.position } as React.CSSProperties}
                     className="object-cover object-(--pos) md:object-[100%_50%]"
                   />
-                  <div
-                    aria-hidden
-                    className={`absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-klein to-transparent md:inset-0 md:h-auto ${
-                      s.full
-                        ? "md:bg-[linear-gradient(to_right,var(--color-klein)_0%,var(--color-klein)_34%,color-mix(in_srgb,var(--color-klein)_70%,transparent)_45%,transparent_60%)]"
-                        : "md:bg-gradient-to-r md:from-klein/60 md:via-klein/10"
-                    }`}
-                  />
+                  {/* Le voile bleu de lisibilité — pas sur les visuels `full`, laissés tels quels */}
+                  {!s.full && <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-klein to-transparent md:inset-0 md:h-auto md:bg-gradient-to-r md:from-klein/60 md:via-klein/10" />}
                 </div>
-                <div className="relative p-6 pb-8 pt-4 md:absolute md:inset-y-0 md:left-0 md:flex md:w-[46%] md:flex-col md:justify-center md:p-12">
+                <div className={`relative p-6 pb-8 pt-4 md:absolute md:inset-y-0 md:left-0 md:flex md:w-[46%] md:flex-col md:justify-center md:p-12 ${s.full ? "md:[text-shadow:0_2px_3px_rgb(11_11_15/0.9),0_0_26px_rgb(11_11_15/0.85)]" : ""}`}>
                   <p className="label text-marble/85">{s.label}</p>
                   <p className="display mt-4 text-[clamp(2rem,4.2vw,4rem)]">{s.title}</p>
-                  <ButtonLink href={s.cta.href} variant="marble" className="mt-7 self-start">{s.cta.label}</ButtonLink>
+                  <ButtonLink href={s.cta.href} variant="marble" className="mt-7 self-start [text-shadow:none]">{s.cta.label}</ButtonLink>
                 </div>
               </div>
             );
