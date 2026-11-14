@@ -20,21 +20,6 @@ const SLIDES: Slide[] = [
     position: "50% 50%",
   },
   {
-    // Le message performance : une accroche, et l'allégation autorisée qui la fonde, citée mot pour mot.
-    id: "performance",
-    label: "Performance · créatine 3 g par dose",
-    title: "Pour les séries qui comptent.",
-    text: "« La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. »",
-    cta: { label: "Commander · 49 €", href: "/produits/cri" },
-    // Essai sur fond blanc (2026-11-14). La version sur mur bleu existe aussi : "assis-16x9" et "assis-4x5", sans `light`.
-    image: visuel("assis-blanc-16x9"),
-    imageMobile: visuel("assis-blanc-4x5"),
-    light: true,
-    alt: "La statue de marbre assise sur un bloc, le menton sur le poing, tient le pot SCULT CRI posé sur son genou",
-    position: "50% 50%",
-    positionDesktop: "100% 6%",   // sur un écran large l'image est rognée en hauteur : on garde la tête
-  },
-  {
     id: "lot",
     label: "Lot 001 · 690 g · 30 doses",
     title: "Lot 001. Numéroté sur chaque pot.",

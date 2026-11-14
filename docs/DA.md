@@ -471,6 +471,12 @@ la pierre lisse et brillante (« très IA ») ; demander « a real photograph of
 a real antique sculpture, shot on 35mm film, visible grain, matte chalky
 weathered stone, nothing smooth, glossy or polished, not a 3D render ».
 
+**Retirée du site le 2026-11-14, à la demande** (« enlève l'image 2 du slider du
+bas ») : le slider du bas n'a plus que deux slides, la dose et le lot. Les
+quatre images sources restent dans `docs/3d/sources/accueil/assis-*.webp` ;
+pour les remettre, rajouter leurs entrées dans `ACCUEIL`
+(`scripts/3d/gouts-visuels.mjs`) et la slide dans `Statue.tsx`.
+
 Statue assise sur fond blanc (essai en ligne sur la slide 2 du slider du
 bas) : 16:9 `d1be7782-e622-4530-935f-a47d37133daa`, 4:5
 `70f76be1-9bc3-43bf-8e46-fb73e4cd2bdd`. Obtenues en demandant de ne changer
