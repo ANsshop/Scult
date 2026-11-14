@@ -1,4 +1,6 @@
 import type { PpImage } from "@/lib/pp/client";
+import FORMULE from "./cri-formule.json";
+import { visuel } from "./visuels";
 
 /**
  * Les goûts de CRI. Même pot, même formule : seuls changent la pastille de
@@ -37,55 +39,35 @@ export type Flavour = {
   ingredients: string;
 };
 
-const INGREDIENTS =
-  "L-citrulline, bêta-alanine, créatine monohydrate, L-tyrosine, taurine, citrate de sodium, acidifiant : acide citrique, {AROME}, citrate de potassium, L-théanine, édulcorant : glycosides de stéviol, caféine anhydre, anti-agglomérant : dioxyde de silicium, colorant : {COLORANT}, D-pantothénate de calcium, chlorhydrate de pyridoxine.";
-const ingredients = (arome: string, colorant: string) => INGREDIENTS.replace("{AROME}", arome).replace("{COLORANT}", colorant);
+/** Les visuels du goût, produits par scripts/3d/gouts-visuels.mjs. */
+const visuelDe = (id: FlavourId, nom: string) => visuel(`${id}-${nom}`);
 
-function gallery(suffix: string, label: string): PpImage[] {
-  return [
-    { url: `/products/cri${suffix}-01.webp`, alt: `Pot SCULT CRI ${label} vu de face : le nom CRI en bleu imprimé sur le visage d'une statue qui hurle, strap rouge autour du couvercle`, width: 1344, height: 1680 },
-    { url: `/products/cri${suffix}-02.webp`, alt: `Dos du pot SCULT CRI ${label} : tableau nutritionnel, liste d'ingrédients, conseils d'utilisation et précautions d'emploi`, width: 1656, height: 2208 },
-    { url: `/lifestyle/cri${suffix}-01.webp`, alt: `Une statue de marbre qui hurle tend le pot SCULT CRI ${label} vers l'objectif, devant un mur bleu`, width: 1792, height: 2240 },
-  ];
+function flavour(id: FlavourId, code: string, label: string, lines: [string, string]): Flavour {
+  const nom = label.toLowerCase();
+  const { arome, colorant } = FORMULE.gouts[id];
+  return {
+    id,
+    code,
+    label,
+    lines,
+    swatch: `/gouts/${id}.webp`,
+    still: visuelDe(id, "detoure"),
+    mini: visuelDe(id, "mini"),
+    texture: `/models/etiquette-${id}.jpg`,
+    images: [
+      { url: visuelDe(id, "face"), alt: `Pot SCULT CRI ${nom} vu de face : le nom CRI en bleu imprimé sur le visage d'une statue qui hurle, strap rouge autour du couvercle`, width: 1344, height: 1680 },
+      { url: visuelDe(id, "dos"), alt: `Dos du pot SCULT CRI ${nom} : tableau nutritionnel, liste d'ingrédients, conseils d'utilisation et précautions d'emploi`, width: 1656, height: 2208 },
+      { url: visuelDe(id, "ambiance"), alt: `Une statue de marbre qui hurle tend le pot SCULT CRI ${nom} vers l'objectif, devant un mur bleu`, width: 1792, height: 2240 },
+    ],
+    // La liste commune, avec l'arôme et le colorant du goût (cri-formule.json, partagé avec l'étiquette).
+    ingredients: FORMULE.ingredients.replace("{AROME}", arome).replace("{COLORANT}", colorant),
+  };
 }
 
 export const FLAVOURS: Flavour[] = [
-  {
-    id: "fruits-rouges",
-    code: "FR",
-    label: "Fruits rouges",
-    lines: ["Fruits", "rouges"],
-    swatch: "/gouts/fruits-rouges.webp",
-    still: "/home/pot-detoure.webp",
-    mini: "/home/pot-mini.webp",
-    texture: "/models/etiquette-fruits-rouges.jpg",
-    images: gallery("", "fruits rouges"),
-    ingredients: ingredients("arôme naturel", "rouge de betterave"),
-  },
-  {
-    id: "cassis-framboise",
-    code: "CF",
-    label: "Cassis framboise",
-    lines: ["Cassis", "framboise"],
-    swatch: "/gouts/cassis-framboise.webp",
-    still: "/home/pot-detoure-cassis-framboise.webp",
-    mini: "/home/pot-mini-cassis-framboise.webp",
-    texture: "/models/etiquette-cassis-framboise.jpg",
-    images: gallery("-cassis-framboise", "cassis framboise"),
-    ingredients: ingredients("arômes naturels de cassis et de framboise", "rouge de betterave"),
-  },
-  {
-    id: "ice-tea-peche",
-    code: "ITP",
-    label: "Ice tea pêche",
-    lines: ["Ice tea", "pêche"],
-    swatch: "/gouts/ice-tea-peche.webp",
-    still: "/home/pot-detoure-ice-tea-peche.webp",
-    mini: "/home/pot-mini-ice-tea-peche.webp",
-    texture: "/models/etiquette-ice-tea-peche.jpg",
-    images: gallery("-ice-tea-peche", "ice tea pêche"),
-    ingredients: ingredients("arômes naturels de thé et de pêche", "caramel ordinaire"),
-  },
+  flavour("fruits-rouges", "FR", "Fruits rouges", ["Fruits", "rouges"]),
+  flavour("cassis-framboise", "CF", "Cassis framboise", ["Cassis", "framboise"]),
+  flavour("ice-tea-peche", "ITP", "Ice tea pêche", ["Ice tea", "pêche"]),
 ];
 
 /** Le goût d'origine : celui des visuels de l'accueil, et celui affiché avant tout choix. */

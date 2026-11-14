@@ -1,3 +1,4 @@
+import { DEFAULT_FLAVOUR, getFlavour } from "@/lib/content/flavours";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
@@ -24,7 +25,7 @@ export function Footer() {
       <div aria-hidden className="absolute inset-0 opacity-[0.08] mix-blend-overlay" style={{ backgroundImage: "url(/noise.svg)", backgroundSize: "180px" }} />
       {/* Le pot, en fond */}
       <div aria-hidden className="pointer-events-none absolute right-[-17vw] top-10 w-[62vw] md:right-[-2%] md:top-[7%] md:w-[min(47vw,44rem)]">
-        <Image src="/home/pot-detoure.webp" alt="" width={900} height={1096} sizes="(min-width: 768px) 47vw, 62vw" className="flash-shadow h-auto w-full rotate-[8deg]" />
+        <Image src={getFlavour(DEFAULT_FLAVOUR).still} alt="" width={900} height={1096} sizes="(min-width: 768px) 47vw, 62vw" className="flash-shadow h-auto w-full rotate-[8deg]" />
       </div>
 
       <div className="relative mx-auto max-w-[1360px] px-5 pb-8 pt-14 md:px-10 md:pb-10 md:pt-24">

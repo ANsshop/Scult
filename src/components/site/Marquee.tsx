@@ -11,13 +11,12 @@ import { useEffect, useRef } from "react";
  * limites du règlement 1924/2006 : des dosages, le moment de prise, une
  * allégation autorisée — jamais de promesse d'effet (scripts/gate.sh).
  */
-const ROW_1 = ["Pré-workout", "8 g de citrulline", "4 g de bêta-alanine", "3 g de créatine", "150 mg de caféine"];
+const ROW_1 = ["Pré-workout", "8 g de citrulline", "3,2 g de bêta-alanine", "3 g de créatine", "390 mg de caféine"];
 const ROW_2 = [
   "Rien ne se sculpte en silence",
   "20 à 30 minutes avant la séance",
-  // Allégations autorisées, mot pour mot (règlement (UE) n° 432/2012) — ne pas les raccourcir.
-  "La vitamine B6 contribue à réduire la fatigue",
-  "Le potassium contribue à une fonction musculaire normale",
+  "400 mg de théanine",
+  "Trois goûts",
   "Une dose, 400 ml d'eau",
 ];
 

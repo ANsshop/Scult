@@ -376,3 +376,35 @@ ingrédients estimés.
   l'encart « Ajoutez un 2ᵉ pot » laisse choisir le goût du deuxième.
 - Données : `src/lib/content/flavours.ts` (présentation) et les variantes du
   catalogue (prix, stock) — voir ASSUMPTIONS [25].
+
+## Formule « marché USA » (2026-11-14)
+
+Nouvelle formule (ASSUMPTIONS [26]) : elle change la ligne de dosages de la
+face (« CITRULLINE 8 G · BÊTA-ALANINE 3,2 G · CRÉATINE 3 G · CAFÉINE 390 MG »)
+et tout le dos. Tout part de `src/lib/content/cri-formule.json`.
+
+- **Le dos** est recomposé par `gouts.mjs` : même format (1500 × 2102), même
+  en-tête et même pied que l'original, tableau en deux colonnes — les dix
+  actifs à gauche, le complexe Focus à droite avec un encadré « caféine
+  totale ». Polices : Cousine (texte), Montserrat ExtraBold (dénomination).
+- **Aucune image n'a été regénérée.** `scripts/3d/retouche.mjs` efface une
+  encre sur le papier du pot et repose un texte composé en vraie police, dans
+  la même perspective : la ligne de dosages est trouvée par son encre le long
+  d'un axe relevé à la loupe, ses deux bords ajustés en droites. Le dos de la
+  photo est effacé en entier puis la nouvelle étiquette y est projetée avec la
+  courbure du pot.
+- **Visuels versionnés** : tout sort dans `public/cri/<version>/` (la version
+  est dans `cri-formule.json`). Changer la formule = changer de version, donc
+  d'adresse : aucun cache ne ressert l'ancienne image. Les originaux sont dans
+  `docs/3d/sources/photos/` et `docs/3d/sources/accueil/` ; ne jamais retoucher
+  une image déjà retouchée.
+- Images refaites : face, dos, pot détouré, vignette et photo d'ambiance des
+  trois goûts ; hero (2 slides × 2 formats), slider du bas (dose × 2, barre,
+  trois pots × 2), image de partage ; étiquettes et modèles 3D.
+- Piège : sur les petites images, le strap rouge touche presque la fin de la
+  ligne et passe pour de l'encre. Raccourcir l'axe et `bout` (voir
+  `section3-dose-4x5` dans `gouts-visuels.mjs`).
+- Textes : la page Performance ne garde que le bénéfice de la créatine, à côté
+  de la formule ligne par ligne ; le bandeau, le hero, la FAQ et `llms.txt`
+  suivent. La FAQ dit que CRI n'est pas compatible avec la compétition
+  contrôlée.

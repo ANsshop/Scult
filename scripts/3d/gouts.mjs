@@ -1,53 +1,61 @@
 /**
- * Décline l'étiquette du pot CRI par goût.
+ * Compose l'étiquette du pot CRI, pour chaque goût.
  *
- * Même pot, même maquette, même dos : seules changent la pastille de goût en
- * face avant et, au dos, la ligne « Saveur … » et la liste d'ingrédients.
- * Pour chaque goût, écrit dans docs/3d/textures/ :
- *   wrap-<slug>.jpg  l'étiquette complète à enrouler sur le modèle 3D (4096 × 1652)
- *   dos-<slug>.jpg   le dos à plat (1500 × 2102)
+ * Même pot, même maquette : d'un goût à l'autre, seules changent la pastille
+ * de goût en face avant et, au dos, la ligne « Saveur … » et la liste
+ * d'ingrédients (arôme, colorant). Pour chaque goût, écrit dans
+ * docs/3d/textures/ :
+ *   wrap-<goût>.jpg  l'étiquette complète à enrouler sur le modèle 3D (4096 × 1652)
+ *   dos-<goût>.jpg   le dos à plat (1500 × 2102)
+ * et wrap.jpg, copie de l'étiquette du goût d'origine (celle que prend
+ * build_pot.py par défaut).
  *
  *   node scripts/3d/gouts.mjs            # tous les goûts
  *   node scripts/3d/gouts.mjs ice-tea-peche
  *
- * Sources (docs/3d/sources/) : face.jpg (la face avant, fruits rouges),
- * dos.jpg (le dos d'origine), papier.jpg (le grain du papier),
- * gouts/<slug>.jpg (la photo de la pastille), Cousine-Regular.ttf (la police
- * du dos). Le rendu passe par Chrome sans interface.
+ * La formule (tableau, ingrédients, mode d'emploi, précautions, ligne de
+ * dosages de la face) est lue dans src/lib/content/cri-formule.json : le site
+ * lit le même fichier, le pot et la fiche produit disent donc la même chose.
  *
- * ⚠ Les listes d'ingrédients sont des estimations : seuls l'arôme et le
- * colorant changent par rapport à la liste d'origine, elle-même estimée
- * (ASSUMPTIONS.md). Elles se remplacent par celles du façonnier.
+ * Sources (docs/3d/sources/) : face.jpg (la face avant d'origine), dos.jpg
+ * (le dos d'origine : on en garde l'en-tête et le pied), papier.jpg (le grain
+ * du papier), gouts/<goût>.jpg (la photo de la pastille), les polices du dos.
+ * Le rendu passe par Chrome sans interface.
+ *
+ * ⚠ Les listes d'ingrédients sont des estimations (ASSUMPTIONS.md) : elles se
+ * remplacent par celles du fabricant, dans cri-formule.json.
  */
-import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { JBM, ecrire, file, lire, remplacerLigne, shoot } from "./retouche.mjs";
 
-export const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+export { file, shoot };
 export const SRC = resolve("docs/3d/sources");
 const OUT = resolve("docs/3d/textures");
-const FONTS = resolve("src/fonts");
+export const FORMULE = JSON.parse(readFileSync(resolve("src/lib/content/cri-formule.json"), "utf8"));
 
-const BASE =
-  "L-citrulline, bêta-alanine, créatine monohydrate, L-tyrosine, taurine, citrate de sodium, acidifiant : acide citrique, {AROME}, citrate de potassium, L-théanine, édulcorant : glycosides de stéviol, caféine anhydre, anti-agglomérant : dioxyde de silicium, colorant : {COLORANT}, D-pantothénate de calcium, chlorhydrate de pyridoxine.";
+/** La ligne de dosages imprimée sur les visuels d'origine, et celle de la formule. */
+export const LIGNE_ORIGINE = "CITRULLINE 8 G · BÊTA-ALANINE 4 G · CRÉATINE 3 G · CAFÉINE 150 MG";
+export const LIGNE = FORMULE.ligneFace;
 
 /**
+ * `origine` : le goût des visuels de départ — sa pastille est déjà sur la face.
  * `photo` : cadrage de la photo dans la pastille (object-position).
  * `texte` : corps du nom (px), étroitisation, et où il commence dans la pastille
  * (% de la largeur). L'original — « Fruits rouges » — est en 40 px, sans
  * étroitisation, à 53,5 % ; un nom plus long se compose un peu plus petit.
  */
 export const GOUTS = [
+  { slug: "fruits-rouges", origine: true, nom: ["Fruits", "Rouges"], saveur: "Saveur fruits rouges" },
   {
     slug: "cassis-framboise",
     nom: ["Cassis", "Framboise"],
     saveur: "Saveur cassis framboise",
     photo: "22% 55%",
     texte: { taille: 37, etroit: 0.93, gauche: 46 },
-    ingredients: BASE.replace("{AROME}", "arômes naturels de cassis et de framboise").replace("{COLORANT}", "rouge de betterave"),
   },
   {
     slug: "ice-tea-peche",
@@ -55,42 +63,65 @@ export const GOUTS = [
     saveur: "Saveur ice tea pêche",
     photo: "30% 50%",
     texte: { taille: 38, etroit: 1, gauche: 51 },
-    ingredients: BASE.replace("{AROME}", "arômes naturels de thé et de pêche").replace("{COLORANT}", "caramel ordinaire"),
   },
 ];
-
-export const file = (p) => `file://${p}`;
-
-export function shoot(html, width, height, out, dir) {
-  const page = join(dir, "page.html");
-  writeFileSync(page, html);
-  execFileSync(CHROME, [
-    "--headless=new", "--hide-scrollbars", "--force-device-scale-factor=1", "--allow-file-access-from-files",
-    `--user-data-dir=${join(dir, "profil")}`, "--virtual-time-budget=4000",
-    `--window-size=${width},${height}`, `--screenshot=${out}`, file(page),
-  ], { stdio: "ignore" });
-}
+/** La liste d'ingrédients du goût : la liste commune, avec son arôme et son colorant (cri-formule.json). */
+export const ingredientsDe = (g) => FORMULE.ingredients.replace("{AROME}", FORMULE.gouts[g.slug].arome).replace("{COLORANT}", FORMULE.gouts[g.slug].colorant);
 
 export const fonts = `
-@font-face{font-family:JBM;src:url('${file(join(FONTS, "jetbrains-mono-latin-wght-normal.woff2"))}');font-weight:100 800}
-@font-face{font-family:Cousine;src:url('${file(join(SRC, "Cousine-Regular.ttf"))}')}
+${JBM}
+@font-face{font-family:Cousine;src:url('${file(join(SRC, "Cousine-Regular.ttf"))}');font-weight:400}
+@font-face{font-family:Cousine;src:url('${file(join(SRC, "Cousine-Bold.ttf"))}');font-weight:700}
+@font-face{font-family:Montserrat;src:url('${file(join(SRC, "Montserrat-ExtraBold.ttf"))}');font-weight:800}
 html,body{margin:0;background:#000}`;
 
 /** Un nom à trait d'union (« L-théanine ») ne se coupe pas en fin de ligne. */
-const insecable = (t) => t.replace(/[^\s]+-[^\s]+/g, (m) => `<span style="white-space:nowrap">${m}</span>`);
+const insecable = (t) => t.replace(/[^\s(]+-[^\s),]+/g, (m) => `<span style="white-space:nowrap">${m}</span>`);
 
-/** Le dos : la ligne « Saveur … » et le paragraphe d'ingrédients sont recomposés, le reste est d'origine. */
+/**
+ * Le dos. L'en-tête (logo, filet bleu) et le pied (poids net, conservation,
+ * emplacements du QR et du code-barres) viennent du dos d'origine ; tout le
+ * reste est recomposé depuis la formule : tableau des actifs à gauche, le
+ * complexe à droite, ingrédients, mode d'emploi, précautions.
+ */
 function dosHtml(g, fond) {
+  const dos = file(join(SRC, "dos.jpg"));
+  const ligne = (a) => `<tr><td>${a.nom}</td><td class="q">${a.quantite ?? ""}</td></tr>`;
   return `<!doctype html><meta charset="utf-8"><style>${fonts}
-#c{position:relative;width:1500px;height:2102px;overflow:hidden;background:url('${file(join(SRC, "dos.jpg"))}') 0 0/1500px 2102px}
-.cache{position:absolute;background:${fond}}
-.saveur{position:absolute;right:71px;top:105px;height:32px;font:21.4px/32px Cousine,monospace;letter-spacing:2.3px;margin-right:-2.3px;text-transform:uppercase;color:#141416;white-space:nowrap}
-.ingr{position:absolute;left:70px;top:968px;width:1345px;font:23px/31.5px Cousine,monospace;color:#141416}
+#c{position:relative;width:1500px;height:2102px;overflow:hidden;background:${fond};color:#141416;font:23px/31.5px Cousine,monospace}
+.tete{position:absolute;left:0;top:0;width:1500px;height:176px;background:url('${dos}') 0 0/1500px 2102px}
+.pied{position:absolute;left:0;top:1750px;width:1500px;height:352px;background:url('${dos}') 0 -1750px/1500px 2102px}
+.cache{position:absolute;left:1080px;top:104px;width:360px;height:34px;background:${fond}}
+.saveur{position:absolute;right:71px;top:105px;height:32px;font:21.4px/32px Cousine,monospace;letter-spacing:2.3px;margin-right:-2.3px;text-transform:uppercase;white-space:nowrap}
+#m{position:absolute;left:70px;top:186px;width:1360px;height:1556px;display:flex;flex-direction:column;justify-content:space-between}
+.deno{font:800 28px/36px Montserrat,sans-serif;letter-spacing:-0.2px;margin:0}
+.tag{display:inline-block;background:#0f0f13;color:${fond};font:700 19px/40px Cousine,monospace;letter-spacing:3.6px;text-transform:uppercase;padding:0 12px 0 12px;margin:0 0 15px}
+.cols{display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
+table{width:100%;border-collapse:collapse}
+th{font:400 18px/40px Cousine,monospace;letter-spacing:1.4px;text-transform:uppercase;text-align:left;border-bottom:2.5px solid #141416;white-space:nowrap}
+td{height:39.6px;padding:0;border-bottom:1.5px solid rgba(20,20,22,.28);white-space:nowrap}
+.q{text-align:right}
+.note{margin:14px 0 0;padding:10px 14px;border:2.5px solid #141416;font:700 20px/27px Cousine,monospace}
+.note span{font-weight:400}
+p{margin:0}
+b{font-weight:700}
+.boite{border:3px solid #141416;padding:11px 16px;margin:0 0 10px;font-weight:700}
 </style><div id="c">
-<div class="cache" style="left:1080px;top:104px;width:360px;height:34px"></div>
-<div class="saveur">${g.saveur}</div>
-<div class="cache" style="left:60px;top:964px;width:1390px;height:132px"></div>
-<div class="ingr">${insecable(g.ingredients)}</div>
+<div class="tete"></div><div class="cache"></div><div class="saveur">${g.saveur}</div>
+<div id="m">
+<p class="deno">${FORMULE.denomination}</p>
+<section><div class="tag">Informations nutritionnelles</div>
+<div class="cols">
+<div><table><tr><th>Par dose journalière (1 dose = ${FORMULE.dose})</th><th class="q">Quantité</th></tr>${FORMULE.actifs.map(ligne).join("")}</table></div>
+<div><table><tr><th>${FORMULE.complexe.nom}</th><th class="q">${FORMULE.complexe.quantite}</th></tr>${FORMULE.complexe.ingredients.map(ligne).join("")}</table>
+<p class="note">Caféine totale : environ ${FORMULE.cafeineTotale} par dose <span>(dicaféine malate + caféine anhydre).</span></p></div>
+</div></section>
+<section><div class="tag">Ingrédients</div><p>${insecable(ingredientsDe(g))}</p></section>
+<section><div class="tag">Conseils d'utilisation</div><p>${FORMULE.usage} <b>${FORMULE.usageFort}</b> ${FORMULE.usageFin}</p></section>
+<section><div class="tag">Précautions d'emploi</div><p class="boite">${FORMULE.avertissementCafeine}</p><p>${FORMULE.precautions}</p></section>
+<section><div class="tag">Bon à savoir</div><p>${FORMULE.bonASavoir}</p></section>
+</div>
+<div class="pied"></div>
 </div>`;
 }
 
@@ -110,18 +141,16 @@ export function pastilleHtml(g) {
   return `<div class="pastille"><img src="${file(join(SRC, "gouts", `${g.slug}.jpg`))}"><div class="nom"><span>${g.nom[0]}</span><span>${g.nom[1]}</span></div></div>`;
 }
 
-/** La face : l'ancienne pastille est recouverte de papier, la nouvelle est posée au même endroit (390 × 150). */
-function faceHtml(g) {
+/** La face : la ligne de dosages est déjà à jour dans `base` ; pour un autre goût, l'ancienne pastille est recouverte de papier et la nouvelle posée au même endroit. */
+function faceHtml(g, base) {
   return `<!doctype html><meta charset="utf-8"><style>${fonts}
-#c{position:relative;width:3840px;height:1648px;overflow:hidden;background:url('${file(join(SRC, "face.jpg"))}') 0 0/3840px 1648px}
+#c{position:relative;width:3840px;height:1648px;overflow:hidden;background:url('${file(base)}') 0 0/3840px 1648px}
 .papier{position:absolute;left:2052px;top:1404px;width:430px;height:186px;background:url('${file(join(SRC, "papier.jpg"))}') -300px -260px;
   -webkit-mask-image:linear-gradient(to right,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%),linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);
   -webkit-mask-composite:source-in;mask-composite:intersect}
 .pastille{left:2072px;top:1422px}
-${pastilleCss(g)}
-</style><div id="c"><div class="papier"></div>
-${pastilleHtml(g)}
-</div>`;
+${g.origine ? "" : pastilleCss(g)}
+</style><div id="c">${g.origine ? "" : `<div class="papier"></div>${pastilleHtml(g)}`}</div>`;
 }
 
 /** L'étiquette complète : la face au centre, le dos sur la couture arrière, la phrase du couvercle tout autour. */
@@ -143,35 +172,42 @@ function wrapHtml(face, dos) {
 }
 
 async function main() {
-const only = process.argv[2];
-mkdirSync(OUT, { recursive: true });
-// La couleur du fond du dos, relevée dans une zone vide
-const { data } = await sharp(join(SRC, "dos.jpg")).extract({ left: 1440, top: 40, width: 20, height: 20 }).resize(1, 1).raw().toBuffer({ resolveWithObject: true });
-const fond = `rgb(${data[0]},${data[1]},${data[2]})`;
-
-for (const g of GOUTS.filter((x) => !only || x.slug === only)) {
+  const only = process.argv[2];
+  mkdirSync(OUT, { recursive: true });
+  // La couleur du fond du dos, relevée dans une zone vide
+  const { data } = await sharp(join(SRC, "dos.jpg")).extract({ left: 1440, top: 40, width: 20, height: 20 }).resize(1, 1).raw().toBuffer({ resolveWithObject: true });
+  const fond = `rgb(${data[0]},${data[1]},${data[2]})`;
   const dir = mkdtempSync(join(tmpdir(), "gout-"));
   try {
-    const dosPng = join(dir, "dos.png");
-    shoot(dosHtml(g, fond), 1500, 2102, dosPng, dir);
-    const dos = join(OUT, `dos-${g.slug}.jpg`);
-    await sharp(dosPng).extract({ left: 0, top: 0, width: 1500, height: 2102 }).jpeg({ quality: 90 }).toFile(dos);
+    // La face commune à tous les goûts : celle d'origine, avec la ligne de dosages de la formule.
+    const base = join(dir, "face-base.png");
+    const img = await lire(join(SRC, "face.jpg"));
+    if (LIGNE !== LIGNE_ORIGINE) await remplacerLigne(img, { axe: [[2733, 1408], [2733, 296]], demi: 19 }, { ancien: LIGNE_ORIGINE, nouveau: LIGNE }, dir);
+    await ecrire(img, base);
 
-    const facePng = join(dir, "face.png");
-    shoot(faceHtml(g), 3840, 1648, facePng, dir);
-    const face = join(dir, "face.jpg");
-    await sharp(facePng).extract({ left: 0, top: 0, width: 3840, height: 1648 }).jpeg({ quality: 94 }).toFile(face);
+    for (const g of GOUTS.filter((x) => !only || x.slug === only)) {
+      const dosPng = join(dir, "dos.png");
+      shoot(dosHtml(g, fond), 1500, 2102, dosPng, dir);
+      const dos = join(OUT, `dos-${g.slug}.jpg`);
+      await sharp(dosPng).extract({ left: 0, top: 0, width: 1500, height: 2102 }).jpeg({ quality: 92 }).toFile(dos);
 
-    const wrapPng = join(dir, "wrap.png");
-    shoot(wrapHtml(face, dos), 4096, 1652, wrapPng, dir);
-    await sharp(wrapPng).extract({ left: 0, top: 0, width: 4096, height: 1652 }).jpeg({ quality: 90 }).toFile(join(OUT, `wrap-${g.slug}.jpg`));
-    // Contrôle : la pastille et le dos, à la loupe
-    await sharp(face).extract({ left: 2040, top: 1380, width: 760, height: 230 }).resize({ width: 1140 }).jpeg({ quality: 90 }).toFile(join(OUT, `controle-pastille-${g.slug}.jpg`));
-    console.log("✓", g.slug);
+      const facePng = join(dir, "face.png");
+      shoot(faceHtml(g, base), 3840, 1648, facePng, dir);
+      const face = join(dir, "face.jpg");
+      await sharp(facePng).extract({ left: 0, top: 0, width: 3840, height: 1648 }).jpeg({ quality: 94 }).toFile(face);
+
+      const wrapPng = join(dir, "wrap.png");
+      shoot(wrapHtml(face, dos), 4096, 1652, wrapPng, dir);
+      const wrap = join(OUT, `wrap-${g.slug}.jpg`);
+      await sharp(wrapPng).extract({ left: 0, top: 0, width: 4096, height: 1652 }).jpeg({ quality: 90 }).toFile(wrap);
+      if (g.origine) copyFileSync(wrap, join(OUT, "wrap.jpg"));
+      // Contrôle : la pastille et la ligne de dosages, à la loupe
+      await sharp(face).extract({ left: 2040, top: 1380, width: 760, height: 230 }).resize({ width: 1140 }).jpeg({ quality: 90 }).toFile(join(OUT, `controle-pastille-${g.slug}.jpg`));
+      console.log("✓", g.slug);
+    }
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
-}
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) await main();

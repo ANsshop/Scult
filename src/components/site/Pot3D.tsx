@@ -5,6 +5,7 @@ import { createElement, useEffect, useRef, useState } from "react";
 import { DEFAULT_FLAVOUR, getFlavour } from "@/lib/content/flavours";
 
 const DEFAULT_TEXTURE = getFlavour(DEFAULT_FLAVOUR).texture;
+const DEFAULT_STILL = getFlavour(DEFAULT_FLAVOUR).still;
 
 /** Le navigateur sait-il afficher de la 3D ? Sinon on garde l'image fixe, sans charger la visionneuse. */
 function hasWebGL(): boolean {
@@ -45,7 +46,7 @@ export function Pot3D({
   sizes,
   interactive = true,
   onReady,
-  still = "/home/pot-detoure.webp",
+  still = DEFAULT_STILL,
   texture = null,
 }: {
   alt: string;

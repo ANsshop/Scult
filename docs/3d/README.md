@@ -42,8 +42,9 @@ Un pot par goût : seule l'étiquette change (pastille de goût en face, ligne
 « Saveur … » et ingrédients au dos).
 
 ```bash
-node scripts/3d/gouts.mjs                       # étiquettes : textures/wrap-<goût>.jpg et dos-<goût>.jpg
-node scripts/3d/gouts-visuels.mjs               # photos du site par goût (public/products, home, lifestyle, gouts, models)
+node scripts/3d/gouts.mjs                       # étiquettes : textures/wrap-<goût>.jpg, dos-<goût>.jpg et wrap.jpg
+node scripts/3d/gouts-visuels.mjs               # visuels du site : public/cri/<version>/, gouts/, models/, image de partage
+bash scripts/3d/build-web.sh                    # le modèle de la visionneuse du site
 /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup \
   --python scripts/3d/build_pot.py -- docs/3d/textures docs/3d all wrap-ice-tea-peche.jpg pot-cri-ice-tea-peche
 /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup \
@@ -57,6 +58,21 @@ photo `sources/gouts/<goût>.jpg`, une entrée dans `FLAVOURS`
 La visionneuse du site ne charge qu'un modèle : pour changer de goût elle
 remplace l'étiquette (`public/models/etiquette-<goût>.jpg`, 3072 px). Les sources de l'étiquette sont dans
 `sources/` (`face.jpg`, `dos.jpg`, `papier.jpg`, la police du dos).
+
+## Changer la formule
+
+La formule est dans `src/lib/content/cri-formule.json` : tableau, complexe,
+ingrédients, mode d'emploi, précautions, ligne de dosages de la face. Le site
+et l'étiquette lisent ce fichier. Après une modification :
+
+1. passer `version` à la suivante (`f2` → `f3`) : les visuels changent d'adresse ;
+2. `node scripts/3d/gouts.mjs`, puis `node scripts/3d/gouts-visuels.mjs` ;
+3. `bash scripts/3d/build-web.sh`, et `build_pot.py` pour les modèles de
+   référence ; `render_trio.py` si le visuel des trois pots doit suivre.
+
+Les retouches partent toujours des originaux (`sources/photos/`,
+`sources/accueil/`, `sources/face.jpg`, `sources/dos.jpg`), jamais d'une image
+déjà retouchée. Les outils sont dans `scripts/3d/retouche.mjs`.
 
 ## Lumière des rendus
 

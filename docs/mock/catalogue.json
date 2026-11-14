@@ -24,31 +24,31 @@
       "id": "0199f000-0000-7000-8000-00000000a005",
       "name": "CRI",
       "slug": "cri",
-      "description": "Pré-workout en poudre, en trois goûts : fruits rouges, cassis framboise, ice tea pêche. Par dose de 23 g : L-citrulline 8 g, bêta-alanine 4 g, créatine 3 g, L-tyrosine 2 g, taurine 1 g, L-théanine 200 mg, caféine 150 mg, vitamines B5 et B6. Pot de 690 g, soit 30 doses. Avec édulcorant. Contient de la caféine : déconseillé aux enfants et aux femmes enceintes. Fabriqué dans l'Union européenne.",
-      "imageUrl": "/products/cri-01.webp",
+      "description": "Pré-workout en poudre, en trois goûts : fruits rouges, cassis framboise, ice tea pêche. Par dose de 23 g : L-citrulline 8 g, bêta-alanine 3,2 g, créatine 3 g, L-théanine 400 mg, 390 mg de caféine en deux formes, théacrine 100 mg et un complexe Focus de 5,5 g. Pot de 690 g, soit 30 doses. Avec édulcorant. Réservé à l'adulte.",
+      "imageUrl": "/cri/f2/fruits-rouges-face.webp",
       "category": {
         "slug": "poudres",
         "name": "Poudres"
       },
       "seo": {
         "title": "CRI — pré-workout 690 g, 30 doses, 3 goûts",
-        "description": "Pré-workout SCULT : citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose. 30 doses. Fruits rouges, cassis framboise ou ice tea pêche."
+        "description": "Pré-workout SCULT : citrulline 8 g, bêta-alanine 3,2 g, créatine 3 g, 390 mg de caféine par dose. 30 doses. Fruits rouges, cassis framboise, ice tea pêche."
       },
       "images": [
         {
-          "url": "/products/cri-01.webp",
+          "url": "/cri/f2/fruits-rouges-face.webp",
           "alt": "Pot SCULT CRI vu de face : le nom CRI en bleu imprimé sur le visage d'une statue qui hurle, strap rouge autour du couvercle",
           "width": 1344,
           "height": 1680
         },
         {
-          "url": "/products/cri-02.webp",
+          "url": "/cri/f2/fruits-rouges-dos.webp",
           "alt": "Dos du pot SCULT CRI : tableau nutritionnel, liste d'ingrédients, conseils d'utilisation et précautions d'emploi",
           "width": 1656,
           "height": 2208
         },
         {
-          "url": "/lifestyle/cri-01.webp",
+          "url": "/cri/f2/fruits-rouges-ambiance.webp",
           "alt": "Une statue de marbre qui hurle tend le pot SCULT CRI vers l'objectif, devant un mur bleu",
           "width": 1792,
           "height": 2240
@@ -108,7 +108,7 @@
       "name": "CRI — pack de 2",
       "slug": "cri-duo",
       "description": "Deux pots de CRI, pré-workout, aux goûts de votre choix (fruits rouges, cassis framboise, ice tea pêche) : 2 × 690 g, soit 60 doses. 83,30 € au lieu de 98 €. Livraison offerte.",
-      "imageUrl": "/products/cri-01.webp",
+      "imageUrl": "/cri/f2/fruits-rouges-face.webp",
       "category": {
         "slug": "packs",
         "name": "Packs"
@@ -119,7 +119,7 @@
       },
       "images": [
         {
-          "url": "/products/cri-01.webp",
+          "url": "/cri/f2/fruits-rouges-face.webp",
           "alt": "Pot SCULT CRI vu de face : le nom CRI en bleu imprimé sur le visage d'une statue qui hurle, strap rouge autour du couvercle",
           "width": 1344,
           "height": 1680

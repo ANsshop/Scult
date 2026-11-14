@@ -8,7 +8,7 @@ import { PRODUCT_INFO } from "./product-info";
 export const CRI_DOSES = 30; // pot de 690 g, dose de 23 g
 
 /** Les actifs listés un par un, dans l'ordre du tableau ; le reste tient en une phrase. */
-const MAIN = ["L-citrulline", "Bêta-alanine", "Créatine", "L-tyrosine", "Taurine", "L-théanine", "Caféine"];
+const MAIN = ["L-citrulline", "Bêta-alanine", "Créatine", "L-théanine", "Dicaféine malate", "Caféine anhydre", "Théacrine"];
 
 /** « 8 000 mg » → « 8 g » ; « 200 mg » et « 1,4 mg » restent tels quels. */
 export function shortAmount(amount: string): string {
@@ -26,6 +26,11 @@ export function getFormula(slug: string) {
     const line = info.nutrition.find((n) => n.name === name);
     return line ? [{ name, amount: shortAmount(line.amount) }] : [];
   });
+  // Le complexe ferme la liste, donné par son total (« 5 523 mg » → « 5,5 g »).
+  if (info.blend) {
+    const mg = Number(info.blend.amount.replace(/[^\d]/g, ""));
+    main.push({ name: info.blend.name, amount: `${(Math.round(mg / 100) / 10).toString().replace(".", ",")} g` });
+  }
   const rest = info.nutrition.filter((n) => !MAIN.includes(n.name));
   return { main, rest, caffeineWarning: info.caffeineWarning ?? null };
 }

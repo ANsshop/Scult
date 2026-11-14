@@ -1,5 +1,6 @@
 "use client";
 
+import { visuel } from "@/lib/content/visuels";
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
@@ -13,8 +14,8 @@ const SLIDES: Slide[] = [
     label: "Mode d'emploi",
     title: "Une dose. 400 ml d'eau. 20 à 30 minutes avant.",
     cta: { label: "Voir la fiche", href: "/produits/cri" },
-    image: "/home/section3-dose-16x9.webp",
-    imageMobile: "/home/section3-dose-4x5.webp",
+    image: visuel("section3-dose-16x9"),
+    imageMobile: visuel("section3-dose-4x5"),
     alt: "La main de marbre de la statue verse une mesure de poudre rose dans le pot SCULT CRI ouvert, le couvercle posé à côté",
     position: "50% 50%",
   },
@@ -25,8 +26,8 @@ const SLIDES: Slide[] = [
     title: "Pour les séries qui comptent.",
     text: "« La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. »",
     cta: { label: "Commander · 49 €", href: "/produits/cri" },
-    image: "/home/hero-2-16x9.webp",
-    imageMobile: "/home/section3-barre-4x5.webp",
+    image: visuel("hero-2-16x9"),
+    imageMobile: visuel("section3-barre-4x5"),
     alt: "Le poing de marbre de la statue, strap rouge au poignet, serre une barre couverte de craie à côté d'un pot SCULT CRI",
     position: "50% 50%",
   },
@@ -35,8 +36,8 @@ const SLIDES: Slide[] = [
     label: "Lot 001 · 690 g · 30 doses",
     title: "Lot 001. Numéroté sur chaque pot.",
     cta: { label: "Commander CRI · 49 €", href: "/produits/cri" },
-    image: "/home/section3-trio-net-16x9.webp",
-    imageMobile: "/home/section3-trio-net-4x5.webp",
+    image: visuel("trio-16x9"),
+    imageMobile: visuel("trio-4x5"),
     alt: "Trois pots SCULT CRI sur fond blanc, l'un debout, les deux autres penché et couché",
     position: "50% 50%",
     // Visuel sur fond blanc (rendu depuis le modèle 3D, scripts/3d/render_trio.py) : texte à l'encre,

@@ -15,6 +15,9 @@ Usage (depuis la racine du repo) :
 
   Les trois pots sont serrés en grappe pour pouvoir être cadrés gros.
   Visuels du site : 2400 1350 0.21 1.0 0.02 blanc (ordinateur) et 1200 1500 0 1.25 0.17 blanc (téléphone).
+  Le rendu sort sur fond transparent : le poser sur du blanc et l'enregistrer en
+  docs/3d/renders/trio-16x9.jpg et trio-4x5.jpg ; scripts/3d/gouts-visuels.mjs les
+  met ensuite au format du site.
 """
 import math
 import os

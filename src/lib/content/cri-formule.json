@@ -1,0 +1,46 @@
+{
+  "version": "f2",
+  "dose": "23 g",
+  "doses": 30,
+  "poids": "690 g",
+  "denomination": "Complément alimentaire à base d'acides aminés, de créatine, de caféine et d'extraits de plantes. Avec édulcorant.",
+  "actifs": [
+    { "nom": "L-citrulline", "quantite": "8 000 mg" },
+    { "nom": "Bêta-alanine", "quantite": "3 200 mg" },
+    { "nom": "Créatine", "quantite": "3 000 mg" },
+    { "nom": "L-théanine", "quantite": "400 mg" },
+    { "nom": "Sodium (sel rose de l'Himalaya)", "quantite": "300 mg" },
+    { "nom": "Dicaféine malate", "quantite": "300 mg" },
+    { "nom": "Caféine anhydre", "quantite": "170 mg" },
+    { "nom": "Théacrine", "quantite": "100 mg" },
+    { "nom": "Extrait de poivre noir", "quantite": "4,8 mg" },
+    { "nom": "Capsaïcine", "quantite": "3 mg" }
+  ],
+  "complexe": {
+    "nom": "Complexe Focus",
+    "quantite": "5 523 mg",
+    "ingredients": [
+      { "nom": "DMAE bitartrate", "quantite": null },
+      { "nom": "Hericium erinaceus (lion's mane)", "quantite": null },
+      { "nom": "Extrait de genévrier 10:1", "quantite": null },
+      { "nom": "Mucuna pruriens (L-DOPA 99 %)", "quantite": null },
+      { "nom": "N-phénéthyl diméthylamine", "quantite": null },
+      { "nom": "Hordénine 98 %", "quantite": null },
+      { "nom": "Huperzia serrata (huperzine A 1 %)", "quantite": null }
+    ]
+  },
+  "cafeineTotale": "390 mg",
+  "ingredients": "L-citrulline, complexe Focus (bitartrate de DMAE, extrait d'Hericium erinaceus, extrait de baies de genévrier, extrait de Mucuna pruriens, N-phénéthyl diméthylamine, hordénine, extrait d'Huperzia serrata), bêta-alanine, créatine monohydrate, acidifiant : acide citrique, sel rose de l'Himalaya, {AROME}, L-théanine, dicaféine malate, édulcorant : glycosides de stéviol, caféine anhydre, anti-agglomérant : dioxyde de silicium, théacrine, colorant : {COLORANT}, extrait de poivre noir, capsaïcine.",
+  "gouts": {
+    "fruits-rouges": { "arome": "arôme naturel", "colorant": "rouge de betterave" },
+    "cassis-framboise": { "arome": "arômes naturels de cassis et de framboise", "colorant": "rouge de betterave" },
+    "ice-tea-peche": { "arome": "arômes naturels de thé et de pêche", "colorant": "caramel ordinaire" }
+  },
+  "usage": "Mélanger 1 dose (23 g, une mesure rase) dans 400 ml d'eau fraîche. Boire 20 à 30 minutes avant l'entraînement.",
+  "usageFort": "Les premières prises, commencer par une demi-dose.",
+  "usageFin": "Une dose par jour maximum. Ne pas prendre dans les 6 heures avant le coucher.",
+  "avertissementCafeine": "Contient de la caféine (environ 390 mg par dose). Déconseillé aux enfants et aux femmes enceintes.",
+  "precautions": "Réservé à l'adulte. Déconseillé aux adolescents et aux femmes allaitantes. Ne pas dépasser une dose par jour. Ne pas associer à d'autres sources de caféine ou de stimulants. En cas d'hypertension, de trouble cardiaque ou de traitement médical (notamment antidépresseurs IMAO), demander l'avis d'un professionnel de santé avant utilisation. Contient des substances interdites en compétition par certaines fédérations sportives. La bêta-alanine et la capsaïcine peuvent provoquer des picotements ou une sensation de chaleur passagers. Les compléments alimentaires ne doivent pas être utilisés comme substituts d'un régime alimentaire varié et équilibré et d'un mode de vie sain. Tenir hors de portée des enfants.",
+  "bonASavoir": "La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée (effet obtenu avec 3 g de créatine par jour).",
+  "ligneFace": "CITRULLINE 8 G · BÊTA-ALANINE 3,2 G · CRÉATINE 3 G · CAFÉINE 390 MG"
+}

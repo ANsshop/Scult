@@ -24,6 +24,7 @@ const answer = (q: string) => FAQ_ITEMS.find((i) => i.question === q)?.answer ??
 export function ProductPage({ product, offer }: { product: Product; offer?: FlavourOffer | null }) {
   const claims = CLAIMS.filter((c) => c.slug === product.slug);
   const info = PRODUCT_INFO[product.slug];
+  const hasNrv = Boolean(info?.nutrition.some((n) => n.nrv));
   const skus = Object.fromEntries((offer?.flavours ?? []).map((id) => [id, offer!.singles[id]!.item.sku])) as Partial<Record<FlavourId, string>>;
   return (
     <FlavourProvider flavours={offer?.flavours ?? []}>
@@ -78,15 +79,25 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
                   <p className="text-ink">{info.denomination}</p>
                   <table className="mt-4 w-full text-left tabular-nums">
                     <thead>
-                      <tr className="label border-b border-ink text-ink"><th className="py-2 font-normal">{info.serving}</th><th className="py-2 text-right font-normal">Quantité</th><th className="py-2 text-right font-normal">% VNR*</th></tr>
+                      <tr className="label border-b border-ink text-ink"><th className="py-2 font-normal">{info.serving}</th><th className="py-2 text-right font-normal">Quantité</th>{hasNrv && <th className="py-2 text-right font-normal">% VNR*</th>}</tr>
                     </thead>
                     <tbody>
                       {info.nutrition.map((n) => (
-                        <tr key={n.name} className="border-b"><td className="py-2 text-ink">{n.name}</td><td className="py-2 text-right">{n.amount}</td><td className="py-2 text-right">{n.nrv ?? "—"}</td></tr>
+                        <tr key={n.name} className="border-b"><td className="py-2 text-ink">{n.name}</td><td className="py-2 text-right">{n.amount}</td>{hasNrv && <td className="py-2 text-right">{n.nrv ?? "—"}</td>}</tr>
                       ))}
                     </tbody>
                   </table>
-                  <p className="mt-2 text-sm">*VNR : valeurs nutritionnelles de référence. — : pas de valeur de référence établie.</p>
+                  {info.blend && (
+                    <div className="mt-4 overflow-hidden rounded-chip bg-white/70 shadow-[0_0_0_1px_rgb(11_11_15/0.12)]">
+                      <p className="label flex items-center justify-between bg-ink px-4 py-2.5 text-marble"><span>{info.blend.name}</span><span className="tabular-nums">{info.blend.amount}</span></p>
+                      <ul className="divide-y px-4 tabular-nums">
+                        {info.blend.items.map((i) => (
+                          <li key={i.name} className="flex justify-between gap-4 py-2"><span className="text-ink">{i.name}</span>{i.amount && <span>{i.amount}</span>}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {hasNrv && <p className="mt-2 text-sm">*VNR : valeurs nutritionnelles de référence. — : pas de valeur de référence établie.</p>}
                 </div>
               </details>
             )}
