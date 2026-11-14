@@ -11,6 +11,8 @@ type Ctx = {
   items: CartItem[];
   count: number;
   subtotalCents: number;
+  /** Ce que les packs du panier font économiser, par rapport aux mêmes pots achetés à l'unité. */
+  savingCents: number;
   /** `open: false` : ajoute sans ouvrir le tiroir (le bouton l'ouvre lui-même après son animation). */
   add: (item: CartLine, quantity?: number, options?: { open?: boolean }) => void;
   setQuantity: (sku: string, quantity: number) => void;
@@ -27,9 +29,10 @@ const CartContext = createContext<Ctx | null>(null);
  * L'offre pack : `units` pots à l'unité valent un pack, moins cher. `singles`
  * dit quel goût est chaque SKU vendu à l'unité, `packs` donne l'article pack
  * de chaque paire de goûts (clé packKey), `known` tous les articles connus,
- * par SKU, pour rafraîchir un panier enregistré.
+ * par SKU, pour rafraîchir un panier enregistré, `fullCents` le prix des pots
+ * d'un pack achetés à l'unité (ce qu'on économise se compte à partir de lui).
  */
-export type BundleRule = { units: number; singles: Record<string, string>; packs: Record<string, CartLine>; known: Record<string, CartLine> };
+export type BundleRule = { units: number; fullCents: number; singles: Record<string, string>; packs: Record<string, CartLine>; known: Record<string, CartLine> };
 
 /**
  * Applique l'offre pack : dès que le panier contient deux pots à l'unité, ils
@@ -126,12 +129,16 @@ export function CartProvider({ children, bundle }: { children: React.ReactNode; 
   const openCart = useCallback(() => setOpen(true), []);
   const closeCart = useCallback(() => setOpen(false), []);
 
-  const value = useMemo<Ctx>(() => ({
-    items,
-    count: items.reduce((n, i) => n + i.quantity, 0),
-    subtotalCents: items.reduce((n, i) => n + i.priceCents * i.quantity, 0),
-    add, setQuantity, remove, clear, isOpen, openCart, closeCart,
-  }), [items, add, setQuantity, remove, clear, isOpen, openCart, closeCart]);
+  const value = useMemo<Ctx>(() => {
+    const packSkus = new Set(Object.values(bundle?.packs ?? {}).map((p) => p.sku));
+    return {
+      items,
+      count: items.reduce((n, i) => n + i.quantity, 0),
+      subtotalCents: items.reduce((n, i) => n + i.priceCents * i.quantity, 0),
+      savingCents: items.reduce((n, i) => n + (packSkus.has(i.sku) ? Math.max(0, bundle!.fullCents - i.priceCents) * i.quantity : 0), 0),
+      add, setQuantity, remove, clear, isOpen, openCart, closeCart,
+    };
+  }, [items, bundle, add, setQuantity, remove, clear, isOpen, openCart, closeCart]);
 
   return <CartContext value={value}>{children}</CartContext>;
 }

@@ -11,7 +11,7 @@ const COUNTRY_NAMES: Record<string, string> = { FR: "France", BE: "Belgique", LU
 
 /** Estimation côté client avec les mêmes chiffres que le serveur ; le montant facturé vient du socle. */
 export function CheckoutForm({ vatRate }: { vatRate: number }) {
-  const { items, subtotalCents } = useCart();
+  const { items, subtotalCents, savingCents } = useCart();
   const [country, setCountry] = useState("FR");
   const [promo, setPromo] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -51,7 +51,8 @@ export function CheckoutForm({ vatRate }: { vatRate: number }) {
       </div>
       <dl className="space-y-2 text-sm">
         <div className="flex justify-between"><dt>Sous-total</dt><dd className="tabular-nums">{formatPrice(subtotalCents)}</dd></div>
-        <div className="flex justify-between"><dt>Livraison {ship ? `· ${ship.zone.label}` : ""}</dt><dd className="tabular-nums">{ship ? (ship.cents === 0 ? "Offerte" : formatPrice(ship.cents)) : "—"}</dd></div>
+        {savingCents > 0 && <div className="flex justify-between font-medium text-ruby"><dt>Vous économisez</dt><dd className="tabular-nums">{formatPrice(savingCents)}</dd></div>}
+        <div className={`flex justify-between ${ship?.cents === 0 ? "font-medium text-ruby" : ""}`}><dt>Livraison {ship ? `· ${ship.zone.label}` : ""}</dt><dd className="tabular-nums">{ship ? (ship.cents === 0 ? "Offerte" : formatPrice(ship.cents)) : "—"}</dd></div>
         {vat > 0 && <div className="flex justify-between"><dt>TVA {vatRate} %</dt><dd className="tabular-nums">{formatPrice(vat)}</dd></div>}
         <div className="flex justify-between border-t pt-2 text-base font-medium"><dt>Total</dt><dd className="tabular-nums">{formatPrice(base + vat)}</dd></div>
       </dl>

@@ -17,7 +17,7 @@ import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping";
  * ajoutés à l'unité sont déjà regroupés en pack par le panier lui-même.
  */
 export function CartDrawer({ offer }: { offer?: FlavourOffer | null }) {
-  const { items, subtotalCents, isOpen, closeCart, setQuantity, add, remove } = useCart();
+  const { items, subtotalCents, savingCents, isOpen, closeCart, setQuantity, add, remove } = useCart();
   const [picked, setPicked] = useState<FlavourId | null>(null);
   const missing = FREE_SHIPPING_THRESHOLD_CENTS - subtotalCents;
 
@@ -60,6 +60,8 @@ export function CartDrawer({ offer }: { offer?: FlavourOffer | null }) {
             <ul className="divide-y">
               {items.map((i) => {
                 const pots = i.flavours?.length ? i.flavours : [undefined];
+                // Un pack : son prix, et barré celui des mêmes pots à l'unité.
+                const full = offer?.pack && pots.length === offer.pack.units && offer.pack.fullPriceCents > i.priceCents ? offer.pack.fullPriceCents : null;
                 return (
                   <li key={i.sku} className="flex gap-4 py-5">
                     <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-chip bg-klein">
@@ -69,7 +71,7 @@ export function CartDrawer({ offer }: { offer?: FlavourOffer | null }) {
                     <div className="flex-1">
                       <Link href={`/produits/${i.slug}`} onClick={closeCart} className="font-medium hover:underline">{i.name}</Link>
                       {i.detail && <p className="label mt-1 !text-[0.625rem] font-bold" style={{ color: i.flavours?.length === 1 ? getFlavour(i.flavours[0]).color : undefined }}>{i.detail}</p>}
-                      <p className="mt-1 text-sm text-stone">{formatPrice(i.priceCents)}</p>
+                      <p className="mt-1 text-sm text-stone">{formatPrice(i.priceCents)}{full && <s className="ml-2 opacity-70">{formatPrice(full)}</s>}</p>
                       <div className="mt-2 flex items-center gap-3 text-sm">
                         <button type="button" onClick={() => setQuantity(i.sku, i.quantity - 1)} className="h-7 w-7 rounded-full border">−</button>
                         <span className="tabular-nums">{i.quantity}</span>
@@ -127,7 +129,10 @@ export function CartDrawer({ offer }: { offer?: FlavourOffer | null }) {
         )}
         <div className="border-t px-6 py-5">
           <div className="flex justify-between"><span>Sous-total</span><span className="tabular-nums">{formatPrice(subtotalCents)}</span></div>
-          <p className="mt-1 text-sm text-stone">{missing > 0 ? `Plus que ${formatPrice(missing)} pour la livraison offerte.` : "Livraison offerte."}</p>
+          {savingCents > 0 && <div className="mt-1.5 flex justify-between font-medium text-ruby"><span>Vous économisez</span><span className="tabular-nums">{formatPrice(savingCents)}</span></div>}
+          {items.length > 0 && missing <= 0
+            ? <div className="mt-1.5 flex justify-between font-medium text-ruby"><span>Livraison</span><span>Offerte</span></div>
+            : <p className="mt-1.5 text-sm text-stone">Plus que {formatPrice(missing)} pour la livraison offerte.</p>}
           <ButtonLink href="/checkout" className="mt-5 w-full">Commander</ButtonLink>
         </div>
       </aside>

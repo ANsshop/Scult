@@ -43,7 +43,7 @@ function bundleRule(offer: FlavourOffer | null): BundleRule | null {
   const singles = Object.fromEntries(offer.flavours.map((id) => [offer.singles[id]!.item.sku, id]));
   const packs = Object.fromEntries(Object.entries(offer.packs).filter(([, p]) => p.inStock).map(([key, p]) => [key, p.item]));
   const known = Object.fromEntries([...Object.values(offer.singles), ...Object.values(offer.packs)].map((s) => [s!.item.sku, s!.item]));
-  return { units: offer.pack.units, singles, packs, known };
+  return { units: offer.pack.units, fullCents: offer.pack.fullPriceCents, singles, packs, known };
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
