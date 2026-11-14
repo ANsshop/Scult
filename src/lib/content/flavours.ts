@@ -3,9 +3,10 @@ import FORMULE from "./cri-formule.json";
 import { visuel } from "./visuels";
 
 /**
- * Les goûts de CRI. Même pot, même formule : seuls changent la pastille de
- * goût sur la face et, au dos, la ligne « Saveur … » et la liste
- * d'ingrédients (arôme et colorant).
+ * Les goûts de CRI. Même pot, même formule : seuls changent le nom du goût,
+ * écrit dans sa couleur sur la face, et, au dos, la ligne « Saveur … » et la
+ * liste d'ingrédients (arôme et colorant). Nom, couleur, arôme et colorant de
+ * chaque goût sont dans cri-formule.json, que l'étiquette lit aussi.
  *
  * Ce fichier dit comment chaque goût se présente (nom, visuels, ingrédients).
  * Ce qui se vend — prix, stock, SKU — vient du catalogue du socle : une
@@ -24,10 +25,10 @@ export type Flavour = {
   /** Le code du goût dans les SKU : SCULT-CRI-690-<code>. */
   code: string;
   label: string;
-  /** Le nom sur deux lignes, comme sur la pastille du pot. */
+  /** Le nom sur deux lignes, comme sur le pot. */
   lines: [string, string];
-  /** La photo de la pastille (carrée, 160 px). */
-  swatch: string;
+  /** La couleur du goût : celle de son nom sur le pot, reprise par le site. */
+  color: string;
   /** Le pot détouré : image fixe de la visionneuse 3D. */
   still: string;
   /** Le petit pot des vignettes et de l'animation d'ajout au panier. */
@@ -42,15 +43,16 @@ export type Flavour = {
 /** Les visuels du goût, produits par scripts/3d/gouts-visuels.mjs. */
 const visuelDe = (id: FlavourId, nom: string) => visuel(`${id}-${nom}`);
 
-function flavour(id: FlavourId, code: string, label: string, lines: [string, string]): Flavour {
+function flavour(id: FlavourId, code: string): Flavour {
+  const { nom: label, lignes, couleur, arome, colorant } = FORMULE.gouts[id];
   const nom = label.toLowerCase();
-  const { arome, colorant } = FORMULE.gouts[id];
+  const lines: [string, string] = [lignes[0], lignes[1]];
   return {
     id,
     code,
     label,
     lines,
-    swatch: `/gouts/${id}.webp`,
+    color: couleur,
     still: visuelDe(id, "detoure"),
     mini: visuelDe(id, "mini"),
     texture: `/models/etiquette-${id}.jpg`,
@@ -65,9 +67,9 @@ function flavour(id: FlavourId, code: string, label: string, lines: [string, str
 }
 
 export const FLAVOURS: Flavour[] = [
-  flavour("fruits-rouges", "FR", "Fruits rouges", ["Fruits", "rouges"]),
-  flavour("cassis-framboise", "CF", "Cassis framboise", ["Cassis", "framboise"]),
-  flavour("ice-tea-peche", "ITP", "Ice tea pêche", ["Ice tea", "pêche"]),
+  flavour("fruits-rouges", "FR"),
+  flavour("cassis-framboise", "CF"),
+  flavour("ice-tea-peche", "ITP"),
 ];
 
 /** Le goût d'origine : celui des visuels de l'accueil, et celui affiché avant tout choix. */

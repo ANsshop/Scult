@@ -408,3 +408,55 @@ et tout le dos. Tout part de `src/lib/content/cri-formule.json`.
   de la formule ligne par ligne ; le bandeau, le hero, la FAQ et `llms.txt`
   suivent. La FAQ dit que CRI n'est pas compatible avec la compétition
   contrôlée.
+
+## Le goût s'écrit dans sa couleur (2026-11-14)
+
+**La pastille de goût est abandonnée** (« ça gâche le design ») : plus de
+cadre, plus de photo de fruit. Le goût est simplement écrit dans sa couleur,
+sur deux lignes, en JetBrains Mono extra-gras, calé à droite contre le filet
+des mentions (« 30 doses · 690 g »). Une couleur par goût, dans
+`cri-formule.json` : fruits rouges `#c8102e`, cassis framboise `#6f1d7a`,
+ice tea pêche `#8a4a1c` (« en brun »). C'est la quatrième encre du pot, la
+seule qui change d'un goût à l'autre.
+
+- **Sur le site**, le sélecteur de goût reprend ce marquage tel quel : le nom
+  en deux lignes dans sa couleur, le goût choisi cerclé de sa couleur
+  (`FlavourPicker.tsx`). Dans le panier, des ronds de couleur pour choisir le
+  goût du 2ᵉ pot. Les photos de fruits ne servent plus.
+- **Sur les images**, `remplacerPastille` (retouche.mjs) efface l'ancienne
+  pastille et imprime le nom. Le papier est reconstitué depuis les bords de la
+  zone (chaque pixel prend la teinte du papier voisin, l'encre voisine
+  écartée), avec le grain fin d'une bande de papier de la même photo et des
+  marbrures tirées au hasard à la bonne force. Trois pièges rencontrés, à ne
+  pas refaire : reprendre le grain d'une bande trop haute (rayures en
+  miroir) ; échantillonner le bord un pixel sur deux (rayures) ; oublier que
+  `sharp` rend trois canaux même pour une image à un canal (grain décalé).
+
+## Nouvelles images (2026-11-14)
+
+| Image | Job Higgsfield |
+|---|---|
+| Le pot, nouvelle étiquette (référence à passer en n° 1 pour toute nouvelle image) | media `eaa8e759-b803-46a3-a24a-b7cfb0f90c48` |
+| La statue assise, le pot sur le genou, 16:9 en 4k (slider du bas, slide 2) | `4e2d887d-fb81-4e84-b432-5e1dd6602620` |
+| La statue assise, 4:5, moitié gauche libre pour le texte | `c82bbf8f-87fe-4edf-92ff-40f540f908a8` |
+| Hero, slide 2, cadrage large (pot à ~45 % de la hauteur), 16:9 en 4k | `caefde15-b627-4aac-8d56-7ab0c870ba5f` |
+
+- **La statue assise** remplace « la barre » dans le slider du bas : pose du
+  penseur (coude droit sur la cuisse, menton sur le poing, strap rouge au
+  poignet), le pot tenu sur le genou, étiquette face à l'objectif. Bouche
+  fermée, mâchoire serrée : le calme avant l'effort — c'est la seule image où
+  le personnage ne crie pas. Variante écartée : assis, le pot tendu vers
+  l'objectif (`58acb8b6-…`), trop proche de la slide 1 du hero.
+- **Hero, slide 2** : la première version était « trop zoomée, le pot trop
+  grand » sur ordinateur. Régénérée de plus loin, moitié gauche vide.
+  L'outil d'extension d'image (outpaint) est à éviter : il a inventé des
+  colonnes, des haltères et des lances autour de la scène.
+- **Les petits textes d'une image générée sont toujours refaits** par
+  `gouts-visuels.mjs` (`generee: true`) : ligne de dosages, nom du goût,
+  phrase du couvercle (`remplacerLigneCourbe`), et les mentions quand le pot
+  est petit. Le générateur rend le pot fidèlement mais écrit « CRÉATINE 5 G »
+  ou « RIEN NE SE SCULPTE. » ; demander le pot en référence n° 1 et décrire
+  l'étiquette suffit pour le reste.
+- Format téléphone : dire « imagine une ligne verticale au milieu, la statue
+  est entièrement dans la moitié droite » ; « les 42 % de gauche vides » n'a
+  pas suffi.

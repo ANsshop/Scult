@@ -1,9 +1,9 @@
 /**
  * Compose l'étiquette du pot CRI, pour chaque goût.
  *
- * Même pot, même maquette : d'un goût à l'autre, seules changent la pastille
- * de goût en face avant et, au dos, la ligne « Saveur … » et la liste
- * d'ingrédients (arôme, colorant). Pour chaque goût, écrit dans
+ * Même pot, même maquette : d'un goût à l'autre, seuls changent le nom du
+ * goût, écrit dans sa couleur en face avant, et, au dos, la ligne « Saveur … »
+ * et la liste d'ingrédients (arôme, colorant). Pour chaque goût, écrit dans
  * docs/3d/textures/ :
  *   wrap-<goût>.jpg  l'étiquette complète à enrouler sur le modèle 3D (4096 × 1652)
  *   dos-<goût>.jpg   le dos à plat (1500 × 2102)
@@ -19,7 +19,7 @@
  *
  * Sources (docs/3d/sources/) : face.jpg (la face avant d'origine), dos.jpg
  * (le dos d'origine : on en garde l'en-tête et le pied), papier.jpg (le grain
- * du papier), gouts/<goût>.jpg (la photo de la pastille), les polices du dos.
+ * du papier), les polices du dos.
  * Le rendu passe par Chrome sans interface.
  *
  * ⚠ Les listes d'ingrédients sont des estimations (ASSUMPTIONS.md) : elles se
@@ -30,7 +30,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { JBM, ecrire, file, lire, remplacerLigne, shoot } from "./retouche.mjs";
+import { JBM, ecrire, file, lire, remplacerLigne, remplacerPastille, shoot } from "./retouche.mjs";
 
 export { file, shoot };
 export const SRC = resolve("docs/3d/sources");
@@ -42,29 +42,40 @@ export const LIGNE_ORIGINE = "CITRULLINE 8 G · BÊTA-ALANINE 4 G · CRÉATINE 3
 export const LIGNE = FORMULE.ligneFace;
 
 /**
- * `origine` : le goût des visuels de départ — sa pastille est déjà sur la face.
- * `photo` : cadrage de la photo dans la pastille (object-position).
- * `texte` : corps du nom (px), étroitisation, et où il commence dans la pastille
- * (% de la largeur). L'original — « Fruits rouges » — est en 40 px, sans
- * étroitisation, à 53,5 % ; un nom plus long se compose un peu plus petit.
+ * Les goûts : nom, couleur, arôme et colorant sont dans cri-formule.json.
+ * Sur le pot, le goût est simplement écrit dans sa couleur, sur deux lignes,
+ * à gauche du filet des mentions (« 30 doses · 690 g ») : pas de cadre, pas de
+ * photo.
  */
-export const GOUTS = [
-  { slug: "fruits-rouges", origine: true, nom: ["Fruits", "Rouges"], saveur: "Saveur fruits rouges" },
-  {
-    slug: "cassis-framboise",
-    nom: ["Cassis", "Framboise"],
-    saveur: "Saveur cassis framboise",
-    photo: "22% 55%",
-    texte: { taille: 37, etroit: 0.93, gauche: 46 },
-  },
-  {
-    slug: "ice-tea-peche",
-    nom: ["Ice tea", "Pêche"],
-    saveur: "Saveur ice tea pêche",
-    photo: "30% 50%",
-    texte: { taille: 38, etroit: 1, gauche: 51 },
-  },
-];
+export const GOUTS = Object.entries(FORMULE.gouts).map(([slug, g]) => ({ slug, ...g, saveur: `Saveur ${g.nom.toLowerCase()}` }));
+
+/**
+ * Le marquage du goût, en SVG, dans le repère de l'ancienne pastille
+ * (390 × 150, son bord droit à 34 px du filet) : deux lignes en JetBrains Mono
+ * extra-gras, calées à droite, centrées sur la hauteur du filet.
+ */
+export function marque(g) {
+  const taille = 68.5, cap = taille * 0.73, entre = taille * 0.52, haut = (150 - (2 * cap + entre)) / 2;
+  const [l1, l2] = g.lignes.map((l) => l.toUpperCase());
+  return `<g font-family="JBM" font-weight="800" font-size="${taille}" fill="${g.couleur}" text-anchor="end"><text x="388" y="${haut + cap}">${l1}</text><text x="388" y="${haut + 2 * cap + entre}">${l2}</text></g>`;
+}
+/**
+ * Les mentions à droite du filet (« 30 doses · 690 g · complément
+ * alimentaire »), dans le même repère que le marquage du goût. Elles sont
+ * justes sur les photos d'origine ; elles servent à les réimprimer sur une
+ * image générée où le pot est petit et ses petits textes illisibles.
+ */
+export const MENTIONS_ZONE = [446, -8, 690, 158];
+export function mentions() {
+  const lignes = [`${FORMULE.doses} DOSES`, FORMULE.poids.toUpperCase(), "COMPLÉMENT", "ALIMENTAIRE"], bases = [25, 62.6, 109.3, 146.7];
+  return `<g font-family="JBM" font-weight="500" font-size="30" letter-spacing="1.3" fill="#141416">${lignes.map((l, i) => `<text x="455" y="${bases[i]}">${l}</text>`).join("")}</g>`;
+}
+/** La phrase du bord du couvercle, telle qu'on la voit de face : elle fait le tour, on en lit un peu plus de deux. */
+export const COUVERCLE = "SILENCE. · RIEN NE SE SCULPTE EN SILENCE. · RIEN NE SE SCULPTE EN SILENCE. · RIEN NE";
+
+/** Où était la pastille sur la face à plat, et le papier vierge juste dessous. */
+const FACE_PASTILLE = { coins: [[2072, 1422], [2462, 1422], [2462, 1572], [2072, 1572]], papier: { y: 1582, h: 46 } };
+
 /** La liste d'ingrédients du goût : la liste commune, avec son arôme et son colorant (cri-formule.json). */
 export const ingredientsDe = (g) => FORMULE.ingredients.replace("{AROME}", FORMULE.gouts[g.slug].arome).replace("{COLORANT}", FORMULE.gouts[g.slug].colorant);
 
@@ -125,34 +136,6 @@ b{font-weight:700}
 </div>`;
 }
 
-/**
- * La pastille de goût (390 × 150) : la photo à gauche, fondue dans le papier,
- * le nom sur deux lignes à droite. Sert à l'étiquette et aux photos du site
- * (scripts/3d/gouts-visuels.mjs), qui la placent elles-mêmes (`.pastille{left;top;transform}`).
- */
-export function pastilleCss(g) {
-  return `.pastille{position:absolute;width:390px;height:150px;box-sizing:border-box;border:4.5px solid #131315;border-radius:50px;overflow:hidden}
-.pastille img{position:absolute;left:0;top:0;width:${g.texte.gauche - 1.5}%;height:100%;object-fit:cover;object-position:${g.photo};
-  -webkit-mask-image:linear-gradient(to right,#000 70%,transparent 100%);mask-image:linear-gradient(to right,#000 70%,transparent 100%)}
-.nom{position:absolute;left:${g.texte.gauche}%;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;
-  font:700 ${g.texte.taille}px/1.25 JBM,monospace;text-transform:uppercase;color:#131315;white-space:nowrap;transform:scaleX(${g.texte.etroit});transform-origin:left center;opacity:.94;filter:blur(0.25px)}`;
-}
-export function pastilleHtml(g) {
-  return `<div class="pastille"><img src="${file(join(SRC, "gouts", `${g.slug}.jpg`))}"><div class="nom"><span>${g.nom[0]}</span><span>${g.nom[1]}</span></div></div>`;
-}
-
-/** La face : la ligne de dosages est déjà à jour dans `base` ; pour un autre goût, l'ancienne pastille est recouverte de papier et la nouvelle posée au même endroit. */
-function faceHtml(g, base) {
-  return `<!doctype html><meta charset="utf-8"><style>${fonts}
-#c{position:relative;width:3840px;height:1648px;overflow:hidden;background:url('${file(base)}') 0 0/3840px 1648px}
-.papier{position:absolute;left:2052px;top:1404px;width:430px;height:186px;background:url('${file(join(SRC, "papier.jpg"))}') -300px -260px;
-  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%),linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);
-  -webkit-mask-composite:source-in;mask-composite:intersect}
-.pastille{left:2072px;top:1422px}
-${g.origine ? "" : pastilleCss(g)}
-</style><div id="c">${g.origine ? "" : `<div class="papier"></div>${pastilleHtml(g)}`}</div>`;
-}
-
 /** L'étiquette complète : la face au centre, le dos sur la couture arrière, la phrase du couvercle tout autour. */
 function wrapHtml(face, dos) {
   const phrase = Array.from({ length: 5 }, () => "<i>·</i><span>RIEN NE SE SCULPTE EN SILENCE.</span>").join("") + "<i>·</i>";
@@ -180,10 +163,8 @@ async function main() {
   const dir = mkdtempSync(join(tmpdir(), "gout-"));
   try {
     // La face commune à tous les goûts : celle d'origine, avec la ligne de dosages de la formule.
-    const base = join(dir, "face-base.png");
-    const img = await lire(join(SRC, "face.jpg"));
-    if (LIGNE !== LIGNE_ORIGINE) await remplacerLigne(img, { axe: [[2733, 1408], [2733, 296]], demi: 19 }, { ancien: LIGNE_ORIGINE, nouveau: LIGNE }, dir);
-    await ecrire(img, base);
+    const base = await lire(join(SRC, "face.jpg"));
+    if (LIGNE !== LIGNE_ORIGINE) await remplacerLigne(base, { axe: [[2733, 1408], [2733, 296]], demi: 19 }, { ancien: LIGNE_ORIGINE, nouveau: LIGNE }, dir);
 
     for (const g of GOUTS.filter((x) => !only || x.slug === only)) {
       const dosPng = join(dir, "dos.png");
@@ -191,18 +172,19 @@ async function main() {
       const dos = join(OUT, `dos-${g.slug}.jpg`);
       await sharp(dosPng).extract({ left: 0, top: 0, width: 1500, height: 2102 }).jpeg({ quality: 92 }).toFile(dos);
 
-      const facePng = join(dir, "face.png");
-      shoot(faceHtml(g, base), 3840, 1648, facePng, dir);
+      // La face du goût : la pastille d'origine est effacée, le nom du goût imprimé dans sa couleur.
+      const img = { ...base, data: Buffer.from(base.data) };
+      await remplacerPastille(img, FACE_PASTILLE, marque(g), dir);
       const face = join(dir, "face.jpg");
-      await sharp(facePng).extract({ left: 0, top: 0, width: 3840, height: 1648 }).jpeg({ quality: 94 }).toFile(face);
+      await ecrire(img, face);
 
       const wrapPng = join(dir, "wrap.png");
       shoot(wrapHtml(face, dos), 4096, 1652, wrapPng, dir);
       const wrap = join(OUT, `wrap-${g.slug}.jpg`);
       await sharp(wrapPng).extract({ left: 0, top: 0, width: 4096, height: 1652 }).jpeg({ quality: 90 }).toFile(wrap);
-      if (g.origine) copyFileSync(wrap, join(OUT, "wrap.jpg"));
-      // Contrôle : la pastille et la ligne de dosages, à la loupe
-      await sharp(face).extract({ left: 2040, top: 1380, width: 760, height: 230 }).resize({ width: 1140 }).jpeg({ quality: 90 }).toFile(join(OUT, `controle-pastille-${g.slug}.jpg`));
+      if (g.slug === GOUTS[0].slug) copyFileSync(wrap, join(OUT, "wrap.jpg"));
+      // Contrôle : le marquage du goût et les mentions, à la loupe
+      await sharp(face).extract({ left: 2040, top: 1380, width: 760, height: 230 }).resize({ width: 1140 }).jpeg({ quality: 90 }).toFile(join(OUT, `controle-gout-${g.slug}.jpg`));
       console.log("✓", g.slug);
     }
   } finally {

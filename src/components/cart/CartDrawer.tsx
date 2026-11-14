@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "./CartProvider";
@@ -69,7 +68,7 @@ export function CartDrawer({ offer }: { offer?: FlavourOffer | null }) {
                     </div>
                     <div className="flex-1">
                       <Link href={`/produits/${i.slug}`} onClick={closeCart} className="font-medium hover:underline">{i.name}</Link>
-                      {i.detail && <p className="label mt-1 !text-[0.625rem] text-klein">{i.detail}</p>}
+                      {i.detail && <p className="label mt-1 !text-[0.625rem] font-bold" style={{ color: i.flavours?.length === 1 ? getFlavour(i.flavours[0]).color : undefined }}>{i.detail}</p>}
                       <p className="mt-1 text-sm text-stone">{formatPrice(i.priceCents)}</p>
                       <div className="mt-2 flex items-center gap-3 text-sm">
                         <button type="button" onClick={() => setQuantity(i.sku, i.quantity - 1)} className="h-7 w-7 rounded-full border">−</button>
@@ -109,10 +108,9 @@ export function CartDrawer({ offer }: { offer?: FlavourOffer | null }) {
                       aria-label={f.label}
                       title={f.label}
                       onClick={() => setPicked(id)}
-                      className={`relative h-9 w-9 shrink-0 overflow-hidden rounded-full transition-all duration-300 ${on ? "shadow-[0_0_0_2px_var(--color-klein),0_0_0_4px_var(--color-marble)]" : "opacity-75 shadow-[0_0_0_1px_rgb(242_240_234/0.5)] hover:opacity-100"}`}
-                    >
-                      <Image src={f.swatch} alt="" width={160} height={160} sizes="36px" className="h-full w-full object-cover" />
-                    </button>
+                      style={{ backgroundColor: f.color }}
+                      className={`h-8 w-8 shrink-0 rounded-full transition-all duration-300 ${on ? "shadow-[0_0_0_2px_var(--color-klein),0_0_0_4px_var(--color-marble)]" : "opacity-80 shadow-[0_0_0_1.5px_rgb(242_240_234/0.55)] hover:opacity-100"}`}
+                    />
                   );
                 })}
                 <span className="label ml-1 !text-[0.625rem] leading-tight">2ᵉ pot<br /><span className="text-white">{getFlavour(upsell.second).label}</span></span>

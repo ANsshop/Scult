@@ -6,7 +6,7 @@ import { useCallback, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 
 /** Les slides de la section 3. Visuels 16:9, sujet à droite, mur bleu vide à gauche pour le texte. */
-type Slide = { id: string; label: string; title: string; text?: string; cta: { label: string; href: string }; image: string; /** Version verticale (4:5) pour téléphone ; sinon l'image large est recadrée avec `position`. */ imageMobile?: string; alt: string; position: string; /** Visuel sur fond blanc : texte à l'encre ; sur téléphone il passe en haut, au-dessus des pots. */ light?: boolean };
+type Slide = { id: string; label: string; title: string; text?: string; cta: { label: string; href: string }; image: string; /** Version verticale (4:5) pour téléphone ; sinon l'image large est recadrée avec `position`. */ imageMobile?: string; alt: string; position: string; /** Recadrage sur ordinateur (object-position) ; par défaut le sujet reste calé à droite, centré en hauteur. */ positionDesktop?: string; /** Visuel sur fond blanc : texte à l'encre ; sur téléphone il passe en haut, au-dessus des pots. */ light?: boolean };
 
 const SLIDES: Slide[] = [
   {
@@ -26,10 +26,11 @@ const SLIDES: Slide[] = [
     title: "Pour les séries qui comptent.",
     text: "« La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. »",
     cta: { label: "Commander · 49 €", href: "/produits/cri" },
-    image: visuel("hero-2-16x9"),
-    imageMobile: visuel("section3-barre-4x5"),
-    alt: "Le poing de marbre de la statue, strap rouge au poignet, serre une barre couverte de craie à côté d'un pot SCULT CRI",
+    image: visuel("assis-16x9"),
+    imageMobile: visuel("assis-4x5"),
+    alt: "La statue de marbre assise sur un bloc, le menton sur le poing, tient le pot SCULT CRI posé sur son genou",
     position: "50% 50%",
+    positionDesktop: "100% 6%",   // sur un écran large l'image est rognée en hauteur : on garde la tête
   },
   {
     id: "lot",
@@ -102,7 +103,7 @@ export function Statue() {
                     style={{ "--pos": s.position } as React.CSSProperties}
                     className="object-cover object-(--pos) md:hidden"
                   />
-                  <Image src={s.image} alt="" fill sizes="100vw" className="hidden object-cover object-[100%_50%] md:block" />
+                  <Image src={s.image} alt="" fill sizes="100vw" style={{ objectPosition: s.positionDesktop ?? "100% 50%" }} className="hidden object-cover md:block" />
                 </div>
                 <div className={`absolute inset-y-0 left-0 flex flex-col p-5 md:justify-center md:py-12 md:pr-8 md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] ${s.light ? "w-[78%] justify-start pt-[4.75rem] text-ink md:w-[36%]" : `justify-center md:w-[46%] [text-shadow:0_1px_2px_rgb(11_11_15/0.55),0_0_22px_rgb(11_11_15/0.45)] ${s.imageMobile ? "w-[49%]" : "w-[58%]"}`}`}>
                   <p className={`label ${s.light ? "text-stone" : "text-marble/85"}`}>{s.label}</p>

@@ -1,32 +1,35 @@
 /**
  * Produit les visuels du pot pour le site, pour chaque goût, à partir des
- * photos d'origine (docs/3d/sources/photos/, goût fruits rouges, ancienne
- * formule). Sur chaque photo, seul ce qui change est refait ; le reste de
- * l'image n'est pas touché, et rien n'est généré.
- *   - face, pot détouré, photo d'ambiance : la ligne de dosages est effacée
- *     et recomposée ; pour un autre goût, l'ancienne pastille est recouverte
- *     de papier (pris juste dessous, sur la même photo) et la nouvelle posée
- *     au même endroit, dans la même perspective ;
- *   - dos : l'ancienne étiquette est effacée et la nouvelle (dos-<goût>.jpg)
- *     posée à sa place, avec la courbure du pot ;
- *   - images de l'accueil (hero, slider du bas) : la ligne de dosages ;
- *   - vignettes des sélecteurs de goût, et étiquette allégée de chaque goût
- *     pour la visionneuse 3D.
+ * photos d'origine (docs/3d/sources/photos/ et sources/accueil/ : goût fruits
+ * rouges, ancienne formule, pastille de goût avec photo). Sur chaque image,
+ * seul ce qui change est refait ; le reste n'est pas touché, et rien n'est
+ * généré.
+ *   - la ligne de dosages est effacée et recomposée ;
+ *   - la pastille de goût est effacée (le papier est reconstitué) et le nom
+ *     du goût imprimé à sa place, dans sa couleur et dans la même perspective ;
+ *   - dos du pot : l'ancienne étiquette est effacée et la nouvelle
+ *     (dos-<goût>.jpg) posée à sa place, avec la courbure du pot ;
+ *   - étiquette allégée de chaque goût pour la visionneuse 3D.
  *
- *   node scripts/3d/gouts-visuels.mjs            # tous les goûts
- *   node scripts/3d/gouts-visuels.mjs ice-tea-peche
+ *   node scripts/3d/gouts-visuels.mjs            # tout
+ *   node scripts/3d/gouts-visuels.mjs ice-tea-peche   # les visuels d'un goût
  *
  * À lancer après scripts/3d/gouts.mjs (il lit docs/3d/textures/dos-<goût>.jpg
- * et wrap-<goût>.jpg). Les photos sortent dans public/cri/<version>/, la
- * version étant celle de cri-formule.json : quand la formule change, on
+ * et wrap-<goût>.jpg). Les images sortent dans public/cri/<version>/, la
+ * version étant celle de cri-formule.json : quand l'étiquette change, on
  * change de version, donc d'adresse, et aucun cache ne ressert l'ancienne image.
+ *
+ * Ajouter une image : la poser dans sources/accueil/, relever à la loupe l'axe
+ * de sa ligne de dosages et les quatre coins de sa pastille, l'inscrire dans
+ * ACCUEIL. Une image générée s'ajoute de la même façon : ses textes sont
+ * refaits ici, ils sont donc exacts.
  */
-import { mkdirSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import sharp from "sharp";
-import { FORMULE, GOUTS, LIGNE, LIGNE_ORIGINE, SRC, fonts, pastilleCss, pastilleHtml } from "./gouts.mjs";
-import { dilater, ecrire, effacer, file, lire, masqueEncre, matrix3d, remplacerLigne, shoot } from "./retouche.mjs";
+import { COUVERCLE, FORMULE, GOUTS, LIGNE, LIGNE_ORIGINE, MENTIONS_ZONE, SRC, marque, mentions } from "./gouts.mjs";
+import { dilater, ecrire, effacer, lire, masqueEncre, remplacerLigne, remplacerLigneCourbe, remplacerPastille } from "./retouche.mjs";
 
 const PUBLIC = resolve("public");
 const TEX = resolve("docs/3d/textures");
@@ -34,85 +37,105 @@ const PHOTOS = join(SRC, "photos");
 const OUT = join(PUBLIC, "cri", FORMULE.version);
 
 /**
- * Les photos où l'on voit la face du pot. `ligne` : l'axe de la ligne de
- * dosages (son début, en bas, et sa fin) et la demi-largeur où chercher son
- * encre. `coins` : les quatre coins de la pastille de goût (haut-gauche,
- * haut-droit, bas-droit, bas-gauche). `papier` : la première rangée de papier
- * vierge sous la pastille et la hauteur de la bande utilisable, pour
- * recouvrir l'ancienne. Tout est relevé à la loupe sur la photo.
+ * Ce qu'il faut savoir d'une image pour la retoucher, relevé à la loupe :
+ * `ligne` : l'axe de la ligne de dosages (son début, en bas, et sa fin) et la
+ *   demi-largeur où chercher son encre ; `bout` et `tenir` : voir retouche.mjs.
+ * `pastille` : les quatre coins de la pastille de goût d'origine (haut-gauche,
+ *   haut-droit, bas-droit, bas-gauche) et `papier`, la première rangée de
+ *   papier vierge sous elle avec la hauteur de bande utilisable.
  */
 const FACES = [
   {
     src: "face.webp",
     nom: "face",
     ligne: { axe: [[1247.5, 1332], [1247.5, 433]], demi: 14 },
-    coins: [[787.5, 1375], [1061.5, 1375], [1061.5, 1481.5], [787.5, 1481.5]],
-    papier: { y: 1489, h: 40 },
+    pastille: { coins: [[787.5, 1375], [1061.5, 1375], [1061.5, 1481.5], [787.5, 1481.5]], papier: { y: 1489, h: 40 } },
   },
   {
     src: "detoure.webp",
     nom: "detoure",
     ligne: { axe: [[872.5, 902], [870.5, 265]], demi: 11 },
-    coins: [[547, 934], [738, 934], [738, 1011], [547, 1011]],
-    papier: { y: 1018, h: 30 },
+    pastille: { coins: [[547, 934], [738, 934], [738, 1011], [547, 1011]], papier: { y: 1018, h: 30 } },
     mini: true,
   },
   {
     src: "ambiance.webp",
     nom: "ambiance",
     ligne: { axe: [[1376, 1757], [1302.5, 1070]], demi: 16 },
-    coins: [[999, 1777], [1233, 1770.5], [1237.5, 1856.5], [1003, 1872.5]],
-    papier: { y: 1876, h: 24 },
+    pastille: { coins: [[999, 1777], [1233, 1770.5], [1237.5, 1856.5], [1003, 1872.5]], papier: { y: 1876, h: 24 } },
   },
 ];
 
 /**
- * Les images de l'accueil où la ligne de dosages se lit (hero, slider du bas),
- * dans docs/3d/sources/accueil/. Même relevé que ci-dessus ; `tenir` : la
- * nouvelle ligne tient dans la longueur de l'ancienne, le strap est tout près.
+ * Les images de l'accueil (hero, slider du bas), dans sources/accueil/. Le
+ * pot y est toujours celui du goût d'origine. `tenir` partout : la nouvelle
+ * ligne tient dans la longueur de l'ancienne, le strap est tout près.
+ *
+ * `generee` : image produite par un générateur. Le pot y est fidèle, mais ses
+ * petits textes sortent approximatifs : la ligne de dosages, le nom du goût et
+ * la phrase du couvercle (`couvercle` : trois points de sa ligne de base et la
+ * hauteur de ses capitales) sont toujours réimprimés, les mentions aussi si
+ * `mentions` est vrai. `largeur` : la largeur de l'image livrée au site.
  */
 const ACCUEIL = {
-  "hero-16x9": { axe: [[1896, 1010], [1896, 440]], demi: 9 },
-  "hero-9x16": { axe: [[1050.5, 2048], [1035.5, 1462]], demi: 11 },
-  "hero-2-16x9": { axe: [[1870, 840], [1870, 335]], demi: 9 },
-  "hero-2-9x16": { axe: [[887.5, 1565], [887.5, 1042]], demi: 11 },
-  "section3-dose-16x9": { axe: [[2072.5, 1313], [2072.5, 760]], demi: 14 },
-  "section3-dose-4x5": { axe: [[1057, 1225], [1057, 846]], demi: 8, bout: 2 },   // le strap commence 6 px après la fin de la ligne
-  "section3-barre-4x5": { axe: [[1101, 1233], [1101, 830]], demi: 10 },
+  "hero-16x9": {
+    ligne: { axe: [[1896, 1010], [1896, 440]], demi: 9 },
+    pastille: { coins: [[1629, 1034.5], [1804.5, 1034.5], [1804.5, 1115], [1629, 1115]], papier: { y: 1122, h: 40 } },
+  },
+  "hero-9x16": {
+    ligne: { axe: [[1050.5, 2048], [1035.5, 1462]], demi: 11 },
+    pastille: { coins: [[763.5, 2068.5], [940.5, 2068], [941, 2140.5], [764, 2140.5]], papier: { y: 2147, h: 40 } },
+  },
+  // Générée le 2026-11-14 (cadrage plus large que la première version, où le pot était trop grand).
+  "hero-2-16x9": {
+    generee: true,
+    largeur: 2880,
+    couvercle: { points: [[2596, 735], [2999, 714], [3384, 728]], cap: 14 },
+    ligne: { axe: [[3377.5, 1565], [3377.5, 952.5]], demi: 13 },
+    pastille: { coins: [[2999.9, 1575.6], [3224.1, 1575.6], [3224.1, 1661.9], [2999.9, 1661.9]], papier: { y: 1668, h: 30 }, depuis: 125 },
+  },
+  "hero-2-9x16": {
+    ligne: { axe: [[887.5, 1565], [887.5, 1042]], demi: 11 },
+    pastille: { coins: [[611, 1593.5], [775, 1593.5], [775, 1658.5], [611, 1658.5]], papier: { y: 1665, h: 36 } },
+  },
+  "section3-dose-16x9": {
+    ligne: { axe: [[2072.5, 1313], [2072.5, 760]], demi: 14 },
+    pastille: { coins: [[1780.5, 1302], [1951, 1299.3], [1951, 1372.5], [1780.5, 1374.5]], papier: { y: 1381, h: 40 } },
+  },
+  "section3-dose-4x5": {
+    ligne: { axe: [[1057, 1225], [1057, 846]], demi: 8, bout: 2 },   // le strap commence 6 px après la fin de la ligne
+    pastille: { coins: [[868.5, 1216.5], [980.5, 1216.5], [980.5, 1268], [868.5, 1268]], papier: { y: 1273, h: 22 } },
+  },
+  // La statue assise, le pot dans la main (slide 2 du slider du bas). Générées le 2026-11-14.
+  "assis-16x9": {
+    generee: true,
+    largeur: 2880,
+    couvercle: { points: [[2868, 544.5], [3200, 526], [3470, 537.5]], cap: 14.5 },
+    ligne: { axe: [[3456, 1120], [3456, 686]], demi: 13 },
+    pastille: { coins: [[3139.9, 1132.5], [3321.9, 1132.5], [3321.9, 1202.5], [3139.9, 1202.5]], papier: { y: 1209, h: 24 }, depuis: 138 },
+  },
+  "assis-4x5": {
+    generee: true,
+    largeur: 1440,
+    mentions: true,   // le pot est petit : ses mentions sont sorties illisibles
+    couvercle: { points: [[1347.5, 1120], [1505, 1109.5], [1648.75, 1115]], cap: 5.5 },
+    ligne: { axe: [[1637.5, 1412.5], [1637.5, 1193.75]], demi: 7 },
+    pastille: { coins: [[1475.1, 1417], [1573.9, 1417], [1573.9, 1455], [1475.1, 1455]], papier: { y: 1460, h: 12 }, depuis: 143 },
+  },
+};
+/** L'image de partage du lien (Open Graph, Twitter) : même pot, en tout petit. */
+const PARTAGE = {
+  ligne: { axe: [[1032, 495], [1032, 180]], demi: 6, bout: 2 },
+  pastille: { coins: [[889, 509], [984, 509], [984, 553], [889, 553]], papier: { y: 557, h: 14 } },
 };
 
-/** Pose la pastille du goût sur une photo (fichier PNG opaque) et rend l'image complète, en tampon PNG. */
-async function pastilleSurPhoto(photo, g, basePng, dir) {
-  const meta = await sharp(basePng).metadata();
-  const xs = photo.coins.map((p) => p[0]), ys = photo.coins.map((p) => p[1]);
-  const box = { l: Math.min(...xs), t: Math.min(...ys), r: Math.max(...xs), b: Math.max(...ys) };
-  // Zone rendue par Chrome (large : il lui faut une fenêtre confortable) et zone réellement recollée (serrée)
-  const R = { l: Math.max(0, Math.floor(box.l - 320)), t: Math.max(0, Math.floor(box.t - 240)) };
-  R.w = Math.min(meta.width - R.l, 900);
-  R.h = Math.min(meta.height - R.t, 640);
-  const P = { l: Math.floor(box.l - 14), t: Math.floor(box.t - 14), w: Math.ceil(box.r - box.l + 28), h: Math.ceil(box.b - box.t + 28) };
-
-  const k = 390 / (box.r - box.l);          // px de la pastille par px de la photo
-  const m = 9;                               // débord du cache autour de la pastille (px pastille)
-  const bandes = Math.ceil((150 + 2 * m) / (photo.papier.h * k));
-  const hb = (150 + 2 * m) / bandes;         // hauteur d'une bande (px pastille)
-  const strips = Array.from({ length: bandes }, (_, i) =>
-    `<div style="position:absolute;left:0;width:100%;top:${i * hb}px;height:${hb + 0.5}px;background:url('${file(basePng)}') no-repeat;background-size:${meta.width * k}px ${meta.height * k}px;background-position:${-(box.l * k - m)}px ${-(photo.papier.y * k)}px;transform:scaleY(${i % 2 ? -1 : 1})"></div>`).join("");
-  const local = photo.coins.map(([x, y]) => [x - R.l, y - R.t]);
-  const html = `<!doctype html><meta charset="utf-8"><style>${fonts}
-#c{position:relative;width:${R.w}px;height:${R.h}px;overflow:hidden;background:url('${file(basePng)}') ${-R.l}px ${-R.t}px/${meta.width}px ${meta.height}px no-repeat}
-#t{position:absolute;left:0;top:0;width:390px;height:150px;transform-origin:0 0;transform:${matrix3d(390, 150, local)}}
-#cache{position:absolute;left:${-m}px;top:${-m}px;width:${390 + 2 * m}px;height:${150 + 2 * m}px;overflow:hidden;border-radius:${50 + m}px;
-  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 7px,#000 calc(100% - 7px),transparent 100%),linear-gradient(to bottom,transparent 0,#000 7px,#000 calc(100% - 7px),transparent 100%);
-  -webkit-mask-composite:source-in;mask-composite:intersect}
-.pastille{left:0;top:0}
-${pastilleCss(g)}
-</style><div id="c"><div id="t"><div id="cache">${strips}</div>${pastilleHtml(g)}</div></div>`;
-  const shotFile = join(dir, "shot.png");
-  shoot(html, R.w, R.h, shotFile, dir);
-  const patch = await sharp(shotFile).extract({ left: P.l - R.l, top: P.t - R.t, width: P.w, height: P.h }).removeAlpha().png().toBuffer();
-  return sharp(basePng).composite([{ input: patch, left: P.l, top: P.t }]).png().toBuffer();
+/** Une image d'origine avec la ligne de dosages de la formule ; le goût reste à marquer. */
+async function avecLigne(path, ligne, dir, tenir = false) {
+  const img = await lire(path);
+  if (LIGNE !== LIGNE_ORIGINE) await remplacerLigne(img, { ...ligne, tenir }, { ancien: LIGNE_ORIGINE, nouveau: LIGNE }, dir);
+  return img;
 }
+const copie = (img) => ({ ...img, data: Buffer.from(img.data) });
 
 /**
  * Le dos du pot. L'étiquette à plat (1500 px de large) est posée sur la photo
@@ -176,61 +199,54 @@ async function main() {
   const dir = mkdtempSync(join(tmpdir(), "gout-visuels-"));
   try {
     mkdirSync(OUT, { recursive: true });
-    mkdirSync(join(PUBLIC, "gouts"), { recursive: true });
     mkdirSync(join(PUBLIC, "models"), { recursive: true });
     // Les versions précédentes ne servent plus.
     for (const d of readdirSync(join(PUBLIC, "cri"))) if (d !== FORMULE.version) rmSync(join(PUBLIC, "cri", d), { recursive: true, force: true });
 
-    // Les photos de face avec la ligne de dosages de la formule : une fois pour tous les goûts.
-    const bases = [];
-    for (const photo of FACES) {
-      const img = await lire(join(PHOTOS, photo.src));
-      if (LIGNE !== LIGNE_ORIGINE) await remplacerLigne(img, photo.ligne, { ancien: LIGNE_ORIGINE, nouveau: LIGNE }, dir);
-      const png = join(dir, `${photo.nom}.png`);
-      await ecrire(img, png);
-      // Le pot détouré garde sa transparence d'origine.
-      const meta = await sharp(join(PHOTOS, photo.src)).metadata();
-      const alpha = meta.hasAlpha ? await sharp(join(PHOTOS, photo.src)).extractChannel("alpha").toBuffer() : null;
-      bases.push({ photo, png, alpha });
-    }
-
-    // Les images de l'accueil : seule la ligne de dosages change.
     if (!arg) {
-      for (const [nom, ligne] of Object.entries(ACCUEIL)) {
-        const img = await lire(join(SRC, "accueil", `${nom}.webp`));
-        if (LIGNE !== LIGNE_ORIGINE) await remplacerLigne(img, { ...ligne, tenir: true }, { ancien: LIGNE_ORIGINE, nouveau: LIGNE }, dir);
-        await ecrire(img, join(OUT, `${nom}.webp`), { quality: 84 });
+      // Les images de l'accueil : la ligne de dosages et le marquage du goût d'origine.
+      const origine = GOUTS[0];
+      for (const [nom, cfg] of Object.entries(ACCUEIL)) {
+        const src = join(SRC, "accueil", `${nom}.webp`);
+        if (!existsSync(src)) { console.log("— absent :", nom); continue; }
+        const img = await lire(src);
+        if (cfg.couvercle) await remplacerLigneCourbe(img, cfg.couvercle, COUVERCLE, dir);
+        if (cfg.ligne && (cfg.generee || LIGNE !== LIGNE_ORIGINE)) await remplacerLigne(img, { ...cfg.ligne, tenir: true }, { ancien: LIGNE_ORIGINE, nouveau: LIGNE }, dir);
+        if (cfg.pastille) await remplacerPastille(img, cfg.pastille, marque(origine), dir);
+        if (cfg.mentions) await remplacerPastille(img, { ...cfg.pastille, zone: MENTIONS_ZONE }, mentions(), dir, 0.2);
+        let out = sharp(img.data, { raw: { width: img.width, height: img.height, channels: 3 } });
+        if (cfg.largeur && cfg.largeur < img.width) out = out.resize({ width: cfg.largeur });
+        await out.webp({ quality: 84 }).toFile(join(OUT, `${nom}.webp`));
       }
       // Les trois pots sur fond blanc (slide du bas) : rendus du modèle 3D par render_trio.py, posés sur du blanc.
       for (const nom of ["trio-16x9", "trio-4x5"]) await sharp(resolve("docs/3d/renders", `${nom}.jpg`)).webp({ quality: 88 }).toFile(join(OUT, `${nom}.webp`));
-      // L'image de partage du lien (Open Graph, Twitter) : même pot, même ligne, en tout petit.
-      const partage = await lire(join(SRC, "accueil", "partage.jpg"));
-      if (LIGNE !== LIGNE_ORIGINE) await remplacerLigne(partage, { axe: [[1032, 495], [1032, 180]], demi: 6, tenir: true, bout: 2 }, { ancien: LIGNE_ORIGINE, nouveau: LIGNE }, dir);
+      const partage = await avecLigne(join(SRC, "accueil", "partage.jpg"), PARTAGE.ligne, dir, true);
+      await remplacerPastille(partage, PARTAGE.pastille, marque(origine), dir);
       for (const nom of ["opengraph-image.jpg", "twitter-image.jpg"]) await ecrire(partage, resolve("src/app", nom), { quality: 90 });
       console.log("✓ accueil");
     }
 
+    // Les photos de face avec la ligne de dosages de la formule : une fois pour tous les goûts.
+    const bases = [];
+    for (const photo of FACES) {
+      const img = await avecLigne(join(PHOTOS, photo.src), photo.ligne, dir);
+      // Le pot détouré garde sa transparence d'origine.
+      const meta = await sharp(join(PHOTOS, photo.src)).metadata();
+      const alpha = meta.hasAlpha ? await sharp(join(PHOTOS, photo.src)).extractChannel("alpha").toBuffer() : null;
+      bases.push({ photo, img, alpha });
+    }
+
     for (const g of GOUTS.filter((x) => !arg || x.slug === arg)) {
-      for (const { photo, png, alpha } of bases) {
-        const done = g.origine ? await sharp(png).png().toBuffer() : await pastilleSurPhoto(photo, g, png, dir);
-        const out = alpha ? await sharp(done).removeAlpha().joinChannel(alpha).png().toBuffer() : done;
-        await sharp(out).webp({ quality: 90 }).toFile(join(OUT, `${g.slug}-${photo.nom}.webp`));
-        if (photo.mini) await sharp(out).resize({ width: 200 }).webp({ quality: 90 }).toFile(join(OUT, `${g.slug}-mini.webp`));
+      for (const { photo, img, alpha } of bases) {
+        const face = copie(img);
+        await remplacerPastille(face, photo.pastille, marque(g), dir);
+        let out = sharp(face.data, { raw: { width: face.width, height: face.height, channels: 3 } });
+        if (alpha) out = out.joinChannel(alpha);
+        const png = await out.png().toBuffer();
+        await sharp(png).webp({ quality: 90 }).toFile(join(OUT, `${g.slug}-${photo.nom}.webp`));
+        if (photo.mini) await sharp(png).resize({ width: 200 }).webp({ quality: 90 }).toFile(join(OUT, `${g.slug}-mini.webp`));
       }
       await dosSurPhoto(g, join(OUT, `${g.slug}-dos.webp`));
-
-      // La vignette du sélecteur de goût : la photo de la pastille (celle d'origine est prise sur la face).
-      const swatch = join(PUBLIC, `gouts/${g.slug}.webp`);
-      if (g.origine) {
-        await sharp(join(SRC, "face.jpg")).extract({ left: 2084, top: 1429, width: 136, height: 136 }).resize(160, 160).webp({ quality: 88 }).toFile(swatch);
-      } else {
-        const [px, py] = g.photo.split(" ").map((v) => parseFloat(v) / 100);
-        const meta = await sharp(join(SRC, "gouts", `${g.slug}.jpg`)).metadata();
-        const side = Math.min(meta.width, meta.height);
-        await sharp(join(SRC, "gouts", `${g.slug}.jpg`))
-          .extract({ left: Math.round((meta.width - side) * px), top: Math.round((meta.height - side) * py), width: side, height: side })
-          .resize(160, 160).webp({ quality: 88 }).toFile(swatch);
-      }
       await sharp(join(TEX, `wrap-${g.slug}.jpg`)).resize({ width: 3072 }).jpeg({ quality: 80 }).toFile(join(PUBLIC, `models/etiquette-${g.slug}.jpg`));
       console.log("✓", g.slug);
     }

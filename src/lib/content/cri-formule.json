@@ -1,40 +1,118 @@
 {
-  "version": "f2",
+  "version": "f3",
   "dose": "23 g",
   "doses": 30,
   "poids": "690 g",
   "denomination": "Complément alimentaire à base d'acides aminés, de créatine, de caféine et d'extraits de plantes. Avec édulcorant.",
   "actifs": [
-    { "nom": "L-citrulline", "quantite": "8 000 mg" },
-    { "nom": "Bêta-alanine", "quantite": "3 200 mg" },
-    { "nom": "Créatine", "quantite": "3 000 mg" },
-    { "nom": "L-théanine", "quantite": "400 mg" },
-    { "nom": "Sodium (sel rose de l'Himalaya)", "quantite": "300 mg" },
-    { "nom": "Dicaféine malate", "quantite": "300 mg" },
-    { "nom": "Caféine anhydre", "quantite": "170 mg" },
-    { "nom": "Théacrine", "quantite": "100 mg" },
-    { "nom": "Extrait de poivre noir", "quantite": "4,8 mg" },
-    { "nom": "Capsaïcine", "quantite": "3 mg" }
+    {
+      "nom": "L-citrulline",
+      "quantite": "8 000 mg"
+    },
+    {
+      "nom": "Bêta-alanine",
+      "quantite": "3 200 mg"
+    },
+    {
+      "nom": "Créatine",
+      "quantite": "3 000 mg"
+    },
+    {
+      "nom": "L-théanine",
+      "quantite": "400 mg"
+    },
+    {
+      "nom": "Sodium (sel rose de l'Himalaya)",
+      "quantite": "300 mg"
+    },
+    {
+      "nom": "Dicaféine malate",
+      "quantite": "300 mg"
+    },
+    {
+      "nom": "Caféine anhydre",
+      "quantite": "170 mg"
+    },
+    {
+      "nom": "Théacrine",
+      "quantite": "100 mg"
+    },
+    {
+      "nom": "Extrait de poivre noir",
+      "quantite": "4,8 mg"
+    },
+    {
+      "nom": "Capsaïcine",
+      "quantite": "3 mg"
+    }
   ],
   "complexe": {
     "nom": "Complexe Focus",
     "quantite": "5 523 mg",
     "ingredients": [
-      { "nom": "DMAE bitartrate", "quantite": null },
-      { "nom": "Hericium erinaceus (lion's mane)", "quantite": null },
-      { "nom": "Extrait de genévrier 10:1", "quantite": null },
-      { "nom": "Mucuna pruriens (L-DOPA 99 %)", "quantite": null },
-      { "nom": "N-phénéthyl diméthylamine", "quantite": null },
-      { "nom": "Hordénine 98 %", "quantite": null },
-      { "nom": "Huperzia serrata (huperzine A 1 %)", "quantite": null }
+      {
+        "nom": "DMAE bitartrate",
+        "quantite": null
+      },
+      {
+        "nom": "Hericium erinaceus (lion's mane)",
+        "quantite": null
+      },
+      {
+        "nom": "Extrait de genévrier 10:1",
+        "quantite": null
+      },
+      {
+        "nom": "Mucuna pruriens (L-DOPA 99 %)",
+        "quantite": null
+      },
+      {
+        "nom": "N-phénéthyl diméthylamine",
+        "quantite": null
+      },
+      {
+        "nom": "Hordénine 98 %",
+        "quantite": null
+      },
+      {
+        "nom": "Huperzia serrata (huperzine A 1 %)",
+        "quantite": null
+      }
     ]
   },
   "cafeineTotale": "390 mg",
   "ingredients": "L-citrulline, complexe Focus (bitartrate de DMAE, extrait d'Hericium erinaceus, extrait de baies de genévrier, extrait de Mucuna pruriens, N-phénéthyl diméthylamine, hordénine, extrait d'Huperzia serrata), bêta-alanine, créatine monohydrate, acidifiant : acide citrique, sel rose de l'Himalaya, {AROME}, L-théanine, dicaféine malate, édulcorant : glycosides de stéviol, caféine anhydre, anti-agglomérant : dioxyde de silicium, théacrine, colorant : {COLORANT}, extrait de poivre noir, capsaïcine.",
   "gouts": {
-    "fruits-rouges": { "arome": "arôme naturel", "colorant": "rouge de betterave" },
-    "cassis-framboise": { "arome": "arômes naturels de cassis et de framboise", "colorant": "rouge de betterave" },
-    "ice-tea-peche": { "arome": "arômes naturels de thé et de pêche", "colorant": "caramel ordinaire" }
+    "fruits-rouges": {
+      "nom": "Fruits rouges",
+      "lignes": [
+        "Fruits",
+        "rouges"
+      ],
+      "couleur": "#c8102e",
+      "arome": "arôme naturel",
+      "colorant": "rouge de betterave"
+    },
+    "cassis-framboise": {
+      "nom": "Cassis framboise",
+      "lignes": [
+        "Cassis",
+        "framboise"
+      ],
+      "couleur": "#6f1d7a",
+      "arome": "arômes naturels de cassis et de framboise",
+      "colorant": "rouge de betterave"
+    },
+    "ice-tea-peche": {
+      "nom": "Ice tea pêche",
+      "lignes": [
+        "Ice tea",
+        "pêche"
+      ],
+      "couleur": "#8a4a1c",
+      "arome": "arômes naturels de thé et de pêche",
+      "colorant": "caramel ordinaire"
+    }
   },
   "usage": "Mélanger 1 dose (23 g, une mesure rase) dans 400 ml d'eau fraîche. Boire 20 à 30 minutes avant l'entraînement.",
   "usageFort": "Les premières prises, commencer par une demi-dose.",

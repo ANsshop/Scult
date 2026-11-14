@@ -38,8 +38,8 @@ ou par `turntable` pour sortir en plus 48 images de rotation.
 
 ## Les goûts
 
-Un pot par goût : seule l'étiquette change (pastille de goût en face, ligne
-« Saveur … » et ingrédients au dos).
+Un pot par goût : seule l'étiquette change (le nom du goût, écrit dans sa
+couleur en face ; la ligne « Saveur … » et les ingrédients au dos).
 
 ```bash
 node scripts/3d/gouts.mjs                       # étiquettes : textures/wrap-<goût>.jpg, dos-<goût>.jpg et wrap.jpg
@@ -52,8 +52,8 @@ bash scripts/3d/build-web.sh                    # le modèle de la visionneuse d
   docs/3d/pot-cri-cassis-framboise.glb docs/3d/pot-cri.glb docs/3d/pot-cri-ice-tea-peche.glb
 ```
 
-Ajouter un goût : une entrée dans `GOUTS` (`scripts/3d/gouts.mjs`), une
-photo `sources/gouts/<goût>.jpg`, une entrée dans `FLAVOURS`
+Ajouter un goût : son nom, sa couleur, son arôme et son colorant dans
+`src/lib/content/cri-formule.json` (`gouts`), une entrée dans `FLAVOURS`
 (`src/lib/content/flavours.ts`) et ses variantes dans le catalogue.
 La visionneuse du site ne charge qu'un modèle : pour changer de goût elle
 remplace l'étiquette (`public/models/etiquette-<goût>.jpg`, 3072 px). Les sources de l'étiquette sont dans
