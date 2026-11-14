@@ -24,7 +24,7 @@
  * ACCUEIL. Une image générée s'ajoute de la même façon : ses textes sont
  * refaits ici, ils sont donc exacts.
  */
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import sharp from "sharp";
@@ -219,6 +219,9 @@ async function main() {
     mkdirSync(join(PUBLIC, "models"), { recursive: true });
     // Les versions précédentes ne servent plus.
     for (const d of readdirSync(join(PUBLIC, "cri"))) if (d !== FORMULE.version) rmSync(join(PUBLIC, "cri", d), { recursive: true, force: true });
+    // Le catalogue de test suit : ses images (JSON-LD, panier) pointent sur la version en cours.
+    const mock = join(PUBLIC, "..", "docs/mock/catalogue.json");
+    writeFileSync(mock, readFileSync(mock, "utf8").replace(/\/cri\/f\d+\//g, `/cri/${FORMULE.version}/`));
 
     if (!arg) {
       // Les images de l'accueil : la ligne de dosages et le marquage du goût d'origine.

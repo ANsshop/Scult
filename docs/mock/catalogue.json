@@ -25,7 +25,7 @@
       "name": "CRI",
       "slug": "cri",
       "description": "Pré-workout en poudre, en trois goûts : fruits rouges, cassis framboise, ice tea pêche. Par dose de 23 g : L-citrulline 8 g, bêta-alanine 3,2 g, créatine 3 g, L-théanine 400 mg, 390 mg de caféine en deux formes, théacrine 100 mg et un complexe Focus de 5,5 g. Pot de 690 g, soit 30 doses. Avec édulcorant. Réservé à l'adulte.",
-      "imageUrl": "/cri/f2/fruits-rouges-face.webp",
+      "imageUrl": "/cri/f3/fruits-rouges-face.webp",
       "category": {
         "slug": "poudres",
         "name": "Poudres"
@@ -36,19 +36,19 @@
       },
       "images": [
         {
-          "url": "/cri/f2/fruits-rouges-face.webp",
+          "url": "/cri/f3/fruits-rouges-face.webp",
           "alt": "Pot SCULT CRI vu de face : le nom CRI en bleu imprimé sur le visage d'une statue qui hurle, strap rouge autour du couvercle",
           "width": 1344,
           "height": 1680
         },
         {
-          "url": "/cri/f2/fruits-rouges-dos.webp",
+          "url": "/cri/f3/fruits-rouges-dos.webp",
           "alt": "Dos du pot SCULT CRI : tableau nutritionnel, liste d'ingrédients, conseils d'utilisation et précautions d'emploi",
           "width": 1656,
           "height": 2208
         },
         {
-          "url": "/cri/f2/fruits-rouges-ambiance.webp",
+          "url": "/cri/f3/fruits-rouges-ambiance.webp",
           "alt": "Une statue de marbre qui hurle tend le pot SCULT CRI vers l'objectif, devant un mur bleu",
           "width": 1792,
           "height": 2240
@@ -108,7 +108,7 @@
       "name": "CRI — pack de 2",
       "slug": "cri-duo",
       "description": "Deux pots de CRI, pré-workout, aux goûts de votre choix (fruits rouges, cassis framboise, ice tea pêche) : 2 × 690 g, soit 60 doses. 83,30 € au lieu de 98 €. Livraison offerte.",
-      "imageUrl": "/cri/f2/fruits-rouges-face.webp",
+      "imageUrl": "/cri/f3/fruits-rouges-face.webp",
       "category": {
         "slug": "packs",
         "name": "Packs"
@@ -119,7 +119,7 @@
       },
       "images": [
         {
-          "url": "/cri/f2/fruits-rouges-face.webp",
+          "url": "/cri/f3/fruits-rouges-face.webp",
           "alt": "Pot SCULT CRI vu de face : le nom CRI en bleu imprimé sur le visage d'une statue qui hurle, strap rouge autour du couvercle",
           "width": 1344,
           "height": 1680
