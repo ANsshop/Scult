@@ -476,6 +476,18 @@ le choix fait, avec `public/propositions/`.
 | 2 · Regard : demi-visage en noir et blanc sur blanc, la pastille rouge pour seule couleur | `9914d8aa-263c-4669-aeeb-660438e1c276` |
 | 3 · Par-dessus le bras : soleil bas, drapé bleu Klein, strap rouge | `8e76c28b-5874-4ad6-88e5-0a516a5134e0` |
 
+**Propositions 2 et 3 refaites** : les premières « font très IA, trop lisse ».
+Refaites en demandant une vraie photo argentique d'une vraie sculpture
+ancienne — `3be9abe5-6c53-4498-8e7b-ecc3a4b2d7af` (Regard, Tri-X) et
+`5dfe82ef-0c45-42d1-9de5-b4b4e5f6f2e9` (Par-dessus le bras, Portra). Ce qui
+enlève le côté lisse, à réécrire dans tout prompt de statue : « a real
+photograph of a real antique sculpture, shot on 35mm film, visible grain,
+shallow depth of field, slight softness » ; pierre « matte, chalky, weathered,
+sugary crystalline surface, erosion, open pores, chisel marks, stains,
+lichen » ; et l'interdit « nothing is smooth, glossy, polished, wet or
+perfectly clean ; not a 3D render ». Ne plus écrire « glossy polish on the
+raised areas » : c'est lui qui donnait l'aspect image de synthèse.
+
 **Proposition 1 retenue, modifiée** : toujours de dos sur fond noir, mais le
 pot dans la main droite et le regard baissé vers lui, sans le mot FOCUS —
 job `934ac899-e8ba-4fc9-9015-2cad9fef76d4` (variante écartée : le pot levé à
