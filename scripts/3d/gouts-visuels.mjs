@@ -122,6 +122,23 @@ const ACCUEIL = {
     ligne: { axe: [[1637.5, 1412.5], [1637.5, 1193.75]], demi: 7 },
     pastille: { coins: [[1475.1, 1417], [1573.9, 1417], [1573.9, 1455], [1475.1, 1455]], papier: { y: 1460, h: 12 }, depuis: 143 },
   },
+  // La même statue assise, sur fond blanc (essai demandé le 2026-11-14) : même cadrage, même pot.
+  "assis-blanc-16x9": {
+    generee: true,
+    largeur: 2880,
+    mentions: true,   // « 699 G » sur l'image générée
+    couvercle: { points: [[2868, 544.5], [3200, 526.5], [3470, 538]], cap: 14.5 },
+    ligne: { axe: [[3455, 1120], [3455, 688]], demi: 13 },
+    pastille: { coins: [[3139.9, 1134], [3321.9, 1134], [3321.9, 1202.5], [3139.9, 1202.5]], papier: { y: 1209, h: 24 }, depuis: 138 },
+  },
+  "assis-blanc-4x5": {
+    generee: true,
+    largeur: 1440,
+    mentions: true,
+    couvercle: { points: [[1347.5, 1121.5], [1505, 1110.5], [1649, 1116.5]], cap: 6 },
+    ligne: { axe: [[1635.5, 1413], [1635.5, 1195]], demi: 7 },
+    pastille: { coins: [[1470.1, 1416.2], [1568.9, 1416.2], [1568.9, 1453.8], [1470.1, 1453.8]], papier: { y: 1459, h: 12 }, depuis: 150 },
+  },
 };
 /** L'image de partage du lien (Open Graph, Twitter) : même pot, en tout petit. */
 const PARTAGE = {

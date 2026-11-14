@@ -6,7 +6,7 @@ import { useCallback, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 
 /** Les slides de la section 3. Visuels 16:9, sujet à droite, mur bleu vide à gauche pour le texte. */
-type Slide = { id: string; label: string; title: string; text?: string; cta: { label: string; href: string }; image: string; /** Version verticale (4:5) pour téléphone ; sinon l'image large est recadrée avec `position`. */ imageMobile?: string; alt: string; position: string; /** Recadrage sur ordinateur (object-position) ; par défaut le sujet reste calé à droite, centré en hauteur. */ positionDesktop?: string; /** Visuel sur fond blanc : texte à l'encre ; sur téléphone il passe en haut, au-dessus des pots. */ light?: boolean };
+type Slide = { id: string; label: string; title: string; text?: string; cta: { label: string; href: string }; image: string; /** Version verticale (4:5) pour téléphone ; sinon l'image large est recadrée avec `position`. */ imageMobile?: string; alt: string; position: string; /** Recadrage sur ordinateur (object-position) ; par défaut le sujet reste calé à droite, centré en hauteur. */ positionDesktop?: string; /** Visuel sur fond blanc : texte à l'encre, bouton noir, pas d'ombre portée. */ light?: boolean; /** Sur téléphone, le texte passe en haut de l'image (le sujet est en bas du cadre). */ top?: boolean };
 
 const SLIDES: Slide[] = [
   {
@@ -26,8 +26,10 @@ const SLIDES: Slide[] = [
     title: "Pour les séries qui comptent.",
     text: "« La créatine améliore les capacités physiques en cas de séries successives d'exercices très intenses de courte durée. »",
     cta: { label: "Commander · 49 €", href: "/produits/cri" },
-    image: visuel("assis-16x9"),
-    imageMobile: visuel("assis-4x5"),
+    // Essai sur fond blanc (2026-11-14). La version sur mur bleu existe aussi : "assis-16x9" et "assis-4x5", sans `light`.
+    image: visuel("assis-blanc-16x9"),
+    imageMobile: visuel("assis-blanc-4x5"),
+    light: true,
     alt: "La statue de marbre assise sur un bloc, le menton sur le poing, tient le pot SCULT CRI posé sur son genou",
     position: "50% 50%",
     positionDesktop: "100% 6%",   // sur un écran large l'image est rognée en hauteur : on garde la tête
@@ -44,6 +46,7 @@ const SLIDES: Slide[] = [
     // Visuel sur fond blanc (rendu depuis le modèle 3D, scripts/3d/render_trio.py) : texte à l'encre,
     // bouton noir. Sur téléphone les pots sont en bas du cadre : le texte se place au-dessus.
     light: true,
+    top: true,
   },
 ];
 
@@ -105,10 +108,10 @@ export function Statue() {
                   />
                   <Image src={s.image} alt="" fill sizes="100vw" style={{ objectPosition: s.positionDesktop ?? "100% 50%" }} className="hidden object-cover md:block" />
                 </div>
-                <div className={`absolute inset-y-0 left-0 flex flex-col p-5 md:justify-center md:py-12 md:pr-8 md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] ${s.light ? "w-[78%] justify-start pt-[4.75rem] text-ink md:w-[36%]" : `justify-center md:w-[46%] [text-shadow:0_1px_2px_rgb(11_11_15/0.55),0_0_22px_rgb(11_11_15/0.45)] ${s.imageMobile ? "w-[49%]" : "w-[58%]"}`}`}>
+                <div className={`absolute inset-y-0 left-0 flex flex-col p-5 md:justify-center md:py-12 md:pr-8 md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] ${s.top ? "w-[78%] justify-start pt-[4.75rem] md:w-[36%]" : `justify-center md:w-[46%] ${s.imageMobile ? "w-[49%]" : "w-[58%]"}`} ${s.light ? "text-ink" : "[text-shadow:0_1px_2px_rgb(11_11_15/0.55),0_0_22px_rgb(11_11_15/0.45)]"}`}>
                   <p className={`label ${s.light ? "text-stone" : "text-marble/85"}`}>{s.label}</p>
                   <p className="display mt-3 text-[clamp(1.4rem,4.2vw,4rem)] md:mt-4">{s.title}</p>
-                  {s.text && <p className="mt-3 max-w-md text-[0.74rem] leading-snug text-marble/95 md:mt-5 md:text-[1.05rem] md:leading-relaxed">{s.text}</p>}
+                  {s.text && <p className={`mt-3 max-w-md text-[0.74rem] leading-snug md:mt-5 md:text-[1.05rem] md:leading-relaxed ${s.light ? "text-ink/75" : "text-marble/95"}`}>{s.text}</p>}
                   <ButtonLink href={s.cta.href} variant={s.light ? "ink" : "marble"} className="mt-5 !h-10 self-start whitespace-nowrap !px-4 [text-shadow:none] md:mt-7 md:!h-12 md:!px-7">{s.cta.label}</ButtonLink>
                 </div>
               </div>
