@@ -139,15 +139,6 @@ const ACCUEIL = {
     ligne: { axe: [[1635.5, 1413], [1635.5, 1195]], demi: 7 },
     pastille: { coins: [[1470.1, 1416.2], [1568.9, 1416.2], [1568.9, 1453.8], [1470.1, 1453.8]], papier: { y: 1459, h: 12 }, depuis: 150 },
   },
-  // La statue de dos sur fond noir, le pot dans la main droite, le regard baissé vers lui (2026-11-14).
-  // La phrase du couvercle y est sortie juste : on n'y touche pas.
-  "nuit-16x9": {
-    generee: true,
-    largeur: 2880,
-    mentions: true,   // « 698 G » sur l'image générée
-    ligne: { axe: [[3700, 1260], [3700, 830]], demi: 12 },
-    pastille: { coins: [[3427.3, 1270], [3583.3, 1270], [3583.3, 1330], [3427.3, 1330]], papier: { y: 1338, h: 22 }, depuis: 105 },
-  },
 };
 /** L'image de partage du lien (Open Graph, Twitter) : même pot, en tout petit. */
 const PARTAGE = {

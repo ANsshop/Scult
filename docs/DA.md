@@ -461,39 +461,15 @@ seule qui change d'un goût à l'autre.
   est entièrement dans la moitié droite » ; « les 42 % de gauche vides » n'a
   pas suffi.
 
-## Autres tons pour la statue — propositions (2026-11-14)
+## Autres tons pour la statue — abandonné (2026-11-14)
 
-Demande : « qu'on ne reste pas tout le temps sur le même ton sur les
-statues », avec trois références (une statue de dos sur fond noir sous le mot
-FOCUS, un très gros plan de visage en noir et blanc, un regard par-dessus un
-bras). Trois propositions avec notre personnage, montées sur la page de
-travail `/propositions` (hors navigation, non indexée) — à supprimer une fois
-le choix fait, avec `public/propositions/`.
-
-| Proposition | Job Higgsfield (16:9, 4k) |
-|---|---|
-| 1 · Nuit : de dos, fond noir, lumière rasante ; le mot FOCUS est posé en HTML | `9968c6e1-fda7-4bed-9950-35beda60780c` |
-| 2 · Regard : demi-visage en noir et blanc sur blanc, la pastille rouge pour seule couleur | `9914d8aa-263c-4669-aeeb-660438e1c276` |
-| 3 · Par-dessus le bras : soleil bas, drapé bleu Klein, strap rouge | `8e76c28b-5874-4ad6-88e5-0a516a5134e0` |
-
-**Propositions 2 et 3 refaites** : les premières « font très IA, trop lisse ».
-Refaites en demandant une vraie photo argentique d'une vraie sculpture
-ancienne — `3be9abe5-6c53-4498-8e7b-ecc3a4b2d7af` (Regard, Tri-X) et
-`5dfe82ef-0c45-42d1-9de5-b4b4e5f6f2e9` (Par-dessus le bras, Portra). Ce qui
-enlève le côté lisse, à réécrire dans tout prompt de statue : « a real
-photograph of a real antique sculpture, shot on 35mm film, visible grain,
-shallow depth of field, slight softness » ; pierre « matte, chalky, weathered,
-sugary crystalline surface, erosion, open pores, chisel marks, stains,
-lichen » ; et l'interdit « nothing is smooth, glossy, polished, wet or
-perfectly clean ; not a 3D render ». Ne plus écrire « glossy polish on the
-raised areas » : c'est lui qui donnait l'aspect image de synthèse.
-
-**Proposition 1 retenue, modifiée** : toujours de dos sur fond noir, mais le
-pot dans la main droite et le regard baissé vers lui, sans le mot FOCUS —
-job `934ac899-e8ba-4fc9-9015-2cad9fef76d4` (variante écartée : le pot levé à
-hauteur de tête, `5b822d45-…`). Source `sources/accueil/nuit-16x9.webp`,
-livrée par la chaîne en `nuit-16x9` ; sa place sur le site reste à choisir,
-et sa version téléphone (4:5) à générer.
+Trois propositions hors mur bleu ont été essayées (statue de dos sur fond
+noir, demi-visage en noir et blanc, regard par-dessus le bras), puis
+abandonnées à la demande : « on perd du temps pour rien ». Page et images
+supprimées. À retenir si le sujet revient : sans consigne, le générateur rend
+la pierre lisse et brillante (« très IA ») ; demander « a real photograph of
+a real antique sculpture, shot on 35mm film, visible grain, matte chalky
+weathered stone, nothing smooth, glossy or polished, not a 3D render ».
 
 Statue assise sur fond blanc (essai en ligne sur la slide 2 du slider du
 bas) : 16:9 `d1be7782-e622-4530-935f-a47d37133daa`, 4:5
