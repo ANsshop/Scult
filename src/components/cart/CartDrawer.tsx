@@ -1,40 +1,51 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { useCart } from "./CartProvider";
 import { PotStack } from "./PotStack";
 import { ButtonLink } from "@/components/ui/Button";
+import type { FlavourOffer } from "@/lib/catalog/queries";
+import { getFlavour, isFlavourId, packKey, type FlavourId } from "@/lib/content/flavours";
 import { formatPrice } from "@/lib/utils";
 import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping";
 
-/** Le pack à proposer quand le panier contient le produit à l'unité. Préparé côté serveur (layout). */
-export type CartUpsell = {
-  fromSku: string;
-  unitPriceCents: number;
-  units: number;
-  item: { sku: string; slug: string; name: string; priceCents: number; image: string | null };
-};
-
-export function CartDrawer({ upsell }: { upsell?: CartUpsell | null }) {
-  const { items, subtotalCents, isOpen, closeCart, setQuantity, swap, remove } = useCart();
+/**
+ * Le tiroir du panier. `offer` (préparée côté serveur, dans le layout) sert à
+ * proposer le pack : s'il reste un pot seul dans le panier, on propose d'en
+ * ajouter un deuxième, du goût de son choix, au prix du pack. Deux pots
+ * ajoutés à l'unité sont déjà regroupés en pack par le panier lui-même.
+ */
+export function CartDrawer({ offer }: { offer?: FlavourOffer | null }) {
+  const { items, subtotalCents, isOpen, closeCart, setQuantity, add, remove } = useCart();
+  const [picked, setPicked] = useState<FlavourId | null>(null);
   const missing = FREE_SHIPPING_THRESHOLD_CENTS - subtotalCents;
-  // Un pot dans le panier → on propose d'en ajouter un pour passer au pack ;
-  // deux pots ou plus → on propose de les regrouper en pack, au même nombre de pots.
-  const single = upsell ? items.find((i) => i.sku === upsell.fromSku) : undefined;
-  const offer = upsell && single
-    ? (() => {
-        const taken = Math.min(single.quantity, upsell.units);
-        const delta = upsell.item.priceCents - taken * upsell.unitPriceCents;
-        const full = upsell.units * upsell.unitPriceCents;
-        return {
-          taken,
-          delta,
-          saving: full - upsell.item.priceCents,
-          percent: Math.round((1 - upsell.item.priceCents / full) * 100),
-          freeShipping: subtotalCents + delta >= FREE_SHIPPING_THRESHOLD_CENTS,
-        };
-      })()
-    : null;
+
+  // Le pot seul du panier, s'il y en a un, et le pack qu'il formerait avec un 2ᵉ pot.
+  const lone = offer?.pack ? items.find((i) => i.flavours?.length === 1 && isFlavourId(i.flavours[0]) && offer.singles[i.flavours[0]]?.item.sku === i.sku) : undefined;
+  const upsell = (() => {
+    if (!offer?.pack || !lone) return null;
+    const base = lone.flavours![0] as FlavourId;
+    const seconds = offer.flavours.filter((id) => offer.packs[packKey(base, id)]?.inStock && offer.singles[id]?.inStock);
+    if (seconds.length === 0) return null;
+    const second = picked && seconds.includes(picked) ? picked : seconds.includes(base) ? base : seconds[0];
+    const pack = offer.packs[packKey(base, second)].item;
+    const delta = pack.priceCents - lone.priceCents;
+    return {
+      base,
+      seconds,
+      second,
+      pack,
+      delta,
+      units: offer.pack.units,
+      full: offer.pack.fullPriceCents,
+      saving: offer.pack.fullPriceCents - pack.priceCents,
+      percent: Math.round((1 - pack.priceCents / offer.pack.fullPriceCents) * 100),
+      freeShipping: subtotalCents + delta >= FREE_SHIPPING_THRESHOLD_CENTS,
+    };
+  })();
+
   return (
     <div aria-hidden={!isOpen} className={`fixed inset-0 z-50 ${isOpen ? "" : "pointer-events-none"}`}>
       <button type="button" aria-label="Fermer le panier" onClick={closeCart} className={`absolute inset-0 bg-ink/50 transition-opacity ${isOpen ? "opacity-100" : "opacity-0"}`} />
@@ -48,46 +59,71 @@ export function CartDrawer({ upsell }: { upsell?: CartUpsell | null }) {
             <p className="py-10 text-stone">Votre panier est vide.</p>
           ) : (
             <ul className="divide-y">
-              {items.map((i) => (
-                <li key={i.sku} className="flex gap-4 py-5">
-                  <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-chip bg-klein">
-                    {/* Le pot sur le mur bleu ; deux pots pour le pack */}
-                    <PotStack count={upsell && i.sku === upsell.item.sku ? upsell.units : 1} className={upsell && i.sku === upsell.item.sku ? "h-[76%] w-[84%]" : "h-[80%]"} />
-                  </div>
-                  <div className="flex-1">
-                    <Link href={`/produits/${i.slug}`} onClick={closeCart} className="font-medium hover:underline">{i.name}</Link>
-                    <p className="mt-1 text-sm text-stone">{formatPrice(i.priceCents)}</p>
-                    <div className="mt-2 flex items-center gap-3 text-sm">
-                      <button type="button" onClick={() => setQuantity(i.sku, i.quantity - 1)} className="h-7 w-7 rounded-full border">−</button>
-                      <span className="tabular-nums">{i.quantity}</span>
-                      <button type="button" onClick={() => setQuantity(i.sku, i.quantity + 1)} className="h-7 w-7 rounded-full border">+</button>
-                      <button type="button" onClick={() => remove(i.sku)} className="ml-auto label hover:text-ruby">Retirer</button>
+              {items.map((i) => {
+                const pots = i.flavours?.length ? i.flavours : [undefined];
+                return (
+                  <li key={i.sku} className="flex gap-4 py-5">
+                    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-chip bg-klein">
+                      {/* Le pot sur le mur bleu, à l'étiquette de son goût ; deux pots pour le pack */}
+                      <PotStack flavours={pots} className={pots.length > 1 ? "h-[76%] w-[84%]" : "h-[80%]"} />
                     </div>
-                  </div>
-                </li>
-              ))}
+                    <div className="flex-1">
+                      <Link href={`/produits/${i.slug}`} onClick={closeCart} className="font-medium hover:underline">{i.name}</Link>
+                      {i.detail && <p className="label mt-1 !text-[0.625rem] text-klein">{i.detail}</p>}
+                      <p className="mt-1 text-sm text-stone">{formatPrice(i.priceCents)}</p>
+                      <div className="mt-2 flex items-center gap-3 text-sm">
+                        <button type="button" onClick={() => setQuantity(i.sku, i.quantity - 1)} className="h-7 w-7 rounded-full border">−</button>
+                        <span className="tabular-nums">{i.quantity}</span>
+                        <button type="button" onClick={() => setQuantity(i.sku, i.quantity + 1)} className="h-7 w-7 rounded-full border">+</button>
+                        <button type="button" onClick={() => remove(i.sku)} className="ml-auto label hover:text-ruby">Retirer</button>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
-        {offer && upsell && (
+        {upsell && (
           <div className="card-shine group mx-6 mb-5 rounded-card bg-klein p-5 text-marble">
-            {/* Les deux pots du pack, à droite de l'encart */}
-            <PotStack count={upsell.units} className="pointer-events-none !absolute -right-2 top-4 h-32 w-40" />
+            {/* Les deux pots du pack, à droite de l'encart : celui du panier et celui qu'on ajoute */}
+            <PotStack flavours={[upsell.base, upsell.second]} className="pointer-events-none !absolute -right-2 top-4 h-32 w-40" />
             <div className="relative max-w-[62%]">
-              <p className="label flex items-center gap-2 whitespace-nowrap"><span className="rounded-full bg-ruby px-2.5 py-0.5 text-white">−{offer.percent} %</span>Pack de {upsell.units}</p>
-              <p className="display mt-3 text-[1.35rem] leading-[0.95]">
-                {offer.taken < upsell.units ? `Ajoutez un ${upsell.units === 2 ? "2ᵉ" : "autre"} pot.` : `Passez au pack de ${upsell.units}.`}
-              </p>
+              <p className="label flex items-center gap-2 whitespace-nowrap"><span className="rounded-full bg-ruby px-2.5 py-0.5 text-white">−{upsell.percent} %</span>Pack de {upsell.units}</p>
+              <p className="display mt-3 text-[1.35rem] leading-[0.95]">Ajoutez un {upsell.units === 2 ? "2ᵉ" : "autre"} pot.</p>
             </div>
             <p className="relative mt-3 max-w-[62%] text-sm leading-snug text-marble/90">
-              {formatPrice(upsell.item.priceCents)} au lieu de {formatPrice(upsell.units * upsell.unitPriceCents)} : vous économisez {formatPrice(offer.saving)}{offer.freeShipping ? ", et la livraison est offerte" : ""}.
+              {formatPrice(upsell.pack.priceCents)} au lieu de {formatPrice(upsell.full)} : vous économisez {formatPrice(upsell.saving)}{upsell.freeShipping ? ", et la livraison est offerte" : ""}.
             </p>
+            {upsell.seconds.length > 1 && (
+              <div className="relative mt-4 flex items-center gap-2.5" role="radiogroup" aria-label="Goût du 2ᵉ pot">
+                {upsell.seconds.map((id) => {
+                  const f = getFlavour(id);
+                  const on = id === upsell.second;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      aria-label={f.label}
+                      title={f.label}
+                      onClick={() => setPicked(id)}
+                      className={`relative h-9 w-9 shrink-0 overflow-hidden rounded-full transition-all duration-300 ${on ? "shadow-[0_0_0_2px_var(--color-klein),0_0_0_4px_var(--color-marble)]" : "opacity-75 shadow-[0_0_0_1px_rgb(242_240_234/0.5)] hover:opacity-100"}`}
+                    >
+                      <Image src={f.swatch} alt="" width={160} height={160} sizes="36px" className="h-full w-full object-cover" />
+                    </button>
+                  );
+                })}
+                <span className="label ml-1 !text-[0.625rem] leading-tight">2ᵉ pot<br /><span className="text-white">{getFlavour(upsell.second).label}</span></span>
+              </div>
+            )}
             <button
               type="button"
-              onClick={() => swap(upsell.fromSku, offer.taken, upsell.item)}
+              onClick={() => add(offer!.singles[upsell.second]!.item, 1, { open: false })}
               className="btn-shine label relative mt-4 flex h-11 w-full items-center justify-center rounded-btn bg-marble !text-[0.75rem] font-medium text-ink transition-colors hover:bg-white [--btn-reflet:rgb(18_56_199/0.26)]"
             >
-              {offer.delta > 0 ? `Passer au pack · +${formatPrice(offer.delta)}` : `Passer au pack · −${formatPrice(-offer.delta)}`}
+              {upsell.delta > 0 ? `Passer au pack · +${formatPrice(upsell.delta)}` : `Passer au pack · −${formatPrice(-upsell.delta)}`}
             </button>
           </div>
         )}

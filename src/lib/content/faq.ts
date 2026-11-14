@@ -5,7 +5,12 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Qu'est-ce qu'il y a dans CRI ?",
     answer:
-      "Par dose de 23 g : L-citrulline 8 g, bêta-alanine 4 g, créatine 3 g, L-tyrosine 2 g, taurine 1 g, L-théanine 200 mg, caféine 150 mg, sodium 500 mg, potassium 300 mg, vitamines B5 et B6 à 100 % des apports de référence. Saveur fruits rouges, avec édulcorant. Le pot fait 690 g, soit 30 doses.",
+      "Par dose de 23 g : L-citrulline 8 g, bêta-alanine 4 g, créatine 3 g, L-tyrosine 2 g, taurine 1 g, L-théanine 200 mg, caféine 150 mg, sodium 500 mg, potassium 300 mg, vitamines B5 et B6 à 100 % des apports de référence. Avec édulcorant. Le pot fait 690 g, soit 30 doses.",
+  },
+  {
+    question: "Quels goûts existent pour CRI ?",
+    answer:
+      "Trois goûts : fruits rouges, cassis framboise et ice tea pêche. La formule et les dosages sont les mêmes ; seuls l'arôme et le colorant changent. Le pack de 2 se compose librement : deux pots du même goût ou deux goûts différents, au même prix.",
   },
   {
     question: "Combien de caféine dans CRI, et pour qui est-ce déconseillé ?",

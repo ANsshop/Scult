@@ -1,26 +1,36 @@
 import { Container } from "@/components/ui/Container";
 import { PurchaseOptions } from "@/components/cart/PurchaseOptions";
+import { AddToCart } from "@/components/cart/AddToCart";
 import { ProductGallery } from "./ProductGallery";
+import { FlavourGallery, FlavourIngredients, FlavourProvider, FlavourSku } from "./FlavourContext";
 import { Reassurance } from "./Reassurance";
 import { FaqPreview } from "./FaqPreview";
 import { ToggleArrow } from "@/components/ui/ToggleArrow";
 import { CLAIMS } from "@/lib/content/methode";
 import { FAQ_ITEMS } from "@/lib/content/faq";
 import { PRODUCT_INFO } from "@/lib/content/product-info";
-import type { Product } from "@/lib/catalog/queries";
+import type { FlavourOffer, Product } from "@/lib/catalog/queries";
+import type { FlavourId } from "@/lib/content/flavours";
 import { formatPrice } from "@/lib/utils";
 
 const answer = (q: string) => FAQ_ITEMS.find((i) => i.question === q)?.answer ?? "";
 
-export function ProductPage({ product, bundle }: { product: Product; bundle?: Product | null }) {
+/**
+ * La fiche produit. `offer` : le produit décliné en goûts (un pot par goût,
+ * packs de deux). Le goût choisi commande la galerie, la référence, le bloc
+ * d'achat et la liste d'ingrédients. Sans offre par goût, la fiche vend la
+ * première variante du catalogue, telle quelle.
+ */
+export function ProductPage({ product, offer }: { product: Product; offer?: FlavourOffer | null }) {
   const claims = CLAIMS.filter((c) => c.slug === product.slug);
   const info = PRODUCT_INFO[product.slug];
+  const skus = Object.fromEntries((offer?.flavours ?? []).map((id) => [id, offer!.singles[id]!.item.sku])) as Partial<Record<FlavourId, string>>;
   return (
-    <>
+    <FlavourProvider flavours={offer?.flavours ?? []}>
       <Container className="grid gap-10 pb-20 pt-8 md:grid-cols-[1.15fr_1fr] md:gap-16 md:pb-28">
-        <ProductGallery images={product.images} />
+        {offer ? <FlavourGallery fallback={product.images} /> : <ProductGallery images={product.images} />}
         <div className="md:sticky md:top-24 md:self-start">
-          <p className="label text-stone">{product.categorySlug === "packs" ? "Pack" : "Poudre"} · {product.variant.sku}</p>
+          <p className="label text-stone">{product.categorySlug === "packs" ? "Pack" : "Poudre"} · <FlavourSku skus={skus} fallback={product.variant.sku} /></p>
           <h1 className="display mt-4 text-[clamp(2.6rem,6vw,5rem)]">{product.name}</h1>
           <p className="mt-6 flex items-baseline gap-3">
             <span className="text-2xl tabular-nums">{formatPrice(product.priceCents)}</span>
@@ -35,7 +45,16 @@ export function ProductPage({ product, bundle }: { product: Product; bundle?: Pr
           {info?.caffeineWarning && (
             <p className="mt-6 rounded-chip border border-ink px-4 py-3 text-sm font-medium">{info.caffeineWarning}</p>
           )}
-          <PurchaseOptions single={product} bundle={bundle ?? null} />
+          {offer ? (
+            <PurchaseOptions offer={offer} />
+          ) : (
+            <AddToCart
+              item={{ sku: product.variant.sku, slug: product.slug, name: product.name, priceCents: product.priceCents, image: product.images[0]?.url ?? null }}
+              inStock={product.inStock}
+              preorderEta={product.preorderEta}
+              className="mt-8 w-full"
+            />
+          )}
           <Reassurance className="mt-8" />
           <div className="mt-10 divide-y border-y">
             {claims.length > 0 && (
@@ -74,7 +93,7 @@ export function ProductPage({ product, bundle }: { product: Product; bundle?: Pr
             {info && (
               <details className="group py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between font-medium [&::-webkit-details-marker]:hidden">Ingrédients<ToggleArrow /></summary>
-                <div className="mt-4 text-[0.95rem] leading-relaxed text-stone"><p>{info.ingredients}</p></div>
+                <div className="mt-4 text-[0.95rem] leading-relaxed text-stone">{offer ? <FlavourIngredients /> : <p>{info.ingredients}</p>}</div>
               </details>
             )}
             {info && (
@@ -95,6 +114,6 @@ export function ProductPage({ product, bundle }: { product: Product; bundle?: Pr
         </div>
       </Container>
       <FaqPreview count={3} />
-    </>
+    </FlavourProvider>
   );
 }

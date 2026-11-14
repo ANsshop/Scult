@@ -4,10 +4,16 @@
  * ingrédients, mode d'emploi, précautions. Même texte que le dos du pot
  * (docs/da/05-pot-dos-a-plat.jpg) — si l'un change, l'autre aussi.
  *
+ * La liste d'ingrédients de CRI change avec le goût (arôme, colorant) : la
+ * fiche affiche celle du goût choisi (lib/content/flavours.ts) ; celle-ci est
+ * celle du goût d'origine.
+ *
  * ⚠ La liste d'ingrédients de CRI est une estimation tirée de la formule
  * cible : l'ordre, l'arôme, l'édulcorant et le colorant viendront du
  * fabricant (voir ASSUMPTIONS.md).
  */
+import { DEFAULT_FLAVOUR, getFlavour } from "./flavours";
+
 export type ProductInfo = {
   denomination: string;
   serving: string;
@@ -36,8 +42,7 @@ export const PRODUCT_INFO: Record<string, ProductInfo> = {
       { name: "Acide pantothénique (vitamine B5)", amount: "6 mg", nrv: "100 %" },
       { name: "Vitamine B6", amount: "1,4 mg", nrv: "100 %" },
     ],
-    ingredients:
-      "L-citrulline, bêta-alanine, créatine monohydrate, L-tyrosine, taurine, citrate de sodium, acidifiant : acide citrique, arôme naturel, citrate de potassium, L-théanine, édulcorant : glycosides de stéviol, caféine anhydre, anti-agglomérant : dioxyde de silicium, colorant : rouge de betterave, D-pantothénate de calcium, chlorhydrate de pyridoxine.",
+    ingredients: getFlavour(DEFAULT_FLAVOUR).ingredients,
     usage:
       "Mélanger 1 dose (23 g, une mesure rase) dans 400 ml d'eau fraîche. Boire 20 à 30 minutes avant l'entraînement. La première semaine, commencer par une demi-dose. Une dose par jour maximum.",
     caffeineWarning: "Contient de la caféine (150 mg par dose). Déconseillé aux enfants et aux femmes enceintes.",

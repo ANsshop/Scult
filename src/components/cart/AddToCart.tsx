@@ -3,11 +3,10 @@
 import { useState } from "react";
 import { useCart } from "./CartProvider";
 import { Button } from "@/components/ui/Button";
-import type { Product } from "@/lib/catalog/queries";
+import type { CartLine } from "@/lib/types";
+import { getFlavour } from "@/lib/content/flavours";
 import { formatPrice } from "@/lib/utils";
 
-/** Le petit pot qui s'envole vers le panier (200 px de large, quelques Ko). */
-const FLY_IMAGE = "/home/pot-mini.webp";
 const FLY_SIZE = 84;
 const FLIGHT_MS = 700;
 
@@ -18,13 +17,15 @@ const FLIGHT_MS = 700;
  * L'article n'entre dans le panier qu'à l'atterrissage, pour que le compteur
  * change au bon moment. Sans animation possible (mouvement réduit, compteur
  * introuvable), l'ajout est immédiat.
+ *
+ * `item` : l'article tel qu'il entre dans le panier (un pot d'un goût, ou un
+ * pack). Le petit pot qui s'envole est celui de son premier goût.
  */
-export function AddToCart({ product, className }: { product: Product; className?: string }) {
+export function AddToCart({ item, inStock = true, preorderEta = null, className }: { item: CartLine; inStock?: boolean; preorderEta?: string | null; className?: string }) {
   const { add, openCart } = useCart();
   const [state, setState] = useState<"idle" | "flying" | "added">("idle");
-  if (!product.inStock) return <Button disabled className={className}>Rupture</Button>;
+  if (!inStock) return <Button disabled className={className}>Rupture</Button>;
 
-  const item = { sku: product.variant.sku, slug: product.slug, name: product.name, priceCents: product.priceCents, image: product.images[0]?.url ?? null };
   const settle = () => {
     setState("added");
     window.setTimeout(() => setState("idle"), 1600);
@@ -49,7 +50,7 @@ export function AddToCart({ product, className }: { product: Product; className?
     const dy = to.top + to.height / 2 - (startY + FLY_SIZE * 0.6);
 
     const pot = document.createElement("img");
-    pot.src = FLY_IMAGE;
+    pot.src = getFlavour(item.flavours?.[0]).mini;   // 200 px de large, quelques Ko
     pot.alt = "";
     pot.setAttribute("aria-hidden", "true");
     Object.assign(pot.style, {
@@ -89,7 +90,7 @@ export function AddToCart({ product, className }: { product: Product; className?
     flight.oncancel = land;
   };
 
-  const label = product.preorderEta ? `Précommander · ${product.preorderEta}` : `Ajouter · ${formatPrice(product.priceCents)}`;
+  const label = preorderEta ? `Précommander · ${preorderEta}` : `Ajouter · ${formatPrice(item.priceCents)}`;
   return (
     <Button className={`${className ?? ""} ${state === "idle" ? "" : "!bg-klein"}`} onClick={onClick} aria-live="polite">
       {state === "idle" ? label : "Ajouté ✓"}

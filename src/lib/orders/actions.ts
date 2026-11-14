@@ -6,6 +6,7 @@ import { createOrder } from "@/lib/pp/client";
 import { priceCart } from "@/lib/orders/pricing";
 import { SHIPPABLE_COUNTRY_CODES } from "@/lib/shipping";
 import { stripe, siteUrl } from "@/lib/stripe";
+import { flavoursLabel, flavoursOfSku } from "@/lib/content/flavours";
 
 const schema = z.object({
   countryCode: z.string().refine((c) => SHIPPABLE_COUNTRY_CODES.includes(c), "Pays non livré."),
@@ -14,6 +15,12 @@ const schema = z.object({
 });
 
 export type StartCheckoutResult = { ok: true; url: string } | { ok: false; error: string };
+
+/** Le nom de la ligne sur la page de paiement : le produit et, s'il y en a, le ou les goûts lus dans le SKU. */
+function lineName(name: string, sku: string): string {
+  const flavours = flavoursOfSku(sku);
+  return flavours ? `${name} · ${flavoursLabel(flavours)}` : name;
+}
 
 /**
  * Produit classique → Stripe Checkout hébergé. Les montants viennent du
@@ -34,7 +41,7 @@ export async function startCheckoutAction(input: unknown): Promise<StartCheckout
       locale: "fr",
       line_items: priced.lines.map((l) => ({
         quantity: l.quantity,
-        price_data: { currency: "eur", unit_amount: l.unitPriceCents, product_data: { name: l.name, metadata: { sku: l.sku } } },
+        price_data: { currency: "eur", unit_amount: l.unitPriceCents, product_data: { name: lineName(l.name, l.sku), metadata: { sku: l.sku } } },
       })),
       discounts: priced.discountCents > 0
         ? [{ coupon: (await stripe().coupons.create({ amount_off: priced.discountCents, currency: "eur", duration: "once", name: `Code ${promoCode}` })).id }]

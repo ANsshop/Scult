@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import { createElement, useEffect, useRef, useState } from "react";
+import { DEFAULT_FLAVOUR, getFlavour } from "@/lib/content/flavours";
+
+const DEFAULT_TEXTURE = getFlavour(DEFAULT_FLAVOUR).texture;
 
 /** Le navigateur sait-il afficher de la 3D ? Sinon on garde l'image fixe, sans charger la visionneuse. */
 function hasWebGL(): boolean {
@@ -24,23 +27,41 @@ function hasWebGL(): boolean {
  * `interactive` : on fait tourner le pot à la souris ou au doigt. Sans, le
  * pot ne capte aucun geste (la page défile par-dessus) et c'est le parent qui
  * le tourne, via l'élément reçu dans `onReady`.
+ *
+ * `texture` / `still` : le goût. Le modèle est le même pour tous les goûts ;
+ * seule l'étiquette change. On remplace donc l'image de l'étiquette sur le
+ * modèle déjà chargé (700 Ko, sans recharger le pot ni le faire clignoter),
+ * et l'image fixe par celle du goût.
  */
+type Viewer = HTMLElement & {
+  model?: { materials: { name: string; pbrMetallicRoughness: { baseColorTexture: { setTexture: (t: unknown) => void } } }[] };
+  createTexture: (url: string) => Promise<unknown>;
+};
+
+/** Le matériau de l'étiquette dans le modèle (scripts/3d/build_pot.py). */
+const LABEL_MATERIAL = "POT_etiquette";
 export function Pot3D({
   alt,
   sizes,
   interactive = true,
   onReady,
+  still = "/home/pot-detoure.webp",
+  texture = null,
 }: {
   alt: string;
   sizes: string;
   interactive?: boolean;
   onReady?: (viewer: HTMLElement) => void;
+  still?: string;
+  texture?: string | null;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const viewer = useRef<HTMLElement>(null);
   const [ready, setReady] = useState(false);   // la visionneuse est chargée
   const [shown, setShown] = useState(false);   // le modèle est affiché
   const [calm, setCalm] = useState(false);     // mouvement réduit demandé
+  const applied = useRef<string | null>(null); // l'étiquette posée sur le modèle (null : celle du fichier)
+  const textures = useRef(new Map<string, Promise<unknown>>());
 
   useEffect(() => {
     setCalm(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -74,10 +95,29 @@ export function Pot3D({
     };
   }, [ready, onReady]);
 
+  // Changer de goût : poser l'étiquette demandée sur le modèle affiché.
+  useEffect(() => {
+    const el = viewer.current as Viewer | null;
+    if (!shown || !el || !texture || applied.current === texture) return;
+    // Le fichier du modèle porte déjà l'étiquette d'origine : rien à charger tant qu'on n'en a pas changé.
+    if (applied.current === null && texture === DEFAULT_TEXTURE) return;
+    let stale = false;
+    if (!textures.current.has(texture)) textures.current.set(texture, el.createTexture(texture));
+    textures.current.get(texture)!
+      .then((t) => {
+        if (stale) return;
+        el.model?.materials.find((m) => m.name === LABEL_MATERIAL)?.pbrMetallicRoughness.baseColorTexture.setTexture(t);
+        applied.current = texture;
+      })
+      .catch(() => { textures.current.delete(texture); /* réseau : on garde l'étiquette en place */ });
+    return () => { stale = true; };
+  }, [shown, texture]);
+
   return (
     <div ref={box} className="relative aspect-[900/1096] -rotate-[5deg]">
       <Image
-        src="/home/pot-detoure.webp"
+        key={still}
+        src={still}
         alt={alt}
         width={900}
         height={1096}

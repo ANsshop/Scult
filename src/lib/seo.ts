@@ -18,7 +18,7 @@ export function organizationJsonLd() {
         name: SITE_NAME,
         url: origin,
         logo: `${origin}/brand/logo-black.png`,
-        description: "SCULT est une marque européenne de compléments alimentaires en poudre. Son produit : CRI, un pré-workout saveur fruits rouges dont chaque dosage est écrit sur le pot. Fabriqué dans l'Union européenne, lots numérotés.",
+        description: "SCULT est une marque européenne de compléments alimentaires en poudre. Son produit : CRI, un pré-workout en trois goûts (fruits rouges, cassis framboise, ice tea pêche) dont chaque dosage est écrit sur le pot. Fabriqué dans l'Union européenne, lots numérotés.",
         email: "hello@scult.eu",
       },
       { "@type": "WebSite", "@id": `${origin}/#website`, name: SITE_NAME, url: origin, inLanguage: "fr-FR", publisher: { "@id": `${origin}/#organization` } },

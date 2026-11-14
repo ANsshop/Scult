@@ -43,6 +43,7 @@ Un pot par goût : seule l'étiquette change (pastille de goût en face, ligne
 
 ```bash
 node scripts/3d/gouts.mjs                       # étiquettes : textures/wrap-<goût>.jpg et dos-<goût>.jpg
+node scripts/3d/gouts-visuels.mjs               # photos du site par goût (public/products, home, lifestyle, gouts, models)
 /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup \
   --python scripts/3d/build_pot.py -- docs/3d/textures docs/3d all wrap-ice-tea-peche.jpg pot-cri-ice-tea-peche
 /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup \
@@ -50,8 +51,11 @@ node scripts/3d/gouts.mjs                       # étiquettes : textures/wrap-<g
   docs/3d/pot-cri-cassis-framboise.glb docs/3d/pot-cri.glb docs/3d/pot-cri-ice-tea-peche.glb
 ```
 
-Ajouter un goût : une entrée dans `GOUTS` (`scripts/3d/gouts.mjs`) et une
-photo `sources/gouts/<goût>.jpg`. Les sources de l'étiquette sont dans
+Ajouter un goût : une entrée dans `GOUTS` (`scripts/3d/gouts.mjs`), une
+photo `sources/gouts/<goût>.jpg`, une entrée dans `FLAVOURS`
+(`src/lib/content/flavours.ts`) et ses variantes dans le catalogue.
+La visionneuse du site ne charge qu'un modèle : pour changer de goût elle
+remplace l'étiquette (`public/models/etiquette-<goût>.jpg`, 3072 px). Les sources de l'étiquette sont dans
 `sources/` (`face.jpg`, `dos.jpg`, `papier.jpg`, la police du dos).
 
 ## Lumière des rendus

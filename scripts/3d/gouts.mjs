@@ -23,23 +23,30 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const SRC = resolve("docs/3d/sources");
+export const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+export const SRC = resolve("docs/3d/sources");
 const OUT = resolve("docs/3d/textures");
 const FONTS = resolve("src/fonts");
 
 const BASE =
   "L-citrulline, bêta-alanine, créatine monohydrate, L-tyrosine, taurine, citrate de sodium, acidifiant : acide citrique, {AROME}, citrate de potassium, L-théanine, édulcorant : glycosides de stéviol, caféine anhydre, anti-agglomérant : dioxyde de silicium, colorant : {COLORANT}, D-pantothénate de calcium, chlorhydrate de pyridoxine.";
 
-/** `photo` : cadrage de la photo dans la pastille (object-position). */
+/**
+ * `photo` : cadrage de la photo dans la pastille (object-position).
+ * `texte` : corps du nom (px), étroitisation, et où il commence dans la pastille
+ * (% de la largeur). L'original — « Fruits rouges » — est en 40 px, sans
+ * étroitisation, à 53,5 % ; un nom plus long se compose un peu plus petit.
+ */
 export const GOUTS = [
   {
     slug: "cassis-framboise",
     nom: ["Cassis", "Framboise"],
     saveur: "Saveur cassis framboise",
     photo: "22% 55%",
+    texte: { taille: 37, etroit: 0.93, gauche: 46 },
     ingredients: BASE.replace("{AROME}", "arômes naturels de cassis et de framboise").replace("{COLORANT}", "rouge de betterave"),
   },
   {
@@ -47,13 +54,14 @@ export const GOUTS = [
     nom: ["Ice tea", "Pêche"],
     saveur: "Saveur ice tea pêche",
     photo: "30% 50%",
+    texte: { taille: 38, etroit: 1, gauche: 51 },
     ingredients: BASE.replace("{AROME}", "arômes naturels de thé et de pêche").replace("{COLORANT}", "caramel ordinaire"),
   },
 ];
 
-const file = (p) => `file://${p}`;
+export const file = (p) => `file://${p}`;
 
-function shoot(html, width, height, out, dir) {
+export function shoot(html, width, height, out, dir) {
   const page = join(dir, "page.html");
   writeFileSync(page, html);
   execFileSync(CHROME, [
@@ -63,10 +71,13 @@ function shoot(html, width, height, out, dir) {
   ], { stdio: "ignore" });
 }
 
-const fonts = `
+export const fonts = `
 @font-face{font-family:JBM;src:url('${file(join(FONTS, "jetbrains-mono-latin-wght-normal.woff2"))}');font-weight:100 800}
 @font-face{font-family:Cousine;src:url('${file(join(SRC, "Cousine-Regular.ttf"))}')}
 html,body{margin:0;background:#000}`;
+
+/** Un nom à trait d'union (« L-théanine ») ne se coupe pas en fin de ligne. */
+const insecable = (t) => t.replace(/[^\s]+-[^\s]+/g, (m) => `<span style="white-space:nowrap">${m}</span>`);
 
 /** Le dos : la ligne « Saveur … » et le paragraphe d'ingrédients sont recomposés, le reste est d'origine. */
 function dosHtml(g, fond) {
@@ -79,8 +90,24 @@ function dosHtml(g, fond) {
 <div class="cache" style="left:1080px;top:104px;width:360px;height:34px"></div>
 <div class="saveur">${g.saveur}</div>
 <div class="cache" style="left:60px;top:964px;width:1390px;height:132px"></div>
-<div class="ingr">${g.ingredients}</div>
+<div class="ingr">${insecable(g.ingredients)}</div>
 </div>`;
+}
+
+/**
+ * La pastille de goût (390 × 150) : la photo à gauche, fondue dans le papier,
+ * le nom sur deux lignes à droite. Sert à l'étiquette et aux photos du site
+ * (scripts/3d/gouts-visuels.mjs), qui la placent elles-mêmes (`.pastille{left;top;transform}`).
+ */
+export function pastilleCss(g) {
+  return `.pastille{position:absolute;width:390px;height:150px;box-sizing:border-box;border:4.5px solid #131315;border-radius:50px;overflow:hidden}
+.pastille img{position:absolute;left:0;top:0;width:${g.texte.gauche - 1.5}%;height:100%;object-fit:cover;object-position:${g.photo};
+  -webkit-mask-image:linear-gradient(to right,#000 70%,transparent 100%);mask-image:linear-gradient(to right,#000 70%,transparent 100%)}
+.nom{position:absolute;left:${g.texte.gauche}%;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;
+  font:700 ${g.texte.taille}px/1.25 JBM,monospace;text-transform:uppercase;color:#131315;white-space:nowrap;transform:scaleX(${g.texte.etroit});transform-origin:left center;opacity:.94;filter:blur(0.25px)}`;
+}
+export function pastilleHtml(g) {
+  return `<div class="pastille"><img src="${file(join(SRC, "gouts", `${g.slug}.jpg`))}"><div class="nom"><span>${g.nom[0]}</span><span>${g.nom[1]}</span></div></div>`;
 }
 
 /** La face : l'ancienne pastille est recouverte de papier, la nouvelle est posée au même endroit (390 × 150). */
@@ -90,13 +117,10 @@ function faceHtml(g) {
 .papier{position:absolute;left:2052px;top:1404px;width:430px;height:186px;background:url('${file(join(SRC, "papier.jpg"))}') -300px -260px;
   -webkit-mask-image:linear-gradient(to right,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%),linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);
   -webkit-mask-composite:source-in;mask-composite:intersect}
-.pastille{position:absolute;left:2072px;top:1422px;width:390px;height:150px;box-sizing:border-box;border:3.5px solid #131315;border-radius:75px;overflow:hidden}
-.pastille img{position:absolute;left:0;top:0;width:52%;height:100%;object-fit:cover;object-position:${g.photo};
-  -webkit-mask-image:linear-gradient(to right,#000 70%,transparent 100%);mask-image:linear-gradient(to right,#000 70%,transparent 100%)}
-.nom{position:absolute;left:49%;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;
-  font:700 40px/1.16 JBM,monospace;text-transform:uppercase;color:#131315;white-space:nowrap;transform:scaleX(0.72);transform-origin:left center;opacity:.94;filter:blur(0.25px)}
+.pastille{left:2072px;top:1422px}
+${pastilleCss(g)}
 </style><div id="c"><div class="papier"></div>
-<div class="pastille"><img src="${file(join(SRC, "gouts", `${g.slug}.jpg`))}"><div class="nom"><span>${g.nom[0]}</span><span>${g.nom[1]}</span></div></div>
+${pastilleHtml(g)}
 </div>`;
 }
 
@@ -118,6 +142,7 @@ function wrapHtml(face, dos) {
 </div>`;
 }
 
+async function main() {
 const only = process.argv[2];
 mkdirSync(OUT, { recursive: true });
 // La couleur du fond du dos, relevée dans une zone vide
@@ -147,3 +172,6 @@ for (const g of GOUTS.filter((x) => !only || x.slug === only)) {
     rmSync(dir, { recursive: true, force: true });
   }
 }
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) await main();

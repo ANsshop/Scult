@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import type { CartItem } from "@/lib/types";
+import type { CartItem, CartLine } from "@/lib/types";
+import { packKey } from "@/lib/content/flavours";
 
 const STORAGE_KEY = "scult.cart.v1";
 export const MAX_QUANTITY = 20;
@@ -11,10 +12,8 @@ type Ctx = {
   count: number;
   subtotalCents: number;
   /** `open: false` : ajoute sans ouvrir le tiroir (le bouton l'ouvre lui-même après son animation). */
-  add: (item: Omit<CartItem, "quantity">, quantity?: number, options?: { open?: boolean }) => void;
+  add: (item: CartLine, quantity?: number, options?: { open?: boolean }) => void;
   setQuantity: (sku: string, quantity: number) => void;
-  /** Retire `quantity` exemplaires de `fromSku` et ajoute un `item` à la place (un pot → un pack). */
-  swap: (fromSku: string, quantity: number, item: Omit<CartItem, "quantity">) => void;
   remove: (sku: string) => void;
   clear: () => void;
   isOpen: boolean;
@@ -24,25 +23,65 @@ type Ctx = {
 
 const CartContext = createContext<Ctx | null>(null);
 
-/** Le pack d'un produit : `units` exemplaires de `fromSku` valent un `item` (moins cher). */
-export type BundleRule = { fromSku: string; units: number; item: Omit<CartItem, "quantity"> };
+/**
+ * L'offre pack : `units` pots à l'unité valent un pack, moins cher. `singles`
+ * dit quel goût est chaque SKU vendu à l'unité, `packs` donne l'article pack
+ * de chaque paire de goûts (clé packKey), `known` tous les articles connus,
+ * par SKU, pour rafraîchir un panier enregistré.
+ */
+export type BundleRule = { units: number; singles: Record<string, string>; packs: Record<string, CartLine>; known: Record<string, CartLine> };
 
 /**
- * Applique l'offre pack : dès que le panier contient `units` exemplaires du
- * produit à l'unité, ils sont remplacés par un pack — que le client ait choisi
- * le pack ou ajouté les pots un par un, il paie le même prix. Un pot en trop
+ * Applique l'offre pack : dès que le panier contient deux pots à l'unité, ils
+ * sont remplacés par un pack — que le client ait choisi le pack ou ajouté les
+ * pots un par un, du même goût ou non, il paie le même prix. Les pots du même
+ * goût sont regroupés d'abord, les goûts restants ensuite ; un pot en trop
  * reste à l'unité.
  */
 function applyBundle(items: CartItem[], rule?: BundleRule | null): CartItem[] {
-  if (!rule) return items;
-  const single = items.find((i) => i.sku === rule.fromSku);
-  if (!single || single.quantity < rule.units) return items;
-  const packs = Math.floor(single.quantity / rule.units);
-  const left = single.quantity % rule.units;
-  const rest = items.flatMap((i) => (i.sku !== rule.fromSku ? [i] : left > 0 ? [{ ...i, quantity: left }] : []));
-  const hit = rest.find((i) => i.sku === rule.item.sku);
-  if (hit) return rest.map((i) => (i.sku === rule.item.sku ? { ...i, quantity: Math.min(MAX_QUANTITY, i.quantity + packs) } : i));
-  return [...rest, { ...rule.item, quantity: Math.min(MAX_QUANTITY, packs) }];
+  if (!rule || rule.units !== 2) return items;
+  const counts = new Map<string, number>();   // pots à l'unité, par goût, dans l'ordre du panier
+  const lineOf = new Map<string, CartItem>();
+  for (const i of items) {
+    const flavour = rule.singles[i.sku];
+    if (!flavour) continue;
+    counts.set(flavour, (counts.get(flavour) ?? 0) + i.quantity);
+    lineOf.set(flavour, i);
+  }
+  if ([...counts.values()].reduce((n, q) => n + q, 0) < 2) return items;
+
+  const made = new Map<string, number>();     // packs formés, par clé
+  const take = (a: string, b: string, n: number) => {
+    const key = packKey(a, b);
+    if (!rule.packs[key] || n <= 0) return false;
+    made.set(key, (made.get(key) ?? 0) + n);
+    counts.set(a, counts.get(a)! - n);
+    counts.set(b, counts.get(b)! - n);
+    return true;
+  };
+  for (const [flavour, q] of [...counts]) take(flavour, flavour, Math.floor(q / 2));
+  for (let moved = true; moved; ) {
+    moved = false;
+    const left = [...counts].filter(([, q]) => q > 0).map(([f]) => f);
+    search: for (let i = 0; i < left.length; i++) for (let j = i + 1; j < left.length; j++) {
+      if (take(left[i], left[j], 1)) { moved = true; break search; }
+    }
+  }
+  if (made.size === 0) return items;
+
+  const out = items.flatMap((i) => {
+    const flavour = rule.singles[i.sku];
+    if (!flavour) return [i];
+    const q = lineOf.get(flavour) === i ? counts.get(flavour)! : 0;   // le reste du goût tient sur une ligne
+    return q > 0 ? [{ ...i, quantity: q }] : [];
+  });
+  for (const [key, n] of made) {
+    const pack = rule.packs[key];
+    const hit = out.findIndex((i) => i.sku === pack.sku);
+    if (hit >= 0) out[hit] = { ...out[hit], quantity: Math.min(MAX_QUANTITY, out[hit].quantity + n) };
+    else out.push({ ...pack, quantity: Math.min(MAX_QUANTITY, n) });
+  }
+  return out;
 }
 
 /** Panier indexé par SKU : c'est la clé que /api/panier et /api/orders comprennent. */
@@ -60,7 +99,8 @@ export function CartProvider({ children, bundle }: { children: React.ReactNode; 
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect -- hydratation one-shot
-      if (raw) setItems(JSON.parse(raw) as CartItem[]);
+      // Un panier enregistré reprend le nom, le prix et le goût actuels de chaque article connu.
+      if (raw) setItems((JSON.parse(raw) as CartItem[]).map((i) => (bundle?.known[i.sku] ? { ...bundle.known[i.sku], quantity: i.quantity } : i)));
     } catch { /* stockage corrompu : on repart vide */ }
     setHydrated(true);
   }, []);
@@ -70,7 +110,7 @@ export function CartProvider({ children, bundle }: { children: React.ReactNode; 
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch { /* plein ou bloqué */ }
   }, [items, hydrated]);
 
-  const add = useCallback((item: Omit<CartItem, "quantity">, quantity = 1, options?: { open?: boolean }) => {
+  const add = useCallback((item: CartLine, quantity = 1, options?: { open?: boolean }) => {
     setItems((prev) => {
       const hit = prev.find((i) => i.sku === item.sku);
       if (hit) return prev.map((i) => (i.sku === item.sku ? { ...i, quantity: Math.min(MAX_QUANTITY, i.quantity + quantity) } : i));
@@ -81,14 +121,6 @@ export function CartProvider({ children, bundle }: { children: React.ReactNode; 
   const setQuantity = useCallback((sku: string, quantity: number) => {
     setItems((prev) => (quantity <= 0 ? prev.filter((i) => i.sku !== sku) : prev.map((i) => (i.sku === sku ? { ...i, quantity: Math.min(MAX_QUANTITY, quantity) } : i))));
   }, [setItems]);
-  const swap = useCallback((fromSku: string, quantity: number, item: Omit<CartItem, "quantity">) => {
-    setItems((prev) => {
-      const rest = prev.flatMap((i) => (i.sku !== fromSku ? [i] : i.quantity > quantity ? [{ ...i, quantity: i.quantity - quantity }] : []));
-      const hit = rest.find((i) => i.sku === item.sku);
-      if (hit) return rest.map((i) => (i.sku === item.sku ? { ...i, quantity: Math.min(MAX_QUANTITY, i.quantity + 1) } : i));
-      return [...rest, { ...item, quantity: 1 }];
-    });
-  }, [setItems]);
   const remove = useCallback((sku: string) => setItems((prev) => prev.filter((i) => i.sku !== sku)), [setItems]);
   const clear = useCallback(() => setItems([]), [setItems]);
   const openCart = useCallback(() => setOpen(true), []);
@@ -98,8 +130,8 @@ export function CartProvider({ children, bundle }: { children: React.ReactNode; 
     items,
     count: items.reduce((n, i) => n + i.quantity, 0),
     subtotalCents: items.reduce((n, i) => n + i.priceCents * i.quantity, 0),
-    add, setQuantity, swap, remove, clear, isOpen, openCart, closeCart,
-  }), [items, add, setQuantity, swap, remove, clear, isOpen, openCart, closeCart]);
+    add, setQuantity, remove, clear, isOpen, openCart, closeCart,
+  }), [items, add, setQuantity, remove, clear, isOpen, openCart, closeCart]);
 
   return <CartContext value={value}>{children}</CartContext>;
 }

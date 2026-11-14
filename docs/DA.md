@@ -345,4 +345,34 @@ la **pastille de goût** en face avant et, au dos, la ligne « Saveur … » et 
   `9909c590-d721-4bbd-87ef-e5c860bfd929` ice tea pêche).
 - `build_pot.py … all wrap-<goût>.jpg pot-cri-<goût>` sort le modèle 3D.
 - `render_gamme.py` rend les pots côte à côte : `docs/3d/renders/gamme.jpg`.
-- Pas encore sur le site : à valider d'abord (voir ASSUMPTIONS [25]).
+- `gouts-visuels.mjs` décline les photos du site : sur la face, le pot détouré
+  et la photo d'ambiance, l'ancienne pastille est recouverte de papier pris
+  sur la même photo et la nouvelle posée dans la même perspective ; sur le
+  dos, la ligne « Saveur » et les ingrédients sont effacés puis recomposés en
+  suivant la courbure du pot. Aucune génération : le reste de chaque photo
+  est intact.
+
+**Pastille : même dessin pour tous les goûts** — cadre aux coins arrondis
+(pas une gélule), filet de 4,5 px, nom en JetBrains Mono gras sur deux
+lignes. « Fruits rouges » est en 40 px ; un nom plus long se compose un peu
+plus petit (37 px, étroitisé à 93 %) plutôt que d'être écrasé.
+
+**Sur le site (2026-11-14)** — validé : trois goûts, ice tea = pêche,
+ingrédients estimés.
+- **Le sélecteur de goût est la pastille du pot** (`FlavourPicker.tsx`) :
+  photo du fruit à gauche fondue dans le blanc, nom sur deux lignes en mono
+  gras. On choisit le goût en choisissant l'étiquette qu'on verra sur le pot.
+  Pas de pastilles de couleur génériques.
+- **Fiche produit** : le goût commande la galerie (face, dos, ambiance), la
+  référence, les vignettes des cartes « 1 pot » / « Pack de 2 » et la liste
+  d'ingrédients. Le goût est dans l'adresse (`?gout=ice-tea-peche`).
+- **Pack de 2 composable** : le 2ᵉ pot peut être d'un autre goût, au même
+  prix. Un deuxième sélecteur apparaît quand le pack est choisi.
+- **Accueil** : le sélecteur est au-dessus du bouton d'achat ; le pot 3D
+  change d'étiquette sur-le-champ (on remplace l'image de l'étiquette sur le
+  modèle déjà chargé, sans le recharger).
+- **Panier** : chaque ligne montre le pot de son goût et le nom du goût ;
+  deux pots ajoutés à l'unité, du même goût ou non, deviennent un pack ;
+  l'encart « Ajoutez un 2ᵉ pot » laisse choisir le goût du deuxième.
+- Données : `src/lib/content/flavours.ts` (présentation) et les variantes du
+  catalogue (prix, stock) — voir ASSUMPTIONS [25].

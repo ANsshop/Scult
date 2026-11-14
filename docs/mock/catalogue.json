@@ -24,15 +24,15 @@
       "id": "0199f000-0000-7000-8000-00000000a005",
       "name": "CRI",
       "slug": "cri",
-      "description": "Pré-workout en poudre, saveur fruits rouges. Par dose de 23 g : L-citrulline 8 g, bêta-alanine 4 g, créatine 3 g, L-tyrosine 2 g, taurine 1 g, L-théanine 200 mg, caféine 150 mg, vitamines B5 et B6. Pot de 690 g, soit 30 doses. Avec édulcorant. Contient de la caféine : déconseillé aux enfants et aux femmes enceintes. Fabriqué dans l'Union européenne.",
+      "description": "Pré-workout en poudre, en trois goûts : fruits rouges, cassis framboise, ice tea pêche. Par dose de 23 g : L-citrulline 8 g, bêta-alanine 4 g, créatine 3 g, L-tyrosine 2 g, taurine 1 g, L-théanine 200 mg, caféine 150 mg, vitamines B5 et B6. Pot de 690 g, soit 30 doses. Avec édulcorant. Contient de la caféine : déconseillé aux enfants et aux femmes enceintes. Fabriqué dans l'Union européenne.",
       "imageUrl": "/products/cri-01.webp",
       "category": {
         "slug": "poudres",
         "name": "Poudres"
       },
       "seo": {
-        "title": "CRI — pré-workout fruits rouges 690 g, 30 doses",
-        "description": "Pré-workout SCULT : citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose. 690 g, 30 doses, fruits rouges. Livraison Europe, offerte dès 60 €."
+        "title": "CRI — pré-workout 690 g, 30 doses, 3 goûts",
+        "description": "Pré-workout SCULT : citrulline 8 g, bêta-alanine 4 g, créatine 3 g, caféine 150 mg par dose. 30 doses. Fruits rouges, cassis framboise ou ice tea pêche."
       },
       "images": [
         {
@@ -70,6 +70,36 @@
           },
           "weightGrams": 780,
           "unitCount": 1
+        },
+        {
+          "id": "0199f000-0000-7000-8000-00000000b101",
+          "sku": "SCULT-CRI-690-CF",
+          "name": "690 g · Cassis framboise",
+          "priceCents": 4900,
+          "compareAtCents": null,
+          "stock": 100,
+          "available": true,
+          "preorder": {
+            "allowed": false,
+            "eta": null
+          },
+          "weightGrams": 780,
+          "unitCount": 1
+        },
+        {
+          "id": "0199f000-0000-7000-8000-00000000b102",
+          "sku": "SCULT-CRI-690-ITP",
+          "name": "690 g · Ice tea pêche",
+          "priceCents": 4900,
+          "compareAtCents": null,
+          "stock": 100,
+          "available": true,
+          "preorder": {
+            "allowed": false,
+            "eta": null
+          },
+          "weightGrams": 780,
+          "unitCount": 1
         }
       ]
     },
@@ -77,7 +107,7 @@
       "id": "0199f000-0000-7000-8000-00000000a006",
       "name": "CRI — pack de 2",
       "slug": "cri-duo",
-      "description": "Deux pots de CRI, pré-workout saveur fruits rouges : 2 × 690 g, soit 60 doses. 83,30 € au lieu de 98 €. Livraison offerte.",
+      "description": "Deux pots de CRI, pré-workout, aux goûts de votre choix (fruits rouges, cassis framboise, ice tea pêche) : 2 × 690 g, soit 60 doses. 83,30 € au lieu de 98 €. Livraison offerte.",
       "imageUrl": "/products/cri-01.webp",
       "category": {
         "slug": "packs",
@@ -101,6 +131,81 @@
           "id": "0199f000-0000-7000-8000-00000000b006",
           "sku": "SCULT-CRI-690-FR-X2",
           "name": "2 × 690 g · Fruits rouges",
+          "priceCents": 8330,
+          "compareAtCents": 9800,
+          "stock": 50,
+          "available": true,
+          "preorder": {
+            "allowed": false,
+            "eta": null
+          },
+          "weightGrams": 1560,
+          "unitCount": 2
+        },
+        {
+          "id": "0199f000-0000-7000-8000-00000000b201",
+          "sku": "SCULT-CRI-690-CF-X2",
+          "name": "2 × 690 g · Cassis framboise",
+          "priceCents": 8330,
+          "compareAtCents": 9800,
+          "stock": 50,
+          "available": true,
+          "preorder": {
+            "allowed": false,
+            "eta": null
+          },
+          "weightGrams": 1560,
+          "unitCount": 2
+        },
+        {
+          "id": "0199f000-0000-7000-8000-00000000b202",
+          "sku": "SCULT-CRI-690-ITP-X2",
+          "name": "2 × 690 g · Ice tea pêche",
+          "priceCents": 8330,
+          "compareAtCents": 9800,
+          "stock": 50,
+          "available": true,
+          "preorder": {
+            "allowed": false,
+            "eta": null
+          },
+          "weightGrams": 1560,
+          "unitCount": 2
+        },
+        {
+          "id": "0199f000-0000-7000-8000-00000000b203",
+          "sku": "SCULT-CRI-690-FR-CF-X2",
+          "name": "2 × 690 g · Fruits rouges + Cassis framboise",
+          "priceCents": 8330,
+          "compareAtCents": 9800,
+          "stock": 50,
+          "available": true,
+          "preorder": {
+            "allowed": false,
+            "eta": null
+          },
+          "weightGrams": 1560,
+          "unitCount": 2
+        },
+        {
+          "id": "0199f000-0000-7000-8000-00000000b204",
+          "sku": "SCULT-CRI-690-FR-ITP-X2",
+          "name": "2 × 690 g · Fruits rouges + Ice tea pêche",
+          "priceCents": 8330,
+          "compareAtCents": 9800,
+          "stock": 50,
+          "available": true,
+          "preorder": {
+            "allowed": false,
+            "eta": null
+          },
+          "weightGrams": 1560,
+          "unitCount": 2
+        },
+        {
+          "id": "0199f000-0000-7000-8000-00000000b205",
+          "sku": "SCULT-CRI-690-CF-ITP-X2",
+          "name": "2 × 690 g · Cassis framboise + Ice tea pêche",
           "priceCents": 8330,
           "compareAtCents": 9800,
           "stock": 50,

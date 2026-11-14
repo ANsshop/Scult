@@ -4,7 +4,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { ProductPage } from "@/components/site/ProductPage";
 import { JsonLd } from "@/components/site/JsonLd";
-import { getBundleFor, getProductBySlug, getProducts } from "@/lib/catalog/queries";
+import { getFlavourOffer, getProductBySlug, getProducts } from "@/lib/catalog/queries";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <JsonLd data={productJsonLd(product)} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: product.name, path: `/produits/${product.slug}` }])} />
       <Header />
-      <main><ProductPage product={product} bundle={await getBundleFor(product.slug)} /></main>
+      <main><ProductPage product={product} offer={await getFlavourOffer(product.slug)} /></main>
       <Footer />
     </>
   );

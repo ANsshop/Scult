@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AddToCart } from "@/components/cart/AddToCart";
-import type { Product } from "@/lib/catalog/queries";
+import type { FlavourOffer, Product } from "@/lib/catalog/queries";
+import { DEFAULT_FLAVOUR, getFlavour, type FlavourId } from "@/lib/content/flavours";
 import { formatPrice } from "@/lib/utils";
+import { FlavourPicker } from "./FlavourPicker";
 import { Pot3D } from "./Pot3D";
 
 type Line = { name: string; amount: string };
@@ -23,13 +25,22 @@ const TURN = 0.82;
  * est visible dès le début. Sur mobile, un seul dosage à la fois sous le pot,
  * et le bouton d'achat reste en bas d'écran pendant tout le tour.
  * En mouvement réduit : rien n'est collé ni animé, tout est affiché d'emblée.
+ *
+ * `offer` : les goûts. Le choix se fait à côté du bouton d'achat et change
+ * l'étiquette du pot 3D sur-le-champ ; le bouton ajoute le pot du goût choisi.
  */
-export function OfferScroll({ product, lines, doses, caffeineWarning }: { product: Product; lines: Line[]; doses: number; caffeineWarning: string | null }) {
+export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: { product: Product; offer: FlavourOffer | null; lines: Line[]; doses: number; caffeineWarning: string | null }) {
   const wrap = useRef<HTMLDivElement>(null);
   const viewer = useRef<HTMLElement | null>(null);
   const [step, setStep] = useState(0);     // nombre de dosages dévoilés
   const [end, setEnd] = useState(false);   // le tour est fini : l'achat se montre
   const [calm, setCalm] = useState(false);
+  const [picked, setPicked] = useState<FlavourId>(DEFAULT_FLAVOUR);
+  const flavours = offer?.flavours ?? [];
+  const flavour = getFlavour(flavours.includes(picked) ? picked : flavours[0]);
+  const chosen = offer?.singles[flavour.id];
+  const item = chosen?.item ?? { sku: product.variant.sku, slug: product.slug, name: product.name, priceCents: product.priceCents, image: product.images[0]?.url ?? null };
+  const soldOut = flavours.filter((id) => !offer?.singles[id]?.inStock);
   const perDose = formatPrice(Math.round(product.priceCents / doses));
   const n = lines.length;
 
@@ -98,12 +109,15 @@ export function OfferScroll({ product, lines, doses, caffeineWarning }: { produc
             {/* La scène : le pot au centre, les dosages de part et d'autre */}
             <div className="grid flex-1 items-center gap-6 md:grid-cols-[1fr_auto_1fr] md:gap-14">
               {column(lines.slice(0, half), 0, "right")}
-              <div className="relative mx-auto w-[min(58vw,36svh)] md:w-[min(30vw,40svh)]">
+              {/* Sur téléphone, le choix du goût prend une rangée sous le pot : le pot se règle sur la hauteur qui reste. */}
+              <div className={`relative mx-auto md:w-[min(30vw,40svh)] ${flavours.length > 1 ? "w-[max(7rem,min(56vw,calc((100svh-27.75rem)/1.35)))]" : "w-[min(58vw,36svh)]"}`}>
                 <Pot3D
                   alt="Le pot SCULT CRI : le mot CRI en bleu sur le visage d'une statue qui hurle, strap rouge autour du couvercle"
                   sizes="(min-width: 768px) 30vw, 58vw"
                   interactive={false}
                   onReady={onReady}
+                  still={flavour.still}
+                  texture={flavours.length > 1 ? flavour.texture : null}
                 />
                 {/* La pastille : le seul rouge, et c'est le prix */}
                 <p className="pointer-events-none absolute -right-[20%] top-[4%] flex h-[5.75rem] w-[5.75rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-ruby text-white outline outline-1 -outline-offset-[5px] outline-white/45 md:h-[7.25rem] md:w-[7.25rem]">
@@ -131,12 +145,17 @@ export function OfferScroll({ product, lines, doses, caffeineWarning }: { produc
               <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-center md:gap-8">
                 <div className="hidden md:block">
                   <p className="display text-[2.25rem] leading-none">{product.name}</p>
-                  <p className="label mt-1.5 text-stone">Pré-workout · fruits rouges</p>
+                  <p className="label mt-1.5 text-stone">Pré-workout · {flavours.length > 1 ? `${flavours.length} goûts` : flavour.label}</p>
                 </div>
-                <AddToCart product={product} className="!h-14 w-full md:w-[22rem]" />
+                <div className="flex flex-col gap-3 md:w-[23rem]">
+                  {flavours.length > 1 && (
+                    <FlavourPicker name="gout-accueil" legend="Goût" flavours={flavours} value={flavour.id} onChange={setPicked} disabled={soldOut} compact className="[&>legend]:sr-only [&>div]:mt-0" />
+                  )}
+                  <AddToCart key={item.sku} item={item} inStock={chosen?.inStock ?? product.inStock} preorderEta={chosen ? chosen.preorderEta : product.preorderEta} className="!h-14 w-full" />
+                </div>
                 <p className="label hidden text-stone md:block">
                   {perDose} la dose<br />
-                  <Link href={`/produits/${product.slug}`} className="underline underline-offset-4 hover:text-klein">Voir la fiche →</Link>
+                  <Link href={`/produits/${product.slug}${flavour.id === DEFAULT_FLAVOUR ? "" : `?gout=${flavour.id}`}`} className="underline underline-offset-4 hover:text-klein">Voir la fiche →</Link>
                 </p>
               </div>
               <p className="label mt-3 text-center leading-relaxed text-stone">

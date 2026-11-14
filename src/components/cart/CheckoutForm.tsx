@@ -37,7 +37,7 @@ export function CheckoutForm({ vatRate }: { vatRate: number }) {
       }}
     >
       <ul className="divide-y border-y">
-        {items.map((i) => <li key={i.sku} className="flex justify-between py-3 text-sm"><span>{i.name} × {i.quantity}</span><span className="tabular-nums">{formatPrice(i.priceCents * i.quantity)}</span></li>)}
+        {items.map((i) => <li key={i.sku} className="flex justify-between py-3 text-sm"><span>{i.name}{i.detail ? ` · ${i.detail}` : ""} × {i.quantity}</span><span className="tabular-nums">{formatPrice(i.priceCents * i.quantity)}</span></li>)}
       </ul>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm"><span className="label text-stone">Pays de livraison</span>
