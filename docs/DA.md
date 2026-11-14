@@ -476,6 +476,13 @@ le choix fait, avec `public/propositions/`.
 | 2 · Regard : demi-visage en noir et blanc sur blanc, la pastille rouge pour seule couleur | `9914d8aa-263c-4669-aeeb-660438e1c276` |
 | 3 · Par-dessus le bras : soleil bas, drapé bleu Klein, strap rouge | `8e76c28b-5874-4ad6-88e5-0a516a5134e0` |
 
+**Proposition 1 retenue, modifiée** : toujours de dos sur fond noir, mais le
+pot dans la main droite et le regard baissé vers lui, sans le mot FOCUS —
+job `934ac899-e8ba-4fc9-9015-2cad9fef76d4` (variante écartée : le pot levé à
+hauteur de tête, `5b822d45-…`). Source `sources/accueil/nuit-16x9.webp`,
+livrée par la chaîne en `nuit-16x9` ; sa place sur le site reste à choisir,
+et sa version téléphone (4:5) à générer.
+
 Statue assise sur fond blanc (essai en ligne sur la slide 2 du slider du
 bas) : 16:9 `d1be7782-e622-4530-935f-a47d37133daa`, 4:5
 `70f76be1-9bc3-43bf-8e46-fb73e4cd2bdd`. Obtenues en demandant de ne changer

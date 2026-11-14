@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { visuel } from "@/lib/content/visuels";
 
 export const metadata: Metadata = {
   title: "Propositions — autres tons pour la statue",
@@ -17,14 +18,14 @@ const PROPOSITIONS = [
   {
     n: 1,
     nom: "Nuit",
-    image: "/propositions/nuit.webp",
-    alt: "La statue de marbre vue de dos sur fond noir, la lumière rasante dessinant les muscles",
-    position: "78% 30%",
+    // Retenue le 2026-11-14, avec le pot dans la main droite et le regard baissé vers lui, sans le mot « FOCUS ».
+    image: visuel("nuit-16x9"),
+    alt: "La statue de marbre vue de dos sur fond noir, le regard baissé vers le pot SCULT CRI qu'elle tient dans la main droite",
+    position: "100% 30%",
     dark: true,
-    mot: "FOCUS",
-    label: "Complexe Focus · 5,5 g par dose",
+    label: "CRI · le pré-workout SCULT",
     titre: "La tête d'abord.",
-    ou: "Une section sombre sur l'accueil pour le complexe Focus, ou l'en-tête de la page Performance.",
+    ou: "Version retenue : de dos, le pot dans la main droite, le regard vers le pot. Reste à choisir sa place : hero, slider du bas, ou en-tête de la page Performance.",
   },
   {
     n: 2,
@@ -69,12 +70,6 @@ export default function PropositionsPage() {
           <section key={p.n} className="border-t">
             <div className={`relative aspect-[4/5] overflow-hidden md:aspect-auto md:h-[86svh] ${p.dark ? "bg-ink text-marble" : "bg-white text-ink"}`}>
               <Image src={p.image} alt={p.alt} fill sizes="100vw" style={{ objectPosition: p.position }} className="object-cover" />
-              {/* Le mot géant, lettres espacées, posé sur la statue */}
-              {p.mot && (
-                <p aria-hidden style={{ letterSpacing: "0.16em" }} className="display pointer-events-none absolute inset-x-0 top-[36%] text-center text-[14.5vw] leading-none text-marble/85 md:top-[30%] md:text-[11.5vw]">
-                  <span className="-mr-[0.16em]">{p.mot}</span>
-                </p>
-              )}
               <div
                 className={`absolute flex-col p-5 md:p-10 ${p.droite ? "hidden md:flex" : "flex"} ${p.bas ? "inset-x-0 bottom-0 [text-shadow:0_1px_2px_rgb(11_11_15/0.6),0_0_24px_rgb(11_11_15/0.5)] md:max-w-[52%]" : p.droite ? "inset-x-0 bottom-0 md:inset-y-0 md:left-auto md:right-0 md:w-[40%] md:justify-center" : "inset-x-0 bottom-0 md:max-w-[40%]"}`}
               >
