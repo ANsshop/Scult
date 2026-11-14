@@ -460,3 +460,24 @@ seule qui change d'un goût à l'autre.
 - Format téléphone : dire « imagine une ligne verticale au milieu, la statue
   est entièrement dans la moitié droite » ; « les 42 % de gauche vides » n'a
   pas suffi.
+
+## Autres tons pour la statue — propositions (2026-11-14)
+
+Demande : « qu'on ne reste pas tout le temps sur le même ton sur les
+statues », avec trois références (une statue de dos sur fond noir sous le mot
+FOCUS, un très gros plan de visage en noir et blanc, un regard par-dessus un
+bras). Trois propositions avec notre personnage, montées sur la page de
+travail `/propositions` (hors navigation, non indexée) — à supprimer une fois
+le choix fait, avec `public/propositions/`.
+
+| Proposition | Job Higgsfield (16:9, 4k) |
+|---|---|
+| 1 · Nuit : de dos, fond noir, lumière rasante ; le mot FOCUS est posé en HTML | `9968c6e1-fda7-4bed-9950-35beda60780c` |
+| 2 · Regard : demi-visage en noir et blanc sur blanc, la pastille rouge pour seule couleur | `9914d8aa-263c-4669-aeeb-660438e1c276` |
+| 3 · Par-dessus le bras : soleil bas, drapé bleu Klein, strap rouge | `8e76c28b-5874-4ad6-88e5-0a516a5134e0` |
+
+Statue assise sur fond blanc (essai en ligne sur la slide 2 du slider du
+bas) : 16:9 `d1be7782-e622-4530-935f-a47d37133daa`, 4:5
+`70f76be1-9bc3-43bf-8e46-fb73e4cd2bdd`. Obtenues en demandant de ne changer
+que le fond : le pot reste au même endroit, les relevés de la version bleue
+servent presque tels quels.
