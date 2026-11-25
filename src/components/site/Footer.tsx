@@ -22,9 +22,11 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16">
           <div>
             <Link href="/" aria-label="SCULT — accueil" className="group inline-block">
-              {/* Le sourire du couvercle, emblème de la marque (public/brand/sourire.svg) */}
-              {/* eslint-disable-next-line @next/next/no-img-element -- un SVG servi tel quel, rien à optimiser */}
-              <img src="/brand/sourire.svg" alt="" width={931} height={382} loading="lazy" className="mb-7 block h-auto w-[clamp(9rem,17vw,15rem)] origin-left transition-transform duration-500 ease-(--ease-scult) group-hover:scale-[1.04] md:mb-9" />
+              {/* Le sourire chromé du couvercle, emblème de la marque : la photo du couvercle, détourée (public/brand/) */}
+              <span className="sourire mb-7 w-[clamp(9rem,17vw,15rem)] origin-left transition-transform duration-500 ease-(--ease-scult) group-hover:scale-[1.04] md:mb-9">
+                {/* eslint-disable-next-line @next/next/no-img-element -- deux fichiers fixes, rien à optimiser */}
+                <img src="/brand/sourire-chrome.webp" srcSet="/brand/sourire-chrome-480.webp 480w, /brand/sourire-chrome.webp 921w" sizes="(min-width: 768px) 15rem, 9rem" alt="" width={921} height={370} loading="lazy" className="block h-auto w-full" />
+              </span>
               <Wordmark className="h-[clamp(2rem,4.8vw,4.25rem)] w-auto" />
             </Link>
             <p className="display mt-6 text-[clamp(1.5rem,2.6vw,2.4rem)] md:mt-8">{FOOTER.signature}</p>
