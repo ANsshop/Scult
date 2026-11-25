@@ -6,6 +6,7 @@ import { ProductGallery } from "./ProductGallery";
 import { FlavourGallery, FlavourIngredients, FlavourProvider, FlavourSku } from "./FlavourContext";
 import { Reassurance } from "./Reassurance";
 import { FaqPreview } from "./FaqPreview";
+import { FocusComplex } from "./FocusComplex";
 import { ToggleArrow } from "@/components/ui/ToggleArrow";
 import { CLAIMS } from "@/lib/content/methode";
 import { FAQ_ITEMS } from "@/lib/content/faq";
@@ -127,6 +128,7 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
           </div>
         </div>
       </Container>
+      {product.slug === "cri" && <FocusComplex />}
       <FaqPreview count={3} />
     </FlavourProvider>
   );

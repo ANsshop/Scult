@@ -2,6 +2,9 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { imageSize, imageSrcSet, imageUrl } from "@/lib/content/images";
 import { HERO, HERO_OFFRE } from "@/lib/content/site";
+import type { FlavourOffer } from "@/lib/catalog/queries";
+import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping";
+import { formatPrice } from "@/lib/utils";
 import { HeroSlider } from "./HeroSlider";
 
 /** Les mêmes `sizes` pour le préchargement et pour l'image, sinon le navigateur télécharge deux fichiers. */
@@ -26,15 +29,16 @@ const COLONNE = "md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))]";
  *  1. Le bouffon (hero dark) : le vrai contenu de la page — le h1, les
  *     dosages, le bouton. C'est lui que l'intro rose recouvre puis révèle.
  *  2. L'offre : la créa « −30 % sur le deuxième pot », titre peint dans
- *     l'image (d'où son `alt`), et un bouton.
+ *     l'image (d'où son `alt`), et un bouton. `offer` (le catalogue) donne le
+ *     prix du pack, écrit sur le bouton ; sans lui, le bouton reste seul.
  */
-export function Hero() {
+export function Hero({ offer }: { offer?: FlavourOffer | null }) {
   return (
     <HeroSlider
       legal={HERO.legal}
       slides={[
         { id: "bouffon", label: "le bouffon", node: <SlideBouffon /> },
-        { id: "offre", label: "l'offre", clair: true, node: <SlideOffre /> },
+        { id: "offre", label: "l'offre", clair: true, node: <SlideOffre pack={offer?.pack ?? null} /> },
       ]}
       pied={
         <>
@@ -121,7 +125,10 @@ function SlideBouffon() {
  * Elle n'est pas visible à l'arrivée : chargée en basse priorité, pour ne rien
  * prendre à l'image du bouffon.
  */
-function SlideOffre() {
+function SlideOffre({ pack }: { pack: FlavourOffer["pack"] }) {
+  const price = pack ? formatPrice(pack.priceCents) : null;
+  const saving = pack && pack.fullPriceCents > pack.priceCents;
+  const note = pack && [saving ? HERO_OFFRE.instead(formatPrice(pack.fullPriceCents)) : null, pack.priceCents >= FREE_SHIPPING_THRESHOLD_CENTS ? HERO_OFFRE.shipping : null].filter(Boolean).join(" · ");
   const desktop = imageSize("hero-offre-desktop");
   const mobile = imageSize("hero-offre-mobile");
   return (
@@ -143,8 +150,10 @@ function SlideOffre() {
         />
       </picture>
       {/* Le bouton est dans un bloc en absolu : la classe du reflet lui impose `position: relative` */}
-      <div className={`absolute inset-x-0 bottom-10 px-5 md:inset-x-auto md:bottom-[5.5rem] md:left-0 md:pr-0 ${COLONNE}`}>
-        <ButtonLink href={HERO_OFFRE.cta.href} className="h-[3.25rem] w-full !text-[0.85rem] md:h-14 md:w-auto md:px-10">{HERO_OFFRE.cta.label}</ButtonLink>
+      <div className={`absolute inset-x-0 bottom-10 flex flex-col items-center gap-2.5 px-5 md:inset-x-auto md:bottom-[5.5rem] md:left-0 md:flex-row md:gap-5 md:pr-0 ${COLONNE}`}>
+        {/* Mobile : la précision au-dessus du bouton ; ordinateur : à sa droite */}
+        {note && <p className="label rounded-full bg-white/85 px-3.5 py-1.5 font-bold text-noir backdrop-blur md:order-2">{note}</p>}
+        <ButtonLink href={HERO_OFFRE.cta.href} className="h-[3.25rem] w-full !text-[0.85rem] md:h-14 md:w-auto md:px-10">{HERO_OFFRE.cta.label}{price && <> · {price}</>}</ButtonLink>
       </div>
     </div>
   );

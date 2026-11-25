@@ -67,6 +67,34 @@ export const HERO = {
 export const HERO_OFFRE = {
   alt: "« −30 % sur le deuxième pot » peint au pinceau, en rose et noir, à côté de deux pots SCULT qui volent devant des éclaboussures d'encre",
   cta: { label: "J'en prends deux", href: ANNONCE.href },
+  /** À côté du bouton, quand le catalogue donne le prix du pack : « au lieu de 98 € ». */
+  instead: (full: string) => `au lieu de ${full}`,
+  shipping: "livraison offerte",
+};
+
+/**
+ * La section « Complexe Focus » (accueil et fiche produit). Le nom du
+ * complexe, son poids et ses ingrédients viennent de cri-formule.json ; ici,
+ * seulement les textes autour.
+ * `glosses` : ce qu'est chaque ingrédient, en clair — son identité, jamais un
+ * effet (règlement 1924/2006, scripts/gate.sh). La clé est le nom exact de
+ * l'étiquette ; un ingrédient sans entrée n'affiche que son nom.
+ * ⚠ Provisoire, à faire relire avec l'étiquetage.
+ */
+export const FOCUS = {
+  eyebrow: "Dans chaque dose",
+  text: (count: number, amount: string) => `${count} ingrédients réunis en un seul complexe : ${amount} par dose. Les voici, un par un.`,
+  total: "Le complexe",
+  per: "par dose",
+  cta: { label: "Toute la composition", href: "/produits/cri" },
+  glosses: {
+    "DMAE bitartrate": "Diméthylaminoéthanol, sous forme de bitartrate.",
+    "Hericium erinaceus (lion's mane)": "Un champignon, la « crinière de lion ».",
+    "Extrait de genévrier 10:1": "Baies de genévrier, extrait concentré dix fois.",
+    "Mucuna pruriens (L-DOPA 99 %)": "Le pois mascate, extrait titré en L-DOPA.",
+    "Hordénine 98 %": "Hordénine pure à 98 %.",
+    "Huperzia serrata (huperzine A 1 %)": "Un lycopode, extrait titré en huperzine A.",
+  },
 };
 
 /** Bandeau en tête de la fiche produit. */

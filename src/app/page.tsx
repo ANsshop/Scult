@@ -4,7 +4,9 @@ import { IntroRose } from "@/components/site/intro/IntroRose";
 import { Hero } from "@/components/site/Hero";
 import { Marquee } from "@/components/site/Marquee";
 import { Offer } from "@/components/site/Offer";
+import { FocusComplex } from "@/components/site/FocusComplex";
 import { Slider } from "@/components/site/Slider";
+import { FOCUS } from "@/lib/content/site";
 import { FaqPreview } from "@/components/site/FaqPreview";
 import { getFlavourOffer, getProductBySlug } from "@/lib/catalog/queries";
 
@@ -23,9 +25,10 @@ export default async function Home() {
       <IntroRose />
       <Header overlay />
       <main>
-        <Hero />
+        <Hero offer={offer} />
         <Marquee />
         {cri && <Offer product={cri} offer={offer} />}
+        <FocusComplex cta={FOCUS.cta} />
         <Slider />
         <FaqPreview />
       </main>

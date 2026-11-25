@@ -38,6 +38,8 @@
 
 **Le hero de l'accueil** (`Hero.tsx`, `HeroSlider.tsx`) est un slider de deux visuels : le bouffon sur fond noir (titre en HTML), puis la créa de l'offre sur papier blanc, `hero-offre-*`, dont le titre est peint au pinceau dans l'image. Sur la slide blanche, l'en-tête garde son fond noir. La créa n'est jamais recadrée dans son texte (`.hero-offre-image`, `globals.css`). Mobile : un écran, bouton en bas, deux traits pour changer de slide (ou le doigt). Ordinateur : compteur, flèches et pause en bas à droite.
 
+**Le complexe Focus** (`FocusComplex.tsx`, accueil et fiche) : un bloc noir, le titre en deux couleurs, une carte arrondie par ingrédient (numéro rose, nom en Archivo Black, ce qu'il est en une ligne) et une dernière case rose pour le poids du complexe.
+
 **Le slider de l'accueil** (`Slider.tsx`, slides dans `site.ts`) : visuels plein cadre sur fond papier, titre peint dans l'image, bouton en bas à gauche.
 
 **Les textes** : tous dans `src/lib/content/site.ts`, provisoires (voir `ASSUMPTIONS.md`).
