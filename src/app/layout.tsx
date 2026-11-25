@@ -9,13 +9,23 @@ import { INTRO_HEAD_SCRIPT } from "@/components/site/intro/script";
 import "./globals.css";
 
 // Polices auto-hébergées (fichiers Fontsource, licence OFL) : aucun appel à
-// Google Fonts, ni au build ni à l'exécution. Knewave, un pinceau épais et
-// penché, pour les titres et les boutons (la police libre la plus proche du
-// lettrage peint des créas) ; Fraunces pour le texte. Les deux polices du faux
-// site rose (Pacifico, Quicksand) sont dans public/fonts/ et ne se chargent que
-// si l'intro joue (intro.css). Pour changer de police : ce fichier.
+// Google Fonts, ni au build ni à l'exécution.
+//  - Texte, navigation, étiquettes : Barlow Condensed, la condensée la plus
+//    proche de celle de l'étiquette du pot (« PRE-WORKOUT · 400 G »).
+//  - Titres et boutons : Knewave, un pinceau épais et penché, la police libre
+//    la plus proche du lettrage peint des créas.
+// Les deux polices du faux site rose (Pacifico, Quicksand) sont dans
+// public/fonts/ et ne se chargent que si l'intro joue (intro.css).
+// Pour changer de police : ce fichier.
 const titre = localFont({ src: "../fonts/knewave-latin-400-normal.woff2", variable: "--police-titre", weight: "400", display: "swap" });
-const police = localFont({ src: "../fonts/fraunces-latin-wght-normal.woff2", variable: "--police", weight: "100 900", display: "swap" });
+const police = localFont({
+  src: [
+    { path: "../fonts/barlow-condensed-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/barlow-condensed-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--police",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: { default: "SCULT — CRI, le pré-workout aux dosages écrits sur le pot", template: "%s — SCULT" },

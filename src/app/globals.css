@@ -55,8 +55,8 @@
   --color-stone: #76736d;
 
   --font-display: var(--police-titre), "Marker Felt", "Comic Sans MS", cursive;
-  --font-sans: var(--police), Georgia, "Times New Roman", serif;
-  --font-mono: var(--police), Georgia, "Times New Roman", serif; /* plus de police à chasse fixe */
+  --font-sans: var(--police), "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--police), "Arial Narrow", "Helvetica Neue", Arial, sans-serif; /* plus de police à chasse fixe */
 
   --ease-scult: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -84,6 +84,9 @@ body {
   background: var(--fond);
   color: var(--texte);
   font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 1.0625rem; /* une condensée se lit un peu plus grand */
+  letter-spacing: 0.01em;
 }
 
 /* Le grain : une surcouche fixe sur toute la page, qui ne capte aucun clic.
@@ -118,9 +121,9 @@ body::after {
 /* Étiquettes : petites capitales espacées */
 .label {
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 

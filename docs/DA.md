@@ -20,7 +20,7 @@
 | `rose` | `#FF2E93` | `#FF2E93` | l'accent, unique |
 | `noir` | `#070707` | `#070707` | le texte posé sur le rose |
 
-- **Polices** : Knewave pour les titres et les boutons — un pinceau épais et penché, la police libre la plus proche du lettrage peint des créas (qui, lui, est un dessin, coulures comprises) ; capitales, interlignage 0,95 (`.display`). Fraunces pour le texte courant et les étiquettes (`.label`). L'ombre dure rose des titres du brief d'origine est coupée (`.ombre-titre`). Les polices se changent en un endroit : `src/app/layout.tsx`.
+- **Polices** : Knewave pour les titres et les boutons — un pinceau épais et penché, la police libre la plus proche du lettrage peint des créas (qui, lui, est un dessin, coulures comprises) ; capitales, interlignage 0,95 (`.display`). Barlow Condensed pour tout le texte, la navigation et les étiquettes (`.label`) — la condensée la plus proche de celle de l'étiquette du pot. L'ombre dure rose des titres du brief d'origine est coupée (`.ombre-titre`). Les polices se changent en un endroit : `src/app/layout.tsx`.
 - **Boutons** : pilule rose, texte noir au pinceau ; un reflet de lumière les traverse au survol. Le même reflet passe sur le logo et sur les cartes.
 - **Formes** : arrondies — `--radius-btn` (pilule), `--radius-card`, `--radius-chip`.
 - **Grain** : surcouche fixe sur toute la page (`body::after`, `public/noise.svg`), sans effet sur les clics.
