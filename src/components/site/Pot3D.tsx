@@ -122,8 +122,22 @@ export function Pot3D({
       },
       { rootMargin: "600px" },
     );
-    io.observe(el);
-    return () => io.disconnect();
+    // Dans un bloc mis de côté (`inert` : une slide qui n'est pas à l'écran), on ne charge rien tant qu'il n'est pas montré.
+    const aside = el.closest("[inert]");
+    if (!aside) {
+      io.observe(el);
+      return () => io.disconnect();
+    }
+    const waiting = new MutationObserver(() => {
+      if (aside.hasAttribute("inert")) return;
+      waiting.disconnect();
+      io.observe(el);
+    });
+    waiting.observe(aside, { attributes: true, attributeFilter: ["inert"] });
+    return () => {
+      waiting.disconnect();
+      io.disconnect();
+    };
   }, []);
 
   useEffect(() => {

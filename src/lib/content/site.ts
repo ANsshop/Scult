@@ -73,7 +73,7 @@ export const HERO_POCHES = {
   text: "30 pochons de caféine, à glisser contre la gencive. 200 mg par pochon, goût fraise piquante. Sans nicotine, sans tabac.",
   cta: { label: "Me prévenir", href: "mailto:hello@scult.eu?subject=Pochons%20de%20caf%C3%A9ine%20%3A%20pr%C3%A9venez-moi" },
   secondary: { label: "Voir la boîte en 3D", href: "/pochons" },
-  alt: "Le bouffon tend vers l'objectif une boîte ronde blanche de pochons de caféine SCULT, son portrait sur le couvercle ; de l'autre main, il montre un pochon blanc tenu entre deux doigts",
+  alt: "« La caféine en poche. » peint au pinceau, en noir et rose, à côté de boîtes blanches de pochons SCULT qui volent devant des éclaboussures d'encre",
 };
 
 /**

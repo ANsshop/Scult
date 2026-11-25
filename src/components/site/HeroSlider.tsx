@@ -80,7 +80,15 @@ export function HeroSlider({ slides, legal }: { slides: HeroSlide[]; legal: stri
         onPointerLeave={() => { hold.current = false; }}
         onFocusCapture={() => { hold.current = true; }}
         onBlurCapture={() => { hold.current = false; }}
-        onTouchStart={(e) => { touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }}
+        onTouchStart={(e) => {
+          // Un doigt posé sur un produit en 3D le fait tourner : ce n'est pas un changement de slide, et le défilement s'arrête.
+          if ((e.target as Element).closest("model-viewer")) {
+            touch.current = null;
+            setAuto(false);
+            return;
+          }
+          touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }}
         onTouchEnd={(e) => {
           const start = touch.current;
           touch.current = null;

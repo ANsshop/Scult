@@ -35,11 +35,12 @@ const IMAGES = {
   "pot-vues": { file: "hf_20261125_110716_87ef88da-577f-4619-8d2f-c4ced792a3fe.png", widths: [] },
   "bouffon-face": { file: "hf_20261124_211831_7a9d9a94-9fbc-4c83-877d-2edd84efc413.png", widths: [480, 800, 1200, 1792] },
   "bouffon-applaudit": { file: "hf_20261124_211828_c2cae7e6-464b-4dbd-ad49-57ebb026a115.png", widths: [480, 800, 1200, 1792] },
-  // La deuxième slide du hero, l'annonce des pochons de caféine : le bouffon tend la boîte blanche. Générées le
-  // 2026-11-25 sur Higgsfield (GPT Image 2.6) à partir des affiches du bouffon ci-dessus et de la feuille de
-  // référence du produit, validée (docs/refonte-bouffon/sources/planche-pochons.jpg).
-  "hero-poches-desktop": { file: "hf_20261125_193154_0d89db6a-756a-440f-96df-f47c470cba23.png", widths: [960, 1440, 1920, 2688] },
-  "hero-poches-mobile": { file: "hf_20261125_193157_364dd60b-9c59-41c3-90fb-2ca0956c1f6d.png", widths: [480, 780, 1170] },
+  // La deuxième slide du hero, l'annonce des pochons de caféine : une créa dans le style du visuel slide-pots
+  // (« T'as cru quoi ? »), générée le 2026-11-25 sur Higgsfield (GPT Image 2.6) à partir de ce visuel et de la
+  // feuille de référence du produit. La version mobile est la partie droite de la même image, sans le lettrage
+  // (`crop` : x, y, largeur, hauteur, en fractions de l'image) : sur mobile le titre est en texte.
+  "hero-poches-desktop": { file: "hf_20261125_195626_7f0cc8bd-fa38-4e91-aaf4-830c9427618b.png", widths: [960, 1440, 1920, 2688] },
+  "hero-poches-mobile": { file: "hf_20261125_195626_7f0cc8bd-fa38-4e91-aaf4-830c9427618b.png", crop: [0.44, 0, 0.56, 1], widths: [480, 780, 1170, 1505] },
   // Fournie en fichier le 2026-11-25 (pas de lien) : la source est versionnée.
   "slide-pots": { local: "docs/refonte-bouffon/sources/slide-pots.jpg", widths: [960, 1440, 1920] },
 };
@@ -102,9 +103,15 @@ async function emit(name, pipeline, widths, sourceWidth, sourceHeight) {
   manifest[name] = { width: sourceWidth, height: sourceHeight, widths: kept };
 }
 
-for (const [name, { file, local, widths }] of Object.entries(IMAGES)) {
+for (const [name, { file, local, widths, crop }] of Object.entries(IMAGES)) {
   const path = local ?? fetchSource(name, file);
   const meta = await sharp(path).metadata();
+  if (crop) {
+    const [x, y, w, h] = crop;
+    const box = { left: Math.round(x * meta.width), top: Math.round(y * meta.height), width: Math.round(w * meta.width), height: Math.round(h * meta.height) };
+    await emit(name, () => sharp(path).extract(box), widths, box.width, box.height);
+    continue;
+  }
   if (name === "pot-vues") {
     await emit(DETAIL.name, () => sharp(path).extract(DETAIL.box), DETAIL.widths, DETAIL.box.width, DETAIL.box.height);
     continue;

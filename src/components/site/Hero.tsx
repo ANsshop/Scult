@@ -2,7 +2,9 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { imageSize, imageSrcSet, imageUrl, type ImageName } from "@/lib/content/images";
 import { HERO, HERO_POCHES } from "@/lib/content/site";
+import { BOITE_POCHONS } from "@/lib/content/modeles-3d";
 import { HeroSlider } from "./HeroSlider";
+import { Pot3D } from "./Pot3D";
 
 /** Les mêmes `sizes` pour le préchargement et pour l'image, sinon le navigateur télécharge deux fichiers. */
 const SIZES_MOBILE = "100vw";
@@ -35,13 +37,14 @@ type Affiche = {
 };
 
 /**
- * Le hero de l'accueil : un slider de deux affiches du bouffon (HeroSlider
- * pose les commandes). Les textes sont dans lib/content/site.ts.
+ * Le hero de l'accueil : un slider de deux visuels (HeroSlider pose les
+ * commandes). Les textes sont dans lib/content/site.ts.
  *
  *  1. Le pré-workout : le vrai contenu de la page — le h1, les dosages, le
  *     bouton. C'est cette slide que l'intro rose recouvre puis révèle.
- *  2. Le nouveau produit, les pochons de caféine : une annonce, sans prix ni
- *     fiche tant qu'il n'est pas au catalogue.
+ *  2. Le nouveau produit, les pochons de caféine : une créa sur papier blanc,
+ *     dans le style de la section « T'as cru quoi ? », avec la boîte en 3D
+ *     posée sur la boîte centrale. Une annonce, sans prix ni fiche.
  */
 export function Hero() {
   const pied = (a: Affiche) => (
@@ -51,13 +54,12 @@ export function Hero() {
     </>
   );
   const pre: Affiche = { ...HERO, images: { desktop: "hero-dark-desktop", mobile: "hero-dark-mobile" } };
-  const poches: Affiche = { ...HERO_POCHES, images: { desktop: "hero-poches-desktop", mobile: "hero-poches-mobile" } };
   return (
     <HeroSlider
       legal={HERO.legal}
       slides={[
         { id: "pre-workout", label: "le pré-workout", node: <SlideAffiche first {...pre} />, pied: pied(pre) },
-        { id: "poches", label: "les pochons de caféine", node: <SlideAffiche {...poches} />, pied: pied(poches) },
+        { id: "poches", label: "les pochons de caféine", clair: true, node: <SlideCrea />, pied: pied({ ...pre, ...HERO_POCHES }) },
       ]}
     />
   );
@@ -144,6 +146,80 @@ function SlideAffiche({ first = false, images, alt, eyebrow, badge, title, text,
           <ButtonLink href={cta.href} className="h-[3.25rem] w-full !text-[0.85rem] lg:h-14 lg:w-auto lg:px-10">{cta.label}</ButtonLink>
           {secondary && <Link href={secondary.href} className={`${LIEN} hidden lg:inline`}>{secondary.label}</Link>}
         </div>
+      </div>
+    </div>
+  );
+}
+
+/** Où poser la boîte 3D sur la créa : centre et largeur en % de l'image, inclinaison, angle de vue. */
+const BOITE = {
+  desktop: { x: 63.7, y: 50.3, width: 39.5 },
+  // La version mobile est la partie droite de la créa (44 % → 100 %, scripts/bouffon-images.mjs) : mêmes repères, recalculés.
+  mobile: { x: 35.2, y: 50.3, width: 70.5 },
+  tilt: -2,
+  orbit: "-17deg 86deg 135%",
+};
+
+/**
+ * L'annonce des pochons : la créa « La caféine en poche. », papier blanc,
+ * lettrage au pinceau, boîtes qui volent. La boîte en 3D recouvre la boîte
+ * centrale peinte ; on la fait tourner à la souris ou au doigt. Sans 3D, la
+ * boîte peinte reste. La 3D ne se charge que quand la slide est montrée
+ * (Pot3D attend la fin de `inert`) : rien n'est pris à l'image du bouffon.
+ *
+ * Ordinateur : la créa entière (`.hero-scene`, globals.css), son titre peint
+ * dans l'image, le bouton en bas à gauche. Mobile : le titre en texte, en
+ * haut, puis la partie droite de la créa — les boîtes —, le bouton en bas.
+ */
+function SlideCrea() {
+  const desktop = imageSize("hero-poches-desktop");
+  const mobile = imageSize("hero-poches-mobile");
+  const pot = (place: { x: number; y: number; width: number }) => (
+    <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${place.x}%`, top: `${place.y}%`, width: `${place.width}%`, rotate: `${BOITE.tilt}deg` }}>
+      <Pot3D model={BOITE_POCHONS} alt="" orbit={BOITE.orbit} />
+    </div>
+  );
+  const actions = (
+    <>
+      {/* Sur un téléphone très court, la pastille tomberait sur le bas de la boîte : on ne garde que le bouton */}
+      <p className="label rounded-full bg-rose px-3 py-1 font-bold text-noir max-lg:[@media(max-height:620px)]:hidden">{HERO_POCHES.badge}</p>
+      <ButtonLink href={HERO_POCHES.cta.href} className="h-[3.25rem] w-full shrink-0 whitespace-nowrap !text-[0.85rem] lg:h-14 lg:w-auto lg:px-10">{HERO_POCHES.cta.label}</ButtonLink>
+    </>
+  );
+  return (
+    <div className="hero-crea absolute inset-0 overflow-hidden text-noir">
+      {/* Ordinateur : la créa entière, la boîte 3D par-dessus */}
+      <div className="hidden lg:block">
+        <div className="hero-scene">
+          <picture>
+            <source type="image/avif" srcSet={imageSrcSet("hero-poches-desktop", "avif")} sizes="100vw" />
+            <source type="image/webp" srcSet={imageSrcSet("hero-poches-desktop", "webp")} sizes="100vw" />
+            <img src={imageUrl("hero-poches-desktop", 1440)} alt={HERO_POCHES.alt} width={desktop.width} height={desktop.height} loading="lazy" fetchPriority="low" decoding="async" className="absolute inset-0 h-full w-full" />
+          </picture>
+          {pot(BOITE.desktop)}
+        </div>
+        <div className={`absolute bottom-[5.5rem] left-0 flex items-center gap-5 ${COLONNE}`}>
+          {actions}
+          <Link href={HERO_POCHES.secondary.href} className={LIEN}>{HERO_POCHES.secondary.label}</Link>
+        </div>
+      </div>
+
+      {/* Mobile : le titre en texte, les boîtes dessous, le bouton en bas */}
+      <div className="flex h-full flex-col lg:hidden">
+        <div className="px-5 pt-[calc(var(--entete)+0.9rem)] text-center">
+          <h2 className="display text-[min(10vw,5.8svh,4rem)]">
+            {HERO_POCHES.title.main}<br /><span className="text-rose">{HERO_POCHES.title.accent}</span>
+          </h2>
+        </div>
+        <div className="relative mt-1 w-full" style={{ aspectRatio: `${mobile.width} / ${mobile.height}` }}>
+          <picture>
+            <source type="image/avif" srcSet={imageSrcSet("hero-poches-mobile", "avif")} sizes="100vw" />
+            <source type="image/webp" srcSet={imageSrcSet("hero-poches-mobile", "webp")} sizes="100vw" />
+            <img src={imageUrl("hero-poches-mobile", 780)} alt={HERO_POCHES.alt} width={mobile.width} height={mobile.height} loading="lazy" fetchPriority="low" decoding="async" className="hero-crea-fondu absolute inset-0 h-full w-full" />
+          </picture>
+          {pot(BOITE.mobile)}
+        </div>
+        <div className="absolute inset-x-0 bottom-10 flex flex-col items-center gap-2.5 px-5">{actions}</div>
       </div>
     </div>
   );
