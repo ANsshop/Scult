@@ -59,6 +59,16 @@ export const HERO = {
   alt: "Un bouffon musclé au masque blanc fendu d'un sourire tend un pot SCULT noir et rose vers l'objectif, dans une salle de sport en sous-sol",
 };
 
+/**
+ * La deuxième slide du hero : la créa de l'offre, dont le titre est peint dans
+ * l'image (d'où l'`alt`). ⚠ Le chiffre est dans l'image : si l'offre change
+ * (voir ANNONCE), il faut refaire le visuel, pas seulement ce texte.
+ */
+export const HERO_OFFRE = {
+  alt: "« −30 % sur le deuxième pot » peint au pinceau, en rose et noir, à côté de deux pots SCULT qui volent devant des éclaboussures d'encre",
+  cta: { label: "J'en prends deux", href: ANNONCE.href },
+};
+
 /** Bandeau en tête de la fiche produit. */
 export const PRODUCT_BANNER = {
   title: "La blague est finie.",

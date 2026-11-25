@@ -31,6 +31,10 @@ const IMAGES = {
   "pot-vues": { file: "hf_20261125_110716_87ef88da-577f-4619-8d2f-c4ced792a3fe.png", widths: [] },
   "bouffon-face": { file: "hf_20261124_211831_7a9d9a94-9fbc-4c83-877d-2edd84efc413.png", widths: [480, 800, 1200, 1792] },
   "bouffon-applaudit": { file: "hf_20261124_211828_c2cae7e6-464b-4dbd-ad49-57ebb026a115.png", widths: [480, 800, 1200, 1792] },
+  // La deuxième slide du hero, « −30 % sur le deuxième pot » : générée le 2026-11-25 sur Higgsfield
+  // (GPT Image 2.6), avec le visuel slide-pots pour le style et pot-packshot pour l'étiquette.
+  "hero-offre-desktop": { file: "hf_20261125_140920_4d6ec21b-2ca3-44e0-b7c9-bea660bb722a.png", widths: [960, 1440, 1920, 2688] },
+  "hero-offre-mobile": { file: "hf_20261125_141250_cd3e1de0-d7c5-491a-9bad-e72b9c38c615.png", widths: [480, 780, 1170] },
   // Fournie en fichier le 2026-11-25 (pas de lien) : la source est versionnée.
   "slide-pots": { local: "docs/refonte-bouffon/sources/slide-pots.jpg", widths: [960, 1440, 1920] },
 };

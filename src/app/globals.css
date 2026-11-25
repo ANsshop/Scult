@@ -188,6 +188,36 @@ body::after {
 .annonce-piste { animation: annonce 28s linear infinite; }
 a:hover > .annonce-piste { animation-play-state: paused; }
 
+/* Accueil : quand le hero montre une slide claire (HeroSlider, `data-clair`), l'en-tête
+   posé par-dessus, transparent en haut de page, prend son fond noir pour rester lisible. */
+html:has(.hero[data-clair]) .entete { background-color: rgb(7 7 7 / 0.9); }
+
+/* La créa de l'offre (2e slide du hero, Hero.tsx) : son titre est peint dans l'image, donc
+   on ne la recadre jamais dans son contenu. Elle prend toute la largeur, sauf si ses pots
+   passeraient sous l'en-tête ou sous le bouton : là elle rétrécit, et ses bords se fondent
+   dans un aplat de la couleur de son papier (`--papier`).
+   Paysage (2688 × 1520, contenu entre 12 % et 88 % de la hauteur) : calée en bas, le vide
+   du haut sous l'en-tête. Portrait (1520 × 2688, contenu entre 19 % et 79 %) : calée en haut. */
+.hero-offre { --papier: #ece9ea; background: var(--papier); }
+.hero-offre-image {
+  --h: min(56.55vw, calc((100% - var(--entete)) / 0.88));
+  position: absolute;
+  left: 50%;
+  top: min(calc(100% - var(--h)), calc((100% - var(--h) + var(--entete)) / 2));
+  translate: -50% 0;
+  width: auto;
+  max-width: none;
+  height: var(--h);
+  mask-image: linear-gradient(90deg, transparent, #000 2%, #000 98%, transparent), linear-gradient(180deg, transparent, #000 5%, #000 97%, transparent);
+  mask-composite: intersect;
+}
+@media (orientation: portrait) {
+  .hero-offre-image {
+    --h: min(177.78vw, calc((100% - 6.25rem) / 0.79));
+    top: max(0px, calc((100% - var(--h)) / 2));
+  }
+}
+
 /* — Panier et tunnel d'achat : habillage sans toucher aux composants —
    Ces fichiers portent encore une valeur de l'ancienne DA écrite en dur (le halo
    bleu des cartes « 1 pot / pack »). Elle est corrigée ici, par sélecteur. */

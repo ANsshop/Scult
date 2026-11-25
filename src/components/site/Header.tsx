@@ -37,7 +37,7 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
 
   const solid = scrolled || open || !overlay;
   return (
-    <header className={`${overlay ? "fixed inset-x-0 top-0" : "sticky top-0"} sombre z-40 text-texte transition-colors duration-300 ${solid ? "bg-fond/90 shadow-[0_1px_0_rgb(242_240_234/0.16)] backdrop-blur" : "bg-transparent"}`}>
+    <header className={`${overlay ? "fixed inset-x-0 top-0" : "sticky top-0"} entete sombre z-40 text-texte transition-colors duration-300 ${solid ? "bg-fond/90 shadow-[0_1px_0_rgb(242_240_234/0.16)] backdrop-blur" : "bg-transparent"}`}>
       {/* La bande d'annonce : le même texte répété, qui glisse en continu (à l'arrêt en mouvement réduit) */}
       <Link href={ANNONCE.href} aria-label={ANNONCE.text} className="block h-8 overflow-hidden bg-rose text-noir">
         <span aria-hidden className="annonce-piste flex h-full w-max items-center whitespace-nowrap">
