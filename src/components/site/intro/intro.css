@@ -143,11 +143,10 @@ html[data-intro="fade"] #intro-rose { opacity: 0; transition: opacity 200ms line
   position: absolute; inset: 0; z-index: -1;
   color: #ff2e93;
   text-shadow: none;
-  white-space: nowrap; /* mobile : une ligne, comme le titre */
+  white-space: pre-line; /* deux lignes, comme le titre */
   opacity: 0;
   pointer-events: none;
 }
-@media (min-width: 768px) { .hero-titre::before { white-space: pre-line; } } /* ordinateur : deux lignes */
 html[data-intro="glitch"] .hero-titre::before { animation: titre-saute 350ms steps(1, end) 350ms forwards; }
 @keyframes titre-saute {
   0%   { transform: translate3d(-9px, 3px, 0); opacity: 0.9; }

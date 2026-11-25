@@ -51,7 +51,7 @@ export function FlavourPicker({
                 <span>{f.lines[0]}</span>
                 <span>{f.lines[1]}</span>
               </span>
-              <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[1.05rem] peer-focus-visible:shadow-[0_0_0_3px_var(--color-clair)]" />
+              <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[1.05rem] peer-focus-visible:shadow-[0_0_0_3px_var(--texte)]" />
             </label>
           );
         })}

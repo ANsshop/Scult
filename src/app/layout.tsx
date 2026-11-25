@@ -8,12 +8,12 @@ import { organizationJsonLd, siteOrigin } from "@/lib/seo";
 import { INTRO_HEAD_SCRIPT } from "@/components/site/intro/script";
 import "./globals.css";
 
-// Polices auto-hébergées (fichiers Fontsource, licence OFL) : aucun appel à
-// Google Fonts, ni au build ni à l'exécution. Anton pour les titres, Inter pour
-// tout le reste. Les deux polices du faux site rose (Pacifico, Quicksand) sont
-// dans public/fonts/ et ne se chargent que si l'intro joue (intro.css).
-const titre = localFont({ src: "../fonts/anton-latin-400-normal.woff2", variable: "--police-titre", weight: "400", display: "swap" });
-const texte = localFont({ src: "../fonts/inter-latin-wght-normal.woff2", variable: "--police-texte", weight: "100 900", display: "swap" });
+// Police auto-hébergée (fichier Fontsource, licence OFL) : aucun appel à Google
+// Fonts, ni au build ni à l'exécution. Fraunces, une seule police variable pour
+// les titres (très gras) et le texte. Les deux polices du faux site rose
+// (Pacifico, Quicksand) sont dans public/fonts/ et ne se chargent que si l'intro
+// joue (intro.css). Pour changer de police : ce fichier, et `--police` suit.
+const police = localFont({ src: "../fonts/fraunces-latin-wght-normal.woff2", variable: "--police", weight: "100 900", display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "SCULT — CRI, le pré-workout aux dosages écrits sur le pot", template: "%s — SCULT" },
@@ -52,7 +52,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const offer = await cartOffer();
   return (
     // `data-intro` est posé sur <html> par le script du <head>, avant l'hydratation : d'où suppressHydrationWarning.
-    <html lang="fr" className={`${titre.variable} ${texte.variable} h-full`} suppressHydrationWarning>
+    <html lang="fr" className={`${police.variable} h-full`} suppressHydrationWarning>
       <head>
         {/* Avant le premier affichage : l'intro rose joue-t-elle ? (voir components/site/intro/script.ts) */}
         <script dangerouslySetInnerHTML={{ __html: INTRO_HEAD_SCRIPT }} />

@@ -8,7 +8,7 @@ import { Picture } from "./Picture";
  */
 export function Bouffon() {
   return (
-    <section id="bouffon" className="scroll-mt-(--entete) border-b">
+    <section id="bouffon" className="sombre scroll-mt-(--entete) border-b bg-fond text-texte">
       <Container className="grid items-center gap-10 py-20 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16 md:py-28">
         <div className="relative isolate mx-auto w-full max-w-md md:max-w-none">
           <Picture name="bouffon-face" alt={BOUFFON.alt} sizes="(min-width: 768px) 42vw, 100vw" className="block h-auto w-full rounded-card" />

@@ -17,8 +17,9 @@ const DESKTOP = "(min-width: 768px)";
  * Ordinateur : image plein cadre, le bouffon à droite ; un voile noir de
  * gauche à droite garde le texte lisible ; le bloc de texte est calé à gauche,
  * un peu au-dessus du milieu ; la mention légale est en bas à gauche.
- * Mobile : image 9:16 entière (jamais recadrée : le titre, dimensionné sur la
- * largeur d'écran, reste ainsi dans son tiers haut, au-dessus du bonnet), puis,
+ * Mobile : image 9:16 entière (jamais recadrée : le titre, sur deux lignes et
+ * dimensionné sur la largeur d'écran, reste ainsi dans son tiers haut, au-dessus
+ * du masque), puis,
  * sous l'image, le texte et le bouton pleine largeur — le bas du pot reste
  * entièrement visible.
  *
@@ -29,7 +30,7 @@ export function Hero() {
   const desktop = imageSize("hero-dark-desktop");
   const mobile = imageSize("hero-dark-mobile");
   return (
-    <section className="relative isolate overflow-hidden bg-fond md:flex md:min-h-[max(100svh,40rem)] md:flex-col md:justify-center md:pb-[6svh]">
+    <section className="sombre relative isolate overflow-hidden bg-fond md:flex md:min-h-[max(100svh,40rem)] md:flex-col md:justify-center md:pb-[6svh]">
       <link rel="preload" as="image" type="image/avif" media={MOBILE} imageSrcSet={imageSrcSet("hero-dark-mobile", "avif")} imageSizes={SIZES_MOBILE} fetchPriority="high" />
       <link rel="preload" as="image" type="image/avif" media={DESKTOP} imageSrcSet={imageSrcSet("hero-dark-desktop", "avif")} imageSizes={SIZES_DESKTOP} fetchPriority="high" />
 
@@ -40,8 +41,8 @@ export function Hero() {
       <div className="absolute inset-x-0 top-0 z-10 px-5 pt-[7.1rem] text-center md:static md:w-[min(46rem,50vw)] md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] md:pr-0 md:pt-0 md:text-left">
         <p className="label text-doux">{HERO.eyebrow}</p>
         {/* `data-texte` : le double rose du titre, qui saute pendant le glitch (intro.css) */}
-        <h1 data-texte={`${HERO.title.main}\n${HERO.title.accent}`} className="hero-titre display ombre-titre mt-2 whitespace-nowrap text-[min(14.5vw,5rem)] md:mt-5 md:whitespace-normal md:text-[clamp(4.5rem,10.4vw,9.375rem)]">
-          {HERO.title.main} <br className="hidden md:block" /><span className="text-rose [text-shadow:none]">{HERO.title.accent}</span>
+        <h1 data-texte={`${HERO.title.main}\n${HERO.title.accent}`} className="hero-titre display ombre-titre mt-2 text-[min(11.6vw,4.25rem)] md:mt-5 md:text-[clamp(3.25rem,8vw,7.25rem)]">
+          {HERO.title.main}<br /><span className="text-rose [text-shadow:none]">{HERO.title.accent}</span>
         </h1>
       </div>
 
@@ -72,7 +73,7 @@ export function Hero() {
       <div className="px-5 pb-10 pt-6 md:w-[min(46rem,50vw)] md:pb-0 md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] md:pr-0 md:pt-8">
         <p className="text-balance text-[0.95rem] leading-relaxed text-doux md:text-[1.05rem]">{HERO.text}</p>
         <div className="mt-6 flex flex-col gap-5 md:mt-9 md:flex-row md:items-center md:gap-8">
-          <ButtonLink href={HERO.cta.href} className="h-14 w-full text-[1.25rem] md:w-auto md:px-10">{HERO.cta.label}</ButtonLink>
+          <ButtonLink href={HERO.cta.href} className="h-14 w-full text-[1.1rem] md:w-auto md:px-10">{HERO.cta.label}</ButtonLink>
           <Link href={HERO.secondary.href} className="label self-center underline decoration-rose decoration-2 underline-offset-[6px] hover:text-rose md:self-auto">{HERO.secondary.label}</Link>
         </div>
         <p className="label mt-8 !text-[0.5625rem] leading-relaxed text-discret md:absolute md:bottom-7 md:mt-0">{HERO.legal}</p>

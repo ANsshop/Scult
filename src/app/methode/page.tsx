@@ -56,7 +56,7 @@ export default function MethodePage() {
                     ))}
                   </ul>
                   {info.blend && (
-                    <div className="mt-5 rounded-chip bg-clair p-5 text-fond">
+                    <div className="mt-5 rounded-chip bg-texte p-5 text-fond">
                       <p className="flex items-baseline justify-between gap-4"><span className="display text-lg">{info.blend.name}</span><span className="display text-lg tabular-nums">{info.blend.amount}</span></p>
                       <ul className="mt-3 grid gap-x-6 gap-y-1.5 text-[0.9rem] text-fond/85 sm:grid-cols-2">
                         {info.blend.items.map((i) => (

@@ -21,7 +21,7 @@ Cette section remplace, là où elles se contredisent, les hypothèses [04], [14
 - [39] **Visuels = maquettes générées, fournies le 2026-11-25** (`public/bouffon/`, produits par `npm run images:bouffon` depuis les neuf liens du brief). Aucune image n'a été générée ni retouchée au-delà du redimensionnement et de la découpe de la planche `pot-vues` en sept vues. L'image de partage (Open Graph) est un recadrage de `hero-dark-desktop`.
 
 **Direction artistique**
-- [40] **Écarts au brief, demandés en cours de route (2026-11-25)** : boutons et cartes arrondis (le brief disait angles droits) ; texte courant en Inter (le brief disait Space Mono, jugée trop carrée) ; reflets de lumière au survol sur le logo, les boutons et les cartes, comme sur l'ancien site ; bande d'annonce défilante au-dessus de la navigation. Anton reste la police des titres.
+- [40] **Écarts au brief, demandés en cours de route (2026-11-25)** : fonds blancs en alternance avec le noir (le brief disait tout en dark) ; boutons et cartes arrondis (le brief disait angles droits) ; police Fraunces pour les titres et le texte, choisie sans validation après le rejet de Space Mono (« carrée ») puis d'Anton + Inter (« bâton ») — elle se change dans `src/app/layout.tsx` ; reflets de lumière au survol sur le logo, les boutons et les cartes, comme sur l'ancien site ; bande d'annonce défilante au-dessus de la navigation.
 - [41] **Navigation mobile** : logo, panier et bouton « Menu » (le brief disait logo + menu ; le panier est gardé visible).
 - [42] **Logo et signature gardés** : le wordmark SCULT en blocs et « Rien ne se sculpte en silence. » (pied de page, bandeau, balises title/description) ne renvoient ni à la statue ni au bleu ; à confirmer.
 

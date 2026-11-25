@@ -33,7 +33,7 @@ export default async function MerciPage({ searchParams }: { searchParams: Promis
             <p className="label text-rose">Commande</p>
             <h1 className="display ombre-titre mt-4 text-[clamp(2.6rem,8vw,6.5rem)]">{paid ? "Merci." : "Presque là."}</h1>
             <p className="mt-6 max-w-md text-lg text-doux">
-              {paid ? <>Paiement confirmé. La confirmation arrive{email ? <> à <strong className="text-clair">{email}</strong></> : null}. Expédition sous 24 h ouvrées.</> : "Le paiement est en cours de confirmation. Vous recevrez un e-mail dès qu'il sera validé."}
+              {paid ? <>Paiement confirmé. La confirmation arrive{email ? <> à <strong className="text-texte">{email}</strong></> : null}. Expédition sous 24 h ouvrées.</> : "Le paiement est en cours de confirmation. Vous recevrez un e-mail dès qu'il sera validé."}
             </p>
             <Link href="/" className="label mt-10 inline-block underline decoration-rose decoration-2 underline-offset-[6px] hover:text-rose">Retour à l&apos;accueil</Link>
           </div>

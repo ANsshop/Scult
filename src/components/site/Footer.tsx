@@ -17,7 +17,7 @@ const COLS = [
  */
 export function Footer() {
   return (
-    <footer className="relative mt-auto border-t-[6px] border-rose bg-fond text-clair">
+    <footer className="sombre relative mt-auto border-t-[6px] border-rose bg-fond text-texte">
       <div className="mx-auto max-w-[1360px] px-5 pb-8 pt-14 md:px-10 md:pb-10 md:pt-24">
         <div className="grid gap-12 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16">
           <div>

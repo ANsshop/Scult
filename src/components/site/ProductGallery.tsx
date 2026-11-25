@@ -12,7 +12,7 @@ export function ProductGallery({ images }: { images: PpImage[] }) {
     <div className="min-w-0">
       <div className="relative aspect-[4/5] overflow-hidden rounded-card bg-surface">
         <Image key={main.url} src={main.url} alt={main.alt} fill priority={i === 0} sizes="(min-width: 768px) 55vw, 100vw" className="object-cover" />
-        <span className="label absolute left-4 top-4 rounded-full bg-fond/70 px-2.5 py-1 text-clair tabular-nums">{String(i + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}</span>
+        <span className="label absolute left-4 top-4 rounded-full bg-fond/70 px-2.5 py-1 text-texte tabular-nums">{String(i + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}</span>
       </div>
       {images.length > 1 && (
         <ul className="mt-3 flex gap-2.5 overflow-x-auto p-1 no-scrollbar">

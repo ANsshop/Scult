@@ -110,7 +110,7 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
     <section id="formule" className="scroll-mt-(--entete) border-b bg-fond">
       <div ref={wrap} className={calm ? "" : "h-[250svh]"}>
         <div className={`px-3 pb-3 pt-[calc(var(--entete)+0.75rem)] md:px-5 md:pb-5 ${calm ? "" : "sticky top-0 h-svh"}`}>
-          <div className="relative flex h-full flex-col overflow-hidden rounded-card border bg-surface px-5 py-5 md:px-10 md:py-7">
+          <div className="relative flex h-full flex-col overflow-hidden rounded-card border bg-fond px-5 py-5 md:px-10 md:py-7">
             <p className="label grid grid-cols-2 text-discret md:grid-cols-3">
               <span>CRI · Lot 001</span>
               <span className="hidden text-center md:block">La formule · par dose de 23 g</span>
@@ -129,7 +129,7 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
                   ))}
                 </div>
                 {/* L'étiquette du prix : le rose, et c'est le prix */}
-                <p className="pointer-events-none absolute -right-[20%] top-[4%] flex h-[5.75rem] w-[5.75rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-rose text-fond md:h-[7.25rem] md:w-[7.25rem]">
+                <p className="pointer-events-none absolute -right-[20%] top-[4%] flex h-[5.75rem] w-[5.75rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-rose text-noir md:h-[7.25rem] md:w-[7.25rem]">
                   <span className="display text-[1.75rem] tabular-nums md:text-[2.2rem]">{formatPrice(product.priceCents)}</span>
                   <span className="label mt-1 !text-[0.6rem]">{doses} doses</span>
                 </p>

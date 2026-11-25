@@ -41,7 +41,7 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
             {product.compareAtCents && product.compareAtCents > product.priceCents && (
               <>
                 <span className="text-discret line-through tabular-nums">{formatPrice(product.compareAtCents)}</span>
-                <span className="label rounded-full bg-rose px-2.5 py-0.5 text-fond">−{Math.round((1 - product.priceCents / product.compareAtCents) * 100)} %</span>
+                <span className="label rounded-full bg-rose px-2.5 py-0.5 text-noir">−{Math.round((1 - product.priceCents / product.compareAtCents) * 100)} %</span>
               </>
             )}
           </p>
@@ -67,7 +67,7 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
                 <div className="mt-4 space-y-4 text-[0.95rem] leading-relaxed text-doux">
                   {claims.map((c) => (
                     <div key={c.id}>
-                      <p className="text-clair">{c.claim}</p>
+                      <p className="text-texte">{c.claim}</p>
                       <p className="mt-1">{c.condition}</p>
                     </div>
                   ))}
@@ -79,23 +79,23 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
               <details className="group py-5" open>
                 <summary className="flex cursor-pointer list-none items-center justify-between font-bold [&::-webkit-details-marker]:hidden">Composition par dose<ToggleArrow /></summary>
                 <div className="mt-4 text-[0.95rem] leading-relaxed text-doux">
-                  <p className="text-clair">{info.denomination}</p>
+                  <p className="text-texte">{info.denomination}</p>
                   <table className="mt-4 w-full text-left tabular-nums">
                     <thead>
-                      <tr className="label border-b border-clair text-clair"><th className="py-2 font-normal">{info.serving}</th><th className="py-2 text-right font-normal">Quantité</th>{hasNrv && <th className="py-2 text-right font-normal">% VNR*</th>}</tr>
+                      <tr className="label border-b border-texte text-texte"><th className="py-2 font-normal">{info.serving}</th><th className="py-2 text-right font-normal">Quantité</th>{hasNrv && <th className="py-2 text-right font-normal">% VNR*</th>}</tr>
                     </thead>
                     <tbody>
                       {info.nutrition.map((n) => (
-                        <tr key={n.name} className="border-b"><td className="py-2 text-clair">{n.name}</td><td className="py-2 text-right">{n.amount}</td>{hasNrv && <td className="py-2 text-right">{n.nrv ?? "—"}</td>}</tr>
+                        <tr key={n.name} className="border-b"><td className="py-2 text-texte">{n.name}</td><td className="py-2 text-right">{n.amount}</td>{hasNrv && <td className="py-2 text-right">{n.nrv ?? "—"}</td>}</tr>
                       ))}
                     </tbody>
                   </table>
                   {info.blend && (
                     <div className="mt-4 overflow-hidden rounded-chip border bg-surface">
-                      <p className="label flex items-center justify-between bg-clair px-4 py-2.5 text-fond"><span>{info.blend.name}</span><span className="tabular-nums">{info.blend.amount}</span></p>
+                      <p className="label flex items-center justify-between bg-texte px-4 py-2.5 text-fond"><span>{info.blend.name}</span><span className="tabular-nums">{info.blend.amount}</span></p>
                       <ul className="divide-y px-4 tabular-nums">
                         {info.blend.items.map((i) => (
-                          <li key={i.name} className="flex justify-between gap-4 py-2"><span className="text-clair">{i.name}</span>{i.amount && <span>{i.amount}</span>}</li>
+                          <li key={i.name} className="flex justify-between gap-4 py-2"><span className="text-texte">{i.name}</span>{i.amount && <span>{i.amount}</span>}</li>
                         ))}
                       </ul>
                     </div>

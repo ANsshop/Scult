@@ -1,32 +1,62 @@
 @import "tailwindcss";
 
 /* SCULT — tokens de la DA « bouffon ». Voir docs/DA.md.
-   Règle : tout est noir et blanc granuleux, la seule couleur est le rose. */
+   Règle : du noir, du blanc, du grain ; la seule couleur est le rose.
+
+   Deux ambiances, mêmes noms de tokens. Par défaut la page est claire (fond
+   blanc, texte noir, le produit sur blanc). Un bloc marqué `.sombre` (en-tête,
+   heros, section « Le bouffon », pied de page) passe en noir : tout ce qu'il
+   contient — textes, filets, cartes — suit, sans changer une classe. */
+:root {
+  --fond: #ffffff;      /* fond */
+  --surface: #f4f3f0;   /* ce qui se pose sur le fond : cartes, vignettes */
+  --texte: #070707;     /* texte principal */
+  --doux: #3b3a37;      /* texte secondaire */
+  --discret: #76736d;   /* étiquettes, mentions */
+  --reflet: rgb(255 46 147 / 0.12); /* le reflet de lumière qui traverse les cartes */
+  color-scheme: light;
+}
+.sombre {
+  --fond: #070707;
+  --surface: #121212;
+  --texte: #f2f0ea;
+  --doux: #d2cfc7;
+  --discret: #8d8a83;
+  --reflet: rgb(255 255 255 / 0.1);
+  color-scheme: dark;
+  color: var(--texte);
+}
+
+/* `inline` : les classes lisent la variable là où elles sont posées, donc dans l'ambiance du bloc. */
+@theme inline {
+  --color-fond: var(--fond);
+  --color-surface: var(--surface);
+  --color-texte: var(--texte);
+  --color-doux: var(--doux);
+  --color-discret: var(--discret);
+}
+
 @theme {
-  --color-fond: #070707;     /* fond de page */
-  --color-surface: #121212;  /* ce qui se pose sur le fond : cartes, champs, tiroir */
-  --color-clair: #f2f0ea;    /* texte principal */
-  --color-doux: #d2cfc7;     /* texte secondaire */
-  --color-discret: #8d8a83;  /* texte discret : étiquettes, mentions */
-  --color-rose: #ff2e93;     /* l'accent, unique */
+  --color-rose: #ff2e93;   /* l'accent, unique */
+  --color-noir: #070707;   /* le texte posé sur le rose : toujours noir */
 
   /* Noms hérités de l'ancienne DA. Le panier et le tunnel d'achat
      (src/components/cart/, src/app/checkout/) n'ont pas été modifiés par la
      refonte : ils écrivent encore `bg-klein`, `text-marble`, `bg-white`… Ces
-     alias leur donnent les couleurs du thème dark. Ne pas s'en servir
-     ailleurs ; à supprimer le jour où ces fichiers passent aux noms ci-dessus. */
-  --color-klein: #ff2e93;      /* accent → rose */
+     alias leur donnent les couleurs du thème (clair : ils ne vivent que sur
+     fond blanc). Ne pas s'en servir ailleurs ; à supprimer le jour où ces
+     fichiers passent aux noms ci-dessus. */
+  --color-klein: #ff2e93;      /* bleu → rose */
   --color-klein-700: #ff2e93;
-  --color-ruby: #ff2e93;       /* accent → rose */
-  --color-marble: #070707;     /* fond clair → fond */
-  --color-marble-200: #121212;
-  --color-ink: #f2f0ea;        /* texte sombre → texte clair */
-  --color-stone: #8d8a83;      /* texte gris → texte discret */
-  --color-white: #121212;      /* carte blanche → surface ; `text-white` sur rose devient noir */
+  --color-ruby: #ff2e93;       /* rouge → rose */
+  --color-marble: #ffffff;     /* ivoire → blanc */
+  --color-marble-200: #f4f3f0;
+  --color-ink: #070707;
+  --color-stone: #76736d;
 
-  --font-display: var(--police-titre), Impact, "Arial Narrow", sans-serif;
-  --font-sans: var(--police-texte), "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--police-texte), "Helvetica Neue", Arial, sans-serif; /* plus de police à chasse fixe : les étiquettes sont en Inter */
+  --font-display: var(--police), Georgia, "Times New Roman", serif;
+  --font-sans: var(--police), Georgia, "Times New Roman", serif;
+  --font-mono: var(--police), Georgia, "Times New Roman", serif; /* plus de police à chasse fixe */
 
   --ease-scult: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -42,23 +72,17 @@
   --ombre-titre: 5px 2px 0 rgb(255 46 147 / 0.85);
 }
 
-:root {
-  --background: var(--color-fond);
-  --foreground: var(--color-clair);
-  color-scheme: dark;
-}
-
-/* Les filets par défaut : clairs, discrets. Dans la couche `base`, pour qu'une classe
-   `border-rose` ou `border-clair` puisse les remplacer. */
+/* Les filets par défaut : discrets, de la couleur du texte du bloc. Dans la couche
+   `base`, pour qu'une classe `border-rose` ou `border-texte` puisse les remplacer. */
 @layer base {
-  *, ::before, ::after { border-color: color-mix(in srgb, var(--color-clair) 18%, transparent); }
+  *, ::before, ::after { border-color: color-mix(in srgb, var(--texte) 16%, transparent); }
 }
 
-html { background: var(--color-fond); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+html { background: var(--fond); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--fond);
+  color: var(--texte);
   font-family: var(--font-sans);
 }
 
@@ -70,19 +94,19 @@ body::after {
   pointer-events: none;
   background-image: url("/noise.svg");
   background-size: 180px;
-  opacity: 0.09;
+  opacity: 0.08;
 }
 
 ::selection { background: var(--color-rose); color: #070707; }
 
 :focus-visible { outline: 2px solid var(--color-rose); outline-offset: 3px; }
 
-/* Titres : Anton, capitales, interlignage 0.95 */
+/* Titres : Fraunces très gras, capitales, interlignage 0.95 */
 .display {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.005em;
+  letter-spacing: -0.015em;
   line-height: 0.95;
   text-wrap: balance;
 }
@@ -100,8 +124,8 @@ body::after {
 
 .input {
   height: 2.75rem; width: 100%;
-  border: 1px solid color-mix(in srgb, var(--color-clair) 30%, transparent);
-  background: var(--color-surface); color: var(--color-clair);
+  border: 1px solid color-mix(in srgb, var(--texte) 30%, transparent);
+  background: var(--fond); color: var(--texte);
   padding-inline: 0.875rem; font-size: 0.9rem; outline: none;
   border-radius: var(--radius-chip);
 }
@@ -113,7 +137,7 @@ body::after {
 /* L'ombre dure sous les vignettes du pot (carte produit, panier) */
 .flash-shadow { filter: drop-shadow(5px 4px 0 rgb(7 7 7 / 0.9)); }
 /* Bandeau sous le hero : la ligne au contour (le glissement suit le défilement, voir Marquee.tsx) */
-.text-outline { color: transparent; -webkit-text-stroke: 1.5px var(--color-clair); }
+.text-outline { color: transparent; -webkit-text-stroke: 1.5px var(--texte); }
 
 /* Questions en accordéon : la réponse se déplie en douceur là où le navigateur sait animer vers `auto` */
 @supports (interpolate-size: allow-keywords) {
@@ -151,11 +175,12 @@ body::after {
   content: ""; position: absolute; inset-block: 0; left: 0; width: 40%; pointer-events: none;
   background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.3), transparent);
   transform: translateX(-140%) skewX(-24deg);
+  opacity: 0; /* au repos, la bande inclinée dépasserait dans un bloc haut */
 }
-.carte-reflet::after { background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.1), transparent); }
+.carte-reflet::after { background: linear-gradient(90deg, transparent, var(--reflet), transparent); }
 .card-shine::after { animation: card-reflet 4.5s cubic-bezier(0.45, 0, 0.55, 1) 0.5s infinite; }
-@keyframes card-reflet { 0% { transform: translateX(-140%) skewX(-24deg); } 26%, 100% { transform: translateX(320%) skewX(-24deg); } }
-@keyframes carte-reflet { from { transform: translateX(-140%) skewX(-24deg); } to { transform: translateX(320%) skewX(-24deg); } }
+@keyframes card-reflet { 0% { opacity: 1; transform: translateX(-140%) skewX(-24deg); } 26% { opacity: 1; transform: translateX(320%) skewX(-24deg); } 27%, 100% { opacity: 0; transform: translateX(320%) skewX(-24deg); } }
+@keyframes carte-reflet { from { opacity: 1; transform: translateX(-140%) skewX(-24deg); } to { opacity: 1; transform: translateX(320%) skewX(-24deg); } }
 .carte-reflet:hover::after { animation: carte-reflet 1.1s cubic-bezier(0.45, 0, 0.55, 1); }
 
 /* Bande d'annonce au-dessus de la navigation : le texte défile en continu */
@@ -164,21 +189,18 @@ body::after {
 a:hover > .annonce-piste { animation-play-state: paused; }
 
 /* — Panier et tunnel d'achat : habillage sans toucher aux composants —
-   Ces fichiers portent encore quelques valeurs de l'ancienne DA écrites en
-   dur (halo bleu, voile). Elles sont corrigées ici, par sélecteur. */
-/* Le voile derrière le tiroir : sombre, pas clair (`bg-ink/50` vaut désormais du clair) */
-button[aria-label="Fermer le panier"] { background: rgb(0 0 0 / 0.72); }
-/* Le tiroir se détache du fond par un filet */
-aside[aria-label="Panier"] { box-shadow: -1px 0 0 color-mix(in srgb, var(--color-clair) 18%, transparent); }
+   Ces fichiers portent encore une valeur de l'ancienne DA écrite en dur (le halo
+   bleu des cartes « 1 pot / pack »). Elle est corrigée ici, par sélecteur. */
 /* Les cartes « 1 pot / pack » : filet clair, puis filet rose pour le choix en cours (plus de halo bleu) */
-label:has(> input[name="quantite"]) { box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-clair) 22%, transparent); }
+label:has(> input[name="quantite"]) { box-shadow: 0 0 0 1px color-mix(in srgb, var(--texte) 22%, transparent); }
 label:has(> input[name="quantite"]:checked) { box-shadow: 0 0 0 2px var(--color-rose); }
 label:has(> input[name="quantite"]:focus-visible) { outline: 2px solid var(--color-rose); outline-offset: 3px; }
 /* …et le reflet des cartes, au survol */
 label:has(> input[name="quantite"])::after {
   content: ""; position: absolute; inset-block: 0; left: 0; width: 40%; pointer-events: none;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.14), transparent);
+  background: linear-gradient(90deg, transparent, var(--reflet), transparent);
   transform: translateX(-140%) skewX(-24deg);
+  opacity: 0;
 }
 label:has(> input[name="quantite"]):hover::after { animation: carte-reflet 1.1s cubic-bezier(0.45, 0, 0.55, 1); }
 

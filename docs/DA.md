@@ -6,20 +6,22 @@
 
 **Le concept.** Le visiteur arrive sur ce qui ressemble à un site de pré-workout « girly » tout rose. Au bout d'une seconde l'écran glitche et révèle le vrai site : noir et blanc sale, un bouffon d'horreur musclé qui tend le pot. Le rose du faux site devient la couleur du glitch et de la marque. Le site rose est la blague du bouffon.
 
-**La règle.** Tout est noir et blanc granuleux ; la seule couleur est le rose vif `#FF2E93`.
+**La règle.** Du noir, du blanc, du grain ; la seule couleur est le rose vif `#FF2E93`.
 
-| Token (`src/app/globals.css`) | Valeur | Usage |
-|---|---|---|
-| `fond` | `#070707` | fond de page |
-| `surface` | `#121212` | cartes, champs, tiroir du panier |
-| `clair` | `#F2F0EA` | texte principal |
-| `doux` | `#D2CFC7` | texte secondaire |
-| `discret` | `#8D8A83` | étiquettes, mentions |
-| `rose` | `#FF2E93` | l'accent, unique |
+**Deux ambiances, mêmes tokens** (`src/app/globals.css`). La page est claire par défaut — fond blanc, texte noir, le produit sur blanc. Un bloc marqué `.sombre` passe en noir avec tout ce qu'il contient : l'en-tête, le hero de l'accueil, le bandeau de la fiche produit, la section « Le bouffon », le pied de page. Le site alterne ainsi noir et blanc au lieu d'être noir partout.
 
-- **Titres** : Anton, capitales, interlignage 0,95 (`.display`). Grands titres : ombre dure `5px 2px 0` en rose à 85 %, sans flou (`.ombre-titre`).
-- **Texte courant, navigation, étiquettes** : Inter (`.label` pour les petites capitales espacées).
-- **Boutons** : pilule rose, texte noir en Anton ; un reflet de lumière les traverse au survol. Le même reflet passe sur le logo et sur les cartes.
+| Token | Clair (défaut) | `.sombre` | Usage |
+|---|---|---|---|
+| `fond` | `#FFFFFF` | `#070707` | fond |
+| `surface` | `#F4F3F0` | `#121212` | cartes, vignettes |
+| `texte` | `#070707` | `#F2F0EA` | texte principal |
+| `doux` | `#3B3A37` | `#D2CFC7` | texte secondaire |
+| `discret` | `#76736D` | `#8D8A83` | étiquettes, mentions |
+| `rose` | `#FF2E93` | `#FF2E93` | l'accent, unique |
+| `noir` | `#070707` | `#070707` | le texte posé sur le rose |
+
+- **Police** : Fraunces (variable, un seul fichier), pour les titres et le texte. Titres : graisse 900, capitales, interlignage 0,95 (`.display`). Grands titres : ombre dure `5px 2px 0` en rose à 85 %, sans flou (`.ombre-titre`). Étiquettes : petites capitales espacées (`.label`). Elle se change en un endroit : `src/app/layout.tsx`.
+- **Boutons** : pilule rose, texte noir très gras ; un reflet de lumière les traverse au survol. Le même reflet passe sur le logo et sur les cartes.
 - **Formes** : arrondies — `--radius-btn` (pilule), `--radius-card`, `--radius-chip`.
 - **Grain** : surcouche fixe sur toute la page (`body::after`, `public/noise.svg`), sans effet sur les clics.
 - **Bande d'annonce** : rose, en tête de l'en-tête, texte qui défile (`ANNONCE`, `src/lib/content/site.ts`).

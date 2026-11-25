@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-/** Boutons : pilule rose, texte noir en Anton ; au survol, un reflet de lumière la traverse (`btn-shine`, globals.css). */
-const base = "btn-shine inline-flex h-12 items-center justify-center gap-2 rounded-btn px-7 font-display text-[1.05rem] uppercase leading-none tracking-[0.04em] transition-colors";
+/** Boutons : pilule rose, texte noir, très gras ; au survol, un reflet de lumière la traverse (`btn-shine`, globals.css). */
+const base = "btn-shine inline-flex h-12 items-center justify-center gap-2 rounded-btn px-7 font-display text-[0.95rem] font-black uppercase leading-none tracking-[0.03em] transition-colors";
 const variants = {
-  rose: "bg-rose text-fond",
+  rose: "bg-rose text-noir",
   // lien secondaire : un filet, pas d'aplat
   outline: "border border-current text-current hover:border-rose hover:text-rose",
 };

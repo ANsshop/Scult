@@ -37,13 +37,13 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
 
   const solid = scrolled || open || !overlay;
   return (
-    <header className={`${overlay ? "fixed inset-x-0 top-0" : "sticky top-0"} z-40 text-clair transition-colors duration-300 ${solid ? "bg-fond/90 shadow-[0_1px_0_rgb(242_240_234/0.16)] backdrop-blur" : "bg-transparent"}`}>
+    <header className={`${overlay ? "fixed inset-x-0 top-0" : "sticky top-0"} sombre z-40 text-texte transition-colors duration-300 ${solid ? "bg-fond/90 shadow-[0_1px_0_rgb(242_240_234/0.16)] backdrop-blur" : "bg-transparent"}`}>
       {/* La bande d'annonce : le même texte répété, qui glisse en continu (à l'arrêt en mouvement réduit) */}
-      <Link href={ANNONCE.href} aria-label={ANNONCE.text} className="block h-8 overflow-hidden bg-rose text-fond">
+      <Link href={ANNONCE.href} aria-label={ANNONCE.text} className="block h-8 overflow-hidden bg-rose text-noir">
         <span aria-hidden className="annonce-piste flex h-full w-max items-center whitespace-nowrap">
           {Array.from({ length: 16 }, (_, i) => (
-            <span key={i} className="font-display flex items-center text-[0.95rem] uppercase tracking-[0.06em]">
-              {ANNONCE.text}<span className="mx-5 inline-block h-1.5 w-1.5 rounded-full bg-fond" />
+            <span key={i} className="font-display flex items-center text-[0.8rem] font-black uppercase tracking-[0.06em]">
+              {ANNONCE.text}<span className="mx-5 inline-block h-1.5 w-1.5 rounded-full bg-noir" />
             </span>
           ))}
         </span>
@@ -60,7 +60,7 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="menu-mobile"
-            className="label flex h-10 items-center gap-2 rounded-full border border-clair/30 px-3.5 md:hidden"
+            className="label flex h-10 items-center gap-2 rounded-full border border-texte/30 px-3.5 md:hidden"
           >
             <span aria-hidden className="flex w-4 flex-col gap-[3px]">
               <span className={`h-px bg-current transition-transform ${open ? "translate-y-[4px] rotate-45" : ""}`} />
