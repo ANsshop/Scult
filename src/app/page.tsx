@@ -4,7 +4,7 @@ import { IntroRose } from "@/components/site/intro/IntroRose";
 import { Hero } from "@/components/site/Hero";
 import { Marquee } from "@/components/site/Marquee";
 import { Offer } from "@/components/site/Offer";
-import { Bouffon } from "@/components/site/Bouffon";
+import { Slider } from "@/components/site/Slider";
 import { FaqPreview } from "@/components/site/FaqPreview";
 import { getFlavourOffer, getProductBySlug } from "@/lib/catalog/queries";
 
@@ -26,7 +26,7 @@ export default async function Home() {
         <Hero />
         <Marquee />
         {cri && <Offer product={cri} offer={offer} />}
-        <Bouffon />
+        <Slider />
         <FaqPreview />
       </main>
       <Footer />

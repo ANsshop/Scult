@@ -1,14 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AddToCart } from "@/components/cart/AddToCart";
 import type { FlavourOffer, Product } from "@/lib/catalog/queries";
 import { DEFAULT_FLAVOUR, getFlavour, type FlavourId } from "@/lib/content/flavours";
 import { formatPrice } from "@/lib/utils";
-import { imageAt } from "@/lib/content/images";
 import { FlavourPicker } from "./FlavourPicker";
+import { Pot3D } from "./Pot3D";
 
 type Line = { name: string; amount: string };
 
@@ -16,23 +15,11 @@ type Line = { name: string; amount: string };
 const TURN = 0.82;
 
 /**
- * Le tour du pot, en quatre photos (découpées dans la planche pot-vues) : face,
- * un quart de tour, dos, trois quarts de tour. Elles se succèdent par à-coups
- * pendant le défilement, puis le pot revient de face.
- */
-const TURN_FRAMES = [
-  imageAt("pot-vue-face", 660, "Le pot SCULT pré-workout de face : noir, le nom SCULT en rose métallisé, le bouffon masqué sur l'étiquette"),
-  imageAt("pot-vue-trois-quarts", 659, ""),
-  imageAt("pot-vue-dos", 657, ""),
-  imageAt("pot-vue-profil", 660, ""),
-];
-
-/**
- * Section 2 de l'accueil : le pot au milieu de l'écran, qui fait un tour
- * complet, photo par photo, pendant qu'on défile.
+ * Section 2 de l'accueil : le pot en 3D au milieu de l'écran, qui fait un
+ * tour complet pendant qu'on défile.
  *
  * La section est plus haute que l'écran (250 svh) et son contenu reste collé :
- * la position dans ce défilement donne la photo du pot affichée. Les dosages
+ * la position dans ce défilement donne l'angle du pot. Les dosages
  * apparaissent un à un à mesure qu'il tourne ; à la fin du tour le pot revient
  * de face et le bouton d'achat se dévoile, puis reste. Le prix (l'étiquette rose)
  * est visible dès le début. Sur mobile, un seul dosage à la fois sous le pot,
@@ -44,7 +31,7 @@ const TURN_FRAMES = [
  */
 export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: { product: Product; offer: FlavourOffer | null; lines: Line[]; doses: number; caffeineWarning: string | null }) {
   const wrap = useRef<HTMLDivElement>(null);
-  const [frame, setFrame] = useState(0);   // la photo du tour affichée
+  const viewer = useRef<HTMLElement | null>(null);
   const [step, setStep] = useState(0);     // nombre de dosages dévoilés
   const [end, setEnd] = useState(false);   // le tour est fini : l'achat se montre
   const [calm, setCalm] = useState(false);
@@ -64,7 +51,7 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
     const total = rect.height - window.innerHeight;
     const p = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 1;
     const turn = Math.min(1, p / TURN);
-    setFrame(Math.min(TURN_FRAMES.length, Math.floor(turn * (TURN_FRAMES.length + 1))) % TURN_FRAMES.length);
+    if (viewer.current) (viewer.current as HTMLElement & { cameraOrbit: string }).cameraOrbit = `${(turn * 360).toFixed(1)}deg 80deg 135%`;
     setStep(Math.min(n, Math.floor(turn * (n + 1))));
     setEnd(p >= TURN - 0.02);
   }, [n]);
@@ -89,6 +76,8 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
       cancelAnimationFrame(frame);
     };
   }, [n, update]);
+
+  const onReady = useCallback((el: HTMLElement) => { viewer.current = el; update(); }, [update]);
 
   const half = Math.ceil(n / 2);
   const column = (items: Line[], offset: number, align: "right" | "left") => (
@@ -122,12 +111,15 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
               {column(lines.slice(0, half), 0, "right")}
               {/* Sur téléphone, le choix du goût prend une rangée sous le pot : le pot se règle sur la hauteur qui reste. */}
               <div className={`relative mx-auto md:w-[min(30vw,40svh)] ${flavours.length > 1 ? "w-[max(7rem,min(56vw,calc((100svh-27.75rem)/1.35)))]" : "w-[min(58vw,32svh)]"}`}>
-                {/* Les photos du tour, empilées : une seule est visible à la fois */}
-                <div className="relative aspect-[660/754] overflow-hidden rounded-chip">
-                  {TURN_FRAMES.map((f, i) => (
-                    <Image key={f.url} src={f.url} alt={i === 0 ? f.alt : ""} aria-hidden={i !== 0} fill sizes="(min-width: 768px) 30vw, 58vw" className={`object-cover ${i === frame ? "opacity-100" : "opacity-0"}`} />
-                  ))}
-                </div>
+                <Pot3D
+                  alt="Le pot SCULT pré-workout : noir, le nom SCULT en rose métallisé, le bouffon masqué sur l'étiquette"
+                  sizes="(min-width: 768px) 30vw, 58vw"
+                  interactive={false}
+                  onReady={onReady}
+                  still="/models/pot-scult-poster.webp"
+                  orbit="0deg 80deg 135%"
+                  className="-rotate-[5deg]"
+                />
                 {/* L'étiquette du prix : le rose, et c'est le prix */}
                 <p className="pointer-events-none absolute -right-[20%] top-[4%] flex h-[5.75rem] w-[5.75rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-rose text-noir md:h-[7.25rem] md:w-[7.25rem]">
                   <span className="display text-[1.75rem] tabular-nums md:text-[2.2rem]">{formatPrice(product.priceCents)}</span>

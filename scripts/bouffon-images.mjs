@@ -31,6 +31,8 @@ const IMAGES = {
   "pot-vues": { file: "hf_20261125_110716_87ef88da-577f-4619-8d2f-c4ced792a3fe.png", widths: [] },
   "bouffon-face": { file: "hf_20261124_211831_7a9d9a94-9fbc-4c83-877d-2edd84efc413.png", widths: [480, 800, 1200, 1792] },
   "bouffon-applaudit": { file: "hf_20261124_211828_c2cae7e6-464b-4dbd-ad49-57ebb026a115.png", widths: [480, 800, 1200, 1792] },
+  // Fournie en fichier le 2026-11-25 (pas de lien) : la source est versionnée.
+  "slide-pots": { local: "docs/refonte-bouffon/sources/slide-pots.jpg", widths: [960, 1440, 1920] },
 };
 
 /**
@@ -78,8 +80,8 @@ async function emit(name, pipeline, widths, sourceWidth, sourceHeight) {
   manifest[name] = { width: sourceWidth, height: sourceHeight, widths: kept };
 }
 
-for (const [name, { file, widths }] of Object.entries(IMAGES)) {
-  const path = fetchSource(name, file);
+for (const [name, { file, local, widths }] of Object.entries(IMAGES)) {
+  const path = local ?? fetchSource(name, file);
   const meta = await sharp(path).metadata();
   if (name === "pot-vues") {
     for (const [vue, box] of Object.entries(VUES)) {

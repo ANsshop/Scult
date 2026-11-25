@@ -8,7 +8,7 @@ Cette section remplace, là où elles se contredisent, les hypothèses [04], [14
 
 **Contenu provisoire — tout est dans `src/lib/content/site.ts`**
 - [30] **Tous les textes de la refonte sont provisoires** : intro rose, hero, navigation, bandeau de la fiche produit, 404, bande d'annonce. Un seul fichier à modifier.
-- [31] **`TODO` de contenu** (affichés tels quels sur le site) : le texte de la section « Le bouffon » de l'accueil. Aucun autre texte n'a été inventé, sauf [32].
+- [31] **Plus aucun `TODO` affiché** : la section « Le bouffon », qui attendait son texte, est remplacée par le slider ([51]). Aucun texte n'a été inventé, sauf [32].
 - [32] **Titre de l'intro rose remplacé** — le brief disait « Ton boost tout doux » ; `scripts/gate.sh` refuse « boost ». Mis à la place : « Ton pré-workout tout doux » (mots du brief uniquement). À valider ou remplacer.
 - [33] **« …qui te met de bonne humeur avant ta séance »** (texte de l'intro rose, fourni) passe le gate mais reste une promesse d'effet affichée à l'écran, même en décor. À faire relire avec l'étiquetage.
 
@@ -29,6 +29,10 @@ Cette section remplace, là où elles se contredisent, les hypothèses [04], [14
 - [43] Une fois par visiteur : clé `localStorage` `scult_intro_vue`. Si le stockage est illisible (navigation privée stricte), l'intro ne joue pas — plutôt pas de blague qu'une blague à chaque visite.
 - [44] « À l'arrivée sur le site » = chargement de la page d'accueil sans page du site comme provenance. Elle ne joue pas pour les robots d'indexation (filtre sur le user-agent). `?intro=0` la coupe, `?intro=1` la force, le lien « Rejouer la blague » du pied de page utilise `?intro=1`.
 - [45] Mouvement réduit : pas de glitch, fondu de 200 ms. Pendant l'intro, un clic lance le glitch et n'active aucun lien du site dark en dessous.
+
+**Pot 3D et slider (ajoutés le 2026-11-25)**
+- [50] **Modèle 3D du nouveau pot** (`public/models/pot-scult.glb`, 0,8 Mo, reconstruit par `bash scripts/3d/build-bouffon.sh`) : fabriqué à partir des photos fournies, pas d'un fichier d'étiquette. La face vient du packshot déroulé ; **le dos est inventé** (noir, traits roses, bandeau continu) ; les bords de l'étiquette sont un peu flous quand on les amène de face ; le sourire du couvercle est en basse définition. Il porte l'étiquette des photos (4 g, 150 mg, 400 g : voir [34]). À refaire depuis le fichier d'impression de l'étiquette quand il existera. L'éclairage est renforcé dans la visionneuse (`Pot3D.tsx`), le modèle seul sortant terne, et les zones roses y deviennent du vrai métal : des cartes repèrent le rose à sa couleur (`scripts/3d/pot-bouffon-metal.mjs`), la lumière glisse dessus quand le pot tourne. Ces cartes sont posées au chargement, elles ne sont pas dans le fichier `.glb`. Il tourne au défilement dans la section « formule », comme l'ancien pot.
+- [51] **Slider de l'accueil** (à la place de la section « Le bouffon », même ancre `#bouffon`) : une seule slide pour l'instant, donc pas de flèches. Son visuel a été fourni en fichier (1920 × 1086, `docs/refonte-bouffon/sources/`), titre peint dans l'image. Le pot 3D est posé par-dessus le pot central du visuel et le recouvre ; sans 3D, le pot peint reste. Le lien « Le bouffon » de la navigation mène à ce slider : intitulé à revoir. La mascotte de face ne sert plus que sur la 404.
 
 **Technique**
 - [46] **Panier et tunnel d'achat non modifiés** (`src/components/cart/`, `src/lib/orders/`, `src/app/checkout/page.tsx`). Ils prennent le thème par des alias de couleurs (`klein`, `marble`, `ink`, `white`… dans `globals.css`) et quelques règles CSS par sélecteur. À nettoyer quand ces fichiers pourront être modifiés. Seule la page de confirmation (`checkout/merci`) a reçu l'image du bouffon qui applaudit.

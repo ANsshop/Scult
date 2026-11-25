@@ -1,12 +1,12 @@
 /**
  * Tous les textes de la DA « bouffon » : l'intro rose, le hero dark, la
- * navigation, le bandeau de la fiche produit, la section « Le bouffon », la
- * 404, la page de confirmation. Un seul fichier : on change un texte ici,
+ * navigation, le bandeau de la fiche produit, le slider de l'accueil, la 404,
+ * la page de confirmation. Un seul fichier : on change un texte ici,
  * sans ouvrir un composant.
  *
  * ⚠ Tout est provisoire (voir ASSUMPTIONS.md). Les textes passent par
  * scripts/gate.sh comme le reste du site : aucune promesse d'effet.
- * `TODO` = texte à fournir ; il s'affiche tel quel sur le site, exprès.
+ * `TODO` = texte à fournir ; il s'afficherait tel quel sur le site, exprès.
  */
 import FORMULE from "./cri-formule.json";
 import { shortAmount } from "./formula";
@@ -67,11 +67,25 @@ export const PRODUCT_BANNER = {
   alt: "Le pot SCULT posé au sol au premier plan ; derrière lui, le bouffon accroupi, les mains à plat",
 };
 
-/** Section « Le bouffon » de l'accueil. */
+/**
+ * Le slider de l'accueil (ancre #bouffon), sous la section « formule ». Une
+ * slide = un visuel plein cadre, dont le titre est peint dans l'image (d'où
+ * l'`alt`), et un bouton. `pot` place le pot 3D par-dessus le pot central du
+ * visuel : centre et largeur en % de l'image, inclinaison, angle de vue.
+ * Pour ajouter une slide : un visuel dans scripts/bouffon-images.mjs, une entrée ici.
+ */
+export const SLIDES = [
+  {
+    id: "pots",
+    image: "slide-pots" as const,
+    alt: "« T'as cru quoi ? » peint au pinceau, en noir et rose, à côté de pots SCULT qui volent devant des éclaboussures d'encre",
+    cta: { label: "Prends ta dose", href: "/produits/cri" },
+    pot: { x: 66, y: 51.9, width: 45.5, tilt: -8, orbit: "8deg 72deg 135%" },
+  },
+];
+
+/** La mascotte de face (page 404). */
 export const BOUFFON = {
-  eyebrow: "La mascotte",
-  title: "Le bouffon.",
-  text: "TODO — texte de la section « Le bouffon » à fournir.",
   alt: "Le bouffon de face : bonnet à grelots, masque blanc craquelé au large sourire, débardeur noir, poings serrés",
 };
 
