@@ -10,7 +10,7 @@ const COLS = [
 ];
 
 /**
- * Pied de page : noir, un filet rose en tête, le logo, la signature, le
+ * Pied de page : noir, un filet rose en tête, le sourire du couvercle et le logo, la signature, le
  * bouton, les liens, les mentions. Tout en bas, un lien discret rejoue l'intro
  * de l'accueil (`?intro=1`, voir components/site/intro/script.ts) — une balise
  * <a> ordinaire, pour un vrai chargement de page : c'est lui qui lance l'intro.
@@ -21,7 +21,12 @@ export function Footer() {
       <div className="mx-auto max-w-[1360px] px-5 pb-8 pt-14 md:px-10 md:pb-10 md:pt-24">
         <div className="grid gap-12 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16">
           <div>
-            <Link href="/" aria-label="SCULT — accueil" className="inline-block"><Wordmark className="h-[clamp(2rem,4.8vw,4.25rem)] w-auto" /></Link>
+            <Link href="/" aria-label="SCULT — accueil" className="group inline-block">
+              {/* Le sourire du couvercle, emblème de la marque (public/brand/sourire.svg) */}
+              {/* eslint-disable-next-line @next/next/no-img-element -- un SVG servi tel quel, rien à optimiser */}
+              <img src="/brand/sourire.svg" alt="" width={931} height={382} loading="lazy" className="mb-7 block h-auto w-[clamp(9rem,17vw,15rem)] origin-left transition-transform duration-500 ease-(--ease-scult) group-hover:scale-[1.04] md:mb-9" />
+              <Wordmark className="h-[clamp(2rem,4.8vw,4.25rem)] w-auto" />
+            </Link>
             <p className="display mt-6 text-[clamp(1.5rem,2.6vw,2.4rem)] md:mt-8">{FOOTER.signature}</p>
             <ButtonLink href="/produits/cri" className="mt-7">Commander · 49 €</ButtonLink>
           </div>

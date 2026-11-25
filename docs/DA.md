@@ -34,6 +34,8 @@
 
 **Le pot en 3D** (`public/models/pot-scult.glb`, `src/components/site/Pot3D.tsx`) : il tourne au défilement dans la section « formule », sur fond blanc, et se pose sur le visuel du slider de l'accueil, où on le fait tourner à la main. Fabrication et limites : `scripts/3d/build-bouffon.sh` et `ASSUMPTIONS.md` [50].
 
+**Le sourire** (`public/brand/sourire.svg`) : la bouche gravée sur le couvercle du pot, emblème de la marque à côté du wordmark. Tracé vectoriel tiré de la photo du couvercle (vue de dessus), en aplat rose `#FF2E93`. Il ouvre le pied de page, au-dessus du logo, et sert d'icône du site (`src/app/icon.svg`, sur carré noir).
+
 **Le hero de l'accueil** (`Hero.tsx`, `HeroSlider.tsx`) est un slider de deux visuels : le bouffon sur fond noir (titre en HTML), puis la créa de l'offre sur papier blanc, `hero-offre-*`, dont le titre est peint au pinceau dans l'image. Sur la slide blanche, l'en-tête garde son fond noir. La créa n'est jamais recadrée dans son texte (`.hero-offre-image`, `globals.css`). Mobile : un écran, bouton en bas, deux traits pour changer de slide (ou le doigt). Ordinateur : compteur, flèches et pause en bas à droite.
 
 **Le slider de l'accueil** (`Slider.tsx`, slides dans `site.ts`) : visuels plein cadre sur fond papier, titre peint dans l'image, bouton en bas à gauche.
