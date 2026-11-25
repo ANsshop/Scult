@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { imageSize, imageSrcSet, imageUrl, type ImageName } from "@/lib/content/images";
-import { HERO, HERO_POCHES } from "@/lib/content/site";
+import { HERO } from "@/lib/content/site";
 import { HeroSlider } from "./HeroSlider";
 
 /** Les mêmes `sizes` pour le préchargement et pour l'image, sinon le navigateur télécharge deux fichiers. */
@@ -35,14 +35,15 @@ type Affiche = {
 };
 
 /**
- * Le hero de l'accueil : un slider de deux affiches du bouffon (HeroSlider
- * pose les commandes), même mise en page. Les textes sont dans lib/content/site.ts.
+ * Le hero de l'accueil : une seule affiche pour l'instant, le bouffon et le
+ * pré-workout — le vrai contenu de la page (le h1, les dosages, le bouton),
+ * que l'intro rose recouvre puis révèle. Les textes sont dans
+ * lib/content/site.ts.
  *
- *  1. Le pré-workout : le vrai contenu de la page — le h1, les dosages, le
- *     bouton. C'est cette slide que l'intro rose recouvre puis révèle.
- *  2. Le nouveau produit, les pochons de caféine : le bouffon tend la boîte
- *     blanche. Une annonce, sans prix ni fiche ; un lien mène à la boîte en
- *     3D (/pochons).
+ * Il passe par HeroSlider, qui sait en montrer plusieurs : ajouter une slide
+ * ici suffit à faire réapparaître les flèches, les traits et le défilement
+ * automatique. Une deuxième slide (une offre, puis l'annonce des pochons de
+ * caféine) a été essayée sous plusieurs formes le 2026-11-25 et retirée.
  */
 export function Hero() {
   const pied = (a: Affiche) => (
@@ -52,13 +53,11 @@ export function Hero() {
     </>
   );
   const pre: Affiche = { ...HERO, images: { desktop: "hero-dark-desktop", mobile: "hero-dark-mobile" } };
-  const poches: Affiche = { ...HERO_POCHES, images: { desktop: "hero-poches-desktop", mobile: "hero-poches-mobile" } };
   return (
     <HeroSlider
       legal={HERO.legal}
       slides={[
         { id: "pre-workout", label: "le pré-workout", node: <SlideAffiche first {...pre} />, pied: pied(pre) },
-        { id: "poches", label: "les pochons de caféine", node: <SlideAffiche {...poches} />, pied: pied(poches) },
       ]}
     />
   );

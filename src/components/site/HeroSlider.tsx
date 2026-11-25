@@ -73,7 +73,7 @@ export function HeroSlider({ slides, legal }: { slides: HeroSlide[]; legal: stri
   const chip = `label flex h-10 items-center justify-center rounded-full border backdrop-blur transition-colors hover:border-rose hover:bg-rose hover:text-noir ${clair ? "border-noir/20 bg-white/80 text-noir" : "border-white/25 bg-black/50 text-[#f2f0ea]"}`;
 
   return (
-    <section data-clair={clair ? "" : undefined} aria-roledescription="carrousel" aria-label="À la une" className="hero relative isolate">
+    <section data-clair={clair ? "" : undefined} {...(count > 1 ? { "aria-roledescription": "carrousel", "aria-label": "À la une" } : {})} className="hero relative isolate">
       <div
         className="relative grid h-[max(100svh,calc(130vw+6rem))] overflow-hidden bg-noir lg:h-auto"
         onPointerEnter={(e) => { if (e.pointerType === "mouse") hold.current = true; }}
@@ -103,9 +103,7 @@ export function HeroSlider({ slides, legal }: { slides: HeroSlide[]; legal: stri
           return (
             <div
               key={s.id}
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${i + 1} sur ${count} : ${s.label}`}
+              {...(count > 1 ? { role: "group", "aria-roledescription": "slide", "aria-label": `${i + 1} sur ${count} : ${s.label}` } : {})}
               aria-hidden={!active}
               inert={!active}
               className={`relative col-start-1 row-start-1 min-h-0 transition-opacity duration-700 ease-(--ease-scult) ${active ? "opacity-100" : "pointer-events-none opacity-0"}`}
