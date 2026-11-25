@@ -15,6 +15,8 @@ trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$TMP/tex" "$TMP/out" public/models
 
 node scripts/3d/pot-bouffon-textures.mjs
+# Le dos de l'étiquette (composition, ingrédients, précautions), écrit depuis cri-formule.json
+node scripts/3d/pot-bouffon-dos.mjs
 
 node -e "
 const sharp = require('sharp');
@@ -34,6 +36,9 @@ if [ "$MODE" != "web" ]; then
   grep -q POT_OK "$TMP/ref.log" || { tail -20 "$TMP/ref.log"; exit 1; }
   ls -la docs/3d/bouffon/pot-scult.blend docs/3d/bouffon/renders/
 fi
+
+# Les cartes « métal » du rose, posées par la visionneuse au chargement
+node scripts/3d/pot-bouffon-metal.mjs
 
 ls -la public/models/pot-scult.glb
 SIZE=$(wc -c < public/models/pot-scult.glb)
