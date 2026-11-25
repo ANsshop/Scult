@@ -24,7 +24,9 @@ const MANIFEST = "src/lib/content/bouffon-images.json";
 const IMAGES = {
   "hero-rose-desktop": { file: "hf_20261125_105536_6c39dcac-2b3d-4334-ae4f-8ee310bdb12e.png", widths: [960, 1440, 1920, 2688] },
   "hero-rose-mobile": { file: "hf_20261125_111007_04cc17cd-ac63-46f8-b005-8d2d70d732fb.png", widths: [480, 780, 1170] },
-  "hero-dark-desktop": { file: "hf_20261125_110717_3ae8150c-9161-474b-9ba8-40b36093cdc3.png", widths: [960, 1440, 1920, 2688] },
+  // Refaite le 2026-11-25 sur Higgsfield, comme la version mobile, à partir de l'image d'origine (hf_20261125_110717_3ae8150c-…) :
+  // le pot poussé vers l'objectif à deux mains, le bouffon à droite, la moitié gauche dans le noir pour le texte.
+  "hero-dark-desktop": { file: "hf_20261125_162853_f15fcaa7-b94f-4137-bdec-47b81ae83db7.png", widths: [960, 1440, 1920, 2688] },
   // Refaite le 2026-11-25 sur Higgsfield à partir de l'affiche d'origine (hf_20261125_110717_0e6ecaeb-…) : le pot
   // poussé vers l'objectif, et un cadrage fait pour le téléphone — du noir en haut pour le titre, en bas pour le bouton.
   "hero-dark-mobile": { file: "hf_20261125_151524_27029277-a3b2-4e39-85e2-ff62ebc457cb.png", widths: [480, 780, 1170] },

@@ -14,13 +14,17 @@ const SIZES_DESKTOP = "(min-aspect-ratio: 16/9) 100vw, 178vh";
 const SIZES_PORTRAIT = "(min-aspect-ratio: 9/16) 100vw, 57vh";
 // Toute la largeur, moins si l'écran est très large pour sa hauteur.
 const SIZES_PAYSAGE = "(min-aspect-ratio: 2/1) 190vh, 100vw";
-const MOBILE = "(max-width: 767px)";
-const DESKTOP = "(min-width: 768px)";
+const MOBILE = "(max-width: 1023px)";
+const DESKTOP = "(min-width: 1024px)";
 /** La créa de l'offre n'a pas de mise en page à elle : on choisit son format sur la forme de l'écran (comme `.hero-offre-image`, globals.css). */
 const PORTRAIT = "(orientation: portrait)";
 
-/** La colonne de texte, calée sur la grille du site (1360 px). */
-const COLONNE = "md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))]";
+/**
+ * La colonne de texte, calée sur la grille du site (1360 px). `box-content` :
+ * la largeur donnée ailleurs est celle du texte, la marge de gauche s'y ajoute
+ * (sinon, sur un très grand écran, la marge mange la colonne et le titre se coupe).
+ */
+const COLONNE = "lg:box-content lg:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))]";
 
 /**
  * Le hero de l'accueil : un slider de deux visuels (HeroSlider pose les
@@ -51,7 +55,8 @@ export function Hero({ offer }: { offer?: FlavourOffer | null }) {
 }
 
 /**
- * Ordinateur : image plein cadre, le bouffon à droite ; un voile noir de
+ * Ordinateur (à partir de 1024 px ; une tablette tenue debout prend la mise en
+ * page mobile, sinon le texte tombe sur le pot) : image plein cadre, le bouffon à droite ; un voile noir de
  * gauche à droite garde le texte lisible ; le bloc de texte est calé à gauche,
  * un peu au-dessus du milieu.
  * Mobile : tout tient dans un écran. L'affiche 9:16 remplit l'écran bord à
@@ -66,7 +71,7 @@ function SlideBouffon() {
   const desktop = imageSize("hero-dark-desktop");
   const mobile = imageSize("hero-dark-mobile");
   return (
-    <div className={`sombre relative isolate h-full overflow-hidden bg-fond md:flex md:min-h-[max(100svh,40rem)] md:flex-col md:justify-center md:pb-[6svh]`}>
+    <div className={`sombre relative isolate h-full overflow-hidden bg-fond lg:flex lg:min-h-[max(100svh,40rem)] lg:flex-col lg:justify-center lg:pb-[6svh]`}>
       <link rel="preload" as="image" type="image/avif" media={MOBILE} imageSrcSet={imageSrcSet("hero-dark-mobile", "avif")} imageSizes={SIZES_MOBILE} fetchPriority="high" />
       <link rel="preload" as="image" type="image/avif" media={DESKTOP} imageSrcSet={imageSrcSet("hero-dark-desktop", "avif")} imageSizes={SIZES_DESKTOP} fetchPriority="high" />
 
@@ -74,10 +79,10 @@ function SlideBouffon() {
       <span aria-hidden className="absolute left-0 top-(--entete) z-10 h-1.5 w-[min(44vw,36rem)] bg-rose" />
 
       {/* Sur-titre et titre. Mobile : le titre seul, entre la navigation et le bonnet. */}
-      <div className={`absolute inset-x-0 top-0 z-10 px-5 pt-[calc(var(--entete)+0.9rem)] text-center md:static md:w-[min(46rem,50vw)] md:pr-0 md:pt-0 md:text-left ${COLONNE}`}>
-        <p className="label hidden text-doux md:block">{HERO.eyebrow}</p>
+      <div className={`absolute inset-x-0 top-0 z-10 px-5 pt-[calc(var(--entete)+0.9rem)] text-center lg:static lg:w-[min(46rem,45vw)] lg:pr-0 lg:pt-0 lg:text-left ${COLONNE}`}>
+        <p className="label hidden text-doux lg:block">{HERO.eyebrow}</p>
         {/* `data-texte` : le double rose du titre, qui saute pendant le glitch (intro.css) */}
-        <h1 data-texte={`${HERO.title.main}\n${HERO.title.accent}`} className="hero-titre display ombre-titre text-[min(11.2vw,6.5svh,4.25rem)] md:mt-5 md:text-[clamp(3.25rem,7.8vw,7rem)]">
+        <h1 data-texte={`${HERO.title.main}\n${HERO.title.accent}`} className="hero-titre display ombre-titre text-[min(11.2vw,6.5svh,4.25rem)] lg:mt-5 lg:text-[clamp(3.25rem,7.8vw,7rem)]">
           {HERO.title.main}<br /><span className="text-rose [text-shadow:none]">{HERO.title.accent}</span>
         </h1>
       </div>
@@ -96,23 +101,23 @@ function SlideBouffon() {
             height={desktop.height}
             fetchPriority="high"
             loading="eager"
-            className="absolute inset-0 h-full w-full object-cover object-top md:object-[100%_50%]"
+            className="absolute inset-0 h-full w-full object-cover object-top lg:object-[100%_50%]"
           />
         </picture>
         {/* Voile de lisibilité : noir à gauche, transparent vers 62 % (ordinateur) */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,rgb(0_0_0/0.72)_0%,rgb(0_0_0/0.5)_30%,transparent_62%)] md:block" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,rgb(0_0_0/0.72)_0%,rgb(0_0_0/0.5)_30%,transparent_62%)] lg:block" />
         {/* Voile du haut, sous la navigation */}
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-black/75 to-transparent" />
         {/* Mobile : le bas de l'affiche se fond dans le noir, derrière le bouton */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-fond via-fond/70 to-transparent md:hidden" />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-fond via-fond/70 to-transparent lg:hidden" />
       </div>
 
       {/* Texte et boutons. Mobile : le bouton seul, en bas de l'écran. */}
-      <div className={`absolute inset-x-0 bottom-10 px-5 md:static md:w-[min(46rem,50vw)] md:pr-0 md:pt-8 ${COLONNE}`}>
-        <p className="hidden text-balance text-[1.05rem] leading-relaxed text-doux md:block">{HERO.text}</p>
-        <div className="flex flex-col md:mt-9 md:flex-row md:items-center md:gap-8">
-          <ButtonLink href={HERO.cta.href} className="h-[3.25rem] w-full !text-[0.85rem] md:h-14 md:w-auto md:px-10">{HERO.cta.label}</ButtonLink>
-          <Link href={HERO.secondary.href} className="label hidden underline decoration-rose decoration-2 underline-offset-[6px] hover:text-rose md:inline">{HERO.secondary.label}</Link>
+      <div className={`absolute inset-x-0 bottom-10 px-5 lg:static lg:w-[min(46rem,45vw)] lg:pr-0 lg:pt-8 ${COLONNE}`}>
+        <p className="hidden text-balance text-[1.05rem] leading-relaxed text-doux lg:block">{HERO.text}</p>
+        <div className="flex flex-col lg:mt-9 lg:flex-row lg:items-center lg:gap-8">
+          <ButtonLink href={HERO.cta.href} className="h-[3.25rem] w-full !text-[0.85rem] lg:h-14 lg:w-auto lg:px-10">{HERO.cta.label}</ButtonLink>
+          <Link href={HERO.secondary.href} className="label hidden underline decoration-rose decoration-2 underline-offset-[6px] hover:text-rose lg:inline">{HERO.secondary.label}</Link>
         </div>
       </div>
     </div>
@@ -150,10 +155,10 @@ function SlideOffre({ pack }: { pack: FlavourOffer["pack"] }) {
         />
       </picture>
       {/* Le bouton est dans un bloc en absolu : la classe du reflet lui impose `position: relative` */}
-      <div className={`absolute inset-x-0 bottom-10 flex flex-col items-center gap-2.5 px-5 md:inset-x-auto md:bottom-[5.5rem] md:left-0 md:flex-row md:gap-5 md:pr-0 ${COLONNE}`}>
+      <div className={`absolute inset-x-0 bottom-10 flex flex-col items-center gap-2.5 px-5 lg:inset-x-auto lg:bottom-[5.5rem] lg:left-0 lg:flex-row lg:gap-5 lg:pr-0 ${COLONNE}`}>
         {/* Mobile : la précision au-dessus du bouton ; ordinateur : à sa droite */}
-        {note && <p className="label rounded-full bg-white/85 px-3.5 py-1.5 font-bold text-noir backdrop-blur md:order-2">{note}</p>}
-        <ButtonLink href={HERO_OFFRE.cta.href} className="h-[3.25rem] w-full !text-[0.85rem] md:h-14 md:w-auto md:px-10">{HERO_OFFRE.cta.label}{price && <> · {price}</>}</ButtonLink>
+        {note && <p className="label rounded-full bg-white/85 px-3.5 py-1.5 font-bold text-noir backdrop-blur lg:order-2">{note}</p>}
+        <ButtonLink href={HERO_OFFRE.cta.href} className="h-[3.25rem] w-full !text-[0.85rem] lg:h-14 lg:w-auto lg:px-10">{HERO_OFFRE.cta.label}{price && <> · {price}</>}</ButtonLink>
       </div>
     </div>
   );

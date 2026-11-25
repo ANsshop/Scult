@@ -73,7 +73,7 @@ export function HeroSlider({ slides, pied, legal }: { slides: HeroSlide[]; pied:
   return (
     <section data-clair={clair ? "" : undefined} aria-roledescription="carrousel" aria-label="À la une" className="hero relative isolate">
       <div
-        className="relative grid h-[max(100svh,calc(130vw+6rem))] overflow-hidden bg-noir md:h-auto"
+        className="relative grid h-[max(100svh,calc(130vw+6rem))] overflow-hidden bg-noir lg:h-auto"
         onPointerEnter={(e) => { if (e.pointerType === "mouse") hold.current = true; }}
         onPointerLeave={() => { hold.current = false; }}
         onFocusCapture={() => { hold.current = true; }}
@@ -108,7 +108,7 @@ export function HeroSlider({ slides, pied, legal }: { slides: HeroSlide[]; pied:
         {count > 1 && (
           <>
             {/* Mobile : un trait par slide, sous le bouton */}
-            <div className="absolute inset-x-0 bottom-2.5 z-20 flex justify-center gap-2 md:hidden">
+            <div className="absolute inset-x-0 bottom-2.5 z-20 flex justify-center gap-2 lg:hidden">
               {slides.map((s, i) => (
                 <button key={s.id} type="button" onClick={() => go(i)} aria-label={`Slide ${i + 1} : ${s.label}`} aria-current={i === index} className="flex h-6 w-9 items-center">
                   <span className={`h-1 w-full rounded-full transition-colors ${i === index ? "bg-rose" : clair ? "bg-noir/25" : "bg-white/30"}`} />
@@ -116,7 +116,7 @@ export function HeroSlider({ slides, pied, legal }: { slides: HeroSlide[]; pied:
               ))}
             </div>
             {/* Ordinateur : compteur, flèches, pause */}
-            <div className="absolute bottom-7 right-10 z-20 hidden items-center gap-2 md:flex">
+            <div className="absolute bottom-7 right-10 z-20 hidden items-center gap-2 lg:flex">
               <span className={`${chip} pointer-events-none px-4 tabular-nums`} aria-live="polite">{pad(index + 1)} / {pad(count)}</span>
               <button type="button" onClick={() => go(index - 1)} aria-label="Slide précédente" className={`${chip} w-10`}>←</button>
               <button type="button" onClick={() => go(index + 1)} aria-label="Slide suivante" className={`${chip} w-10`}>→</button>
@@ -129,9 +129,9 @@ export function HeroSlider({ slides, pied, legal }: { slides: HeroSlide[]; pied:
       </div>
 
       {/* Mobile : le texte du hero, sous la scène. Ordinateur : il ne reste que la mention, posée en bas à gauche de la scène. */}
-      <div className="sombre bg-fond px-5 pb-9 pt-6 md:absolute md:bottom-7 md:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] md:z-20 md:bg-transparent md:p-0">
-        <div className="md:hidden">{pied}</div>
-        <p className={`label mt-7 !text-[0.5625rem] leading-relaxed text-discret md:mt-0 ${clair ? "md:text-noir/70" : ""}`}>{legal}</p>
+      <div className="sombre bg-fond px-5 pb-9 pt-6 lg:absolute lg:bottom-7 lg:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] lg:z-20 lg:bg-transparent lg:p-0">
+        <div className="lg:hidden">{pied}</div>
+        <p className={`label mt-7 !text-[0.5625rem] leading-relaxed text-discret lg:mt-0 ${clair ? "lg:text-noir/70" : ""}`}>{legal}</p>
       </div>
     </section>
   );
