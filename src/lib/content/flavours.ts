@@ -30,22 +30,25 @@ export type Flavour = {
   color: string;
   /** Le pot de face, en grand. */
   still: string;
-  /** Le petit pot des vignettes et de l'animation d'ajout au panier. */
+  /** Le petit pot détouré (sans fond) des vignettes et de l'animation d'ajout au panier. */
   mini: string;
   /** La galerie de la fiche produit. */
   images: PpImage[];
   ingredients: string;
 };
 
-/** La galerie : le packshot, puis les vues découpées dans la planche du pot. */
+/**
+ * La galerie : les photos du pot sur fond blanc, toutes au format 4:5 et à la
+ * même échelle (scripts/bouffon-images.mjs, BLANC), puis le gros plan.
+ */
 const GALLERY: PpImage[] = [
-  imageAt("pot-packshot", 1200, "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué en noir et blanc sur l'étiquette"),
-  imageAt("pot-vue-trois-quarts", 659, "Le pot SCULT tourné d'un quart vers la gauche"),
-  imageAt("pot-vue-profil", 660, "Le pot SCULT de trois quarts, le bord gauche de l'étiquette visible"),
-  imageAt("pot-vue-dos", 657, "Le dos du pot SCULT : noir mat, traits roses, bandeau rose en bas"),
-  imageAt("pot-vue-couvercle", 721, "Le couvercle du pot SCULT vu de dessus : un sourire rose métallisé"),
-  imageAt("pot-vue-detail", 1073, "Gros plan sur le nom SCULT en rose métallisé et le cœur N°001 de l'étiquette"),
-  imageAt("pot-vue-ouvert", 850, "Le pot SCULT ouvert, opercule en place, couvercle posé à côté"),
+  imageAt("pot-blanc-face", 1200, "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué en noir et blanc sur l'étiquette"),
+  imageAt("pot-blanc-trois-quarts", 880, "Le pot SCULT tourné d'un quart vers la gauche"),
+  imageAt("pot-blanc-profil", 880, "Le pot SCULT de trois quarts, le bord gauche de l'étiquette visible"),
+  imageAt("pot-blanc-dos", 880, "Le dos du pot SCULT : noir mat, traits roses, bandeau rose en bas"),
+  imageAt("pot-blanc-couvercle", 880, "Le couvercle du pot SCULT vu de dessus : un sourire rose métallisé"),
+  imageAt("pot-blanc-detail", 588, "Gros plan sur le cœur N°001 et le nom SCULT en rose métallisé de l'étiquette"),
+  imageAt("pot-blanc-ouvert", 880, "Le pot SCULT ouvert, opercule en place, couvercle posé à côté"),
 ];
 
 function flavour(id: FlavourId, code: string): Flavour {
@@ -56,8 +59,8 @@ function flavour(id: FlavourId, code: string): Flavour {
     label,
     lines: [lignes[0], lignes[1]],
     color: couleur,
-    still: imageUrl("pot-packshot", 1200),
-    mini: imageUrl("pot-packshot", 400),
+    still: imageUrl("pot-blanc-face", 1200),
+    mini: imageUrl("pot-detoure", 400),
     images: GALLERY,
     // La liste commune, avec l'arôme et le colorant du goût (cri-formule.json).
     ingredients: FORMULE.ingredients.replace("{AROME}", arome).replace("{COLORANT}", colorant),

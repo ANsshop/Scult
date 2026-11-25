@@ -25,7 +25,7 @@
       "name": "CRI",
       "slug": "cri",
       "description": "Pré-workout en poudre, goût fraise piquante. Par dose de 23 g : L-citrulline 8 g, bêta-alanine 3,2 g, créatine 3 g, L-théanine 400 mg, 390 mg de caféine en deux formes, théacrine 100 mg et un complexe Focus de 5,5 g. Pot de 690 g, soit 30 doses. Avec édulcorant. Réservé à l'adulte.",
-      "imageUrl": "/bouffon/pot-packshot-1200.webp",
+      "imageUrl": "/bouffon/pot-blanc-face-1200.webp",
       "category": {
         "slug": "poudres",
         "name": "Poudres"
@@ -36,22 +36,22 @@
       },
       "images": [
         {
-          "url": "/bouffon/pot-packshot-1200.webp",
+          "url": "/bouffon/pot-blanc-face-1200.webp",
           "alt": "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué en noir et blanc sur l'étiquette",
           "width": 1200,
           "height": 1500
         },
         {
-          "url": "/bouffon/pot-vue-ouvert-850.webp",
+          "url": "/bouffon/pot-blanc-ouvert-880.webp",
           "alt": "Pot SCULT pré-workout ouvert, opercule en place, couvercle posé à côté",
-          "width": 850,
-          "height": 735
+          "width": 880,
+          "height": 1100
         },
         {
-          "url": "/bouffon/pot-vue-couvercle-721.webp",
+          "url": "/bouffon/pot-blanc-couvercle-880.webp",
           "alt": "Couvercle du pot SCULT vu de dessus : un sourire rose métallisé",
-          "width": 721,
-          "height": 735
+          "width": 880,
+          "height": 1100
         }
       ],
       "faqs": [],
@@ -78,7 +78,7 @@
       "name": "CRI — pack de 2",
       "slug": "cri-duo",
       "description": "Deux pots de CRI, pré-workout goût fraise piquante : 2 × 690 g, soit 60 doses. 83,30 € au lieu de 98 €. Livraison offerte.",
-      "imageUrl": "/bouffon/pot-packshot-1200.webp",
+      "imageUrl": "/bouffon/pot-blanc-face-1200.webp",
       "category": {
         "slug": "packs",
         "name": "Packs"
@@ -89,7 +89,7 @@
       },
       "images": [
         {
-          "url": "/bouffon/pot-packshot-1200.webp",
+          "url": "/bouffon/pot-blanc-face-1200.webp",
           "alt": "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué en noir et blanc sur l'étiquette",
           "width": 1200,
           "height": 1500

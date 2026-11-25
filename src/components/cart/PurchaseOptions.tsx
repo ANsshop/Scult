@@ -8,7 +8,7 @@ import { formatPrice } from "@/lib/utils";
 import { FlavourPicker } from "@/components/site/FlavourPicker";
 import { useFlavour } from "@/components/site/FlavourContext";
 import { AddToCart } from "./AddToCart";
-import { PotStack } from "./PotStack";
+import { PotPile3D } from "@/components/site/PotPile3D";
 
 /** Doses par pot : sert seulement à afficher le prix par dose. */
 const DOSES_PER_UNIT = 30;
@@ -71,11 +71,11 @@ export function PurchaseOptions({ offer }: { offer: FlavourOffer }) {
                 className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-card transition-all duration-300 ${on ? "bg-white shadow-[0_0_0_2px_var(--color-klein),0_14px_30px_-12px_rgb(18_56_199/0.55)]" : "bg-white/60 shadow-[0_0_0_1px_rgb(11_11_15/0.12)] hover:bg-white"}`}
               >
                 <input type="radio" name="quantite" value={key} checked={on} onChange={() => setChoice(key)} className="sr-only" />
-                {/* La vignette : le ou les pots du goût choisi sur le mur bleu, avec l'ombre dure du flash */}
-                <span className="relative flex h-36 items-center justify-center overflow-hidden bg-klein md:h-40">
-                  <PotStack flavours={flavours} className={units > 1 ? "h-[82%] w-[70%]" : "h-[78%]"} />
+                {/* La vignette : le ou les pots en 3D, sur blanc ; ceux de la carte choisie tournent */}
+                <span className="relative flex h-36 items-center justify-center overflow-hidden bg-white md:h-40">
+                  <PotPile3D count={flavours.length} spin={on} className={units > 1 ? "h-[70%] translate-y-[8%] md:h-[84%] md:translate-y-0" : "h-[86%]"} />
                   {off > 0 && <span className="label absolute right-3 top-3 z-10 whitespace-nowrap rounded-full bg-ruby px-2.5 py-1 text-white">−{off} %</span>}
-                  <span aria-hidden className={`absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-full shadow-[0_0_0_2px_var(--color-marble)] transition-colors ${on ? "bg-marble" : "bg-transparent"}`}>
+                  <span aria-hidden className={`absolute left-3 top-3 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white transition-shadow ${on ? "shadow-[0_0_0_2px_var(--color-klein)]" : "shadow-[0_0_0_1.5px_rgb(11_11_15/0.3)]"}`}>
                     <span className={`h-2.5 w-2.5 rounded-full bg-klein transition-transform ${on ? "scale-100" : "scale-0"}`} />
                   </span>
                 </span>

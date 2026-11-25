@@ -47,70 +47,12 @@
       2688
     ]
   },
-  "pot-packshot": {
-    "width": 1792,
-    "height": 2240,
-    "widths": [
-      400,
-      800,
-      1200,
-      1792
-    ]
-  },
-  "pot-vue-face": {
-    "width": 660,
-    "height": 754,
-    "widths": [
-      400,
-      660
-    ]
-  },
-  "pot-vue-trois-quarts": {
-    "width": 659,
-    "height": 754,
-    "widths": [
-      400,
-      659
-    ]
-  },
-  "pot-vue-profil": {
-    "width": 660,
-    "height": 754,
-    "widths": [
-      400,
-      660
-    ]
-  },
-  "pot-vue-dos": {
-    "width": 657,
-    "height": 754,
-    "widths": [
-      400,
-      657
-    ]
-  },
-  "pot-vue-couvercle": {
-    "width": 721,
+  "pot-blanc-detail": {
+    "width": 588,
     "height": 735,
     "widths": [
       400,
-      721
-    ]
-  },
-  "pot-vue-detail": {
-    "width": 1073,
-    "height": 735,
-    "widths": [
-      400,
-      1073
-    ]
-  },
-  "pot-vue-ouvert": {
-    "width": 850,
-    "height": 735,
-    "widths": [
-      400,
-      850
+      588
     ]
   },
   "bouffon-face": {
@@ -159,6 +101,64 @@
       960,
       1440,
       1920
+    ]
+  },
+  "pot-blanc-face": {
+    "width": 1600,
+    "height": 2000,
+    "widths": [
+      400,
+      800,
+      1200,
+      1600
+    ]
+  },
+  "pot-detoure": {
+    "width": 1120,
+    "height": 2030,
+    "widths": [
+      200,
+      400
+    ]
+  },
+  "pot-blanc-trois-quarts": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  },
+  "pot-blanc-profil": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  },
+  "pot-blanc-dos": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  },
+  "pot-blanc-couvercle": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  },
+  "pot-blanc-ouvert": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
     ]
   }
 }

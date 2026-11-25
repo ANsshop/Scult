@@ -83,6 +83,7 @@ async function relight(viewer: Viewer) {
  * pot ne capte aucun geste (la page défile par-dessus) et c'est le parent qui
  * le tourne, via l'élément reçu dans `onReady`.
  * `orbit` : l'angle de vue de départ (« 0deg 80deg 135% » : de face, légèrement du dessus).
+ * `spin` : le pot tourne seul, lentement (jamais en mouvement réduit).
  */
 export function Pot3D({
   alt,
@@ -91,6 +92,7 @@ export function Pot3D({
   onReady,
   still = null,
   orbit = "0deg 80deg 135%",
+  spin = false,
   className = "",
 }: {
   alt: string;
@@ -99,6 +101,7 @@ export function Pot3D({
   onReady?: (viewer: HTMLElement) => void;
   still?: string | null;
   orbit?: string;
+  spin?: boolean;
   className?: string;
 }) {
   const box = useRef<HTMLDivElement>(null);
@@ -161,6 +164,7 @@ export function Pot3D({
           src: "/models/pot-scult.glb",
           alt,
           ...(interactive ? { "camera-controls": "", "disable-zoom": "", "disable-pan": "", "touch-action": "pan-y" } : {}),
+          ...(spin && !calm ? { "auto-rotate": "", "auto-rotate-delay": "0", "rotation-per-second": "26deg" } : {}),
           "interaction-prompt": interactive && !calm ? "auto" : "none",
           "interaction-prompt-style": "wiggle",
           "interaction-prompt-threshold": "1800",
