@@ -35,26 +35,6 @@ const IMAGES = {
   "pot-vues": { file: "hf_20261125_110716_87ef88da-577f-4619-8d2f-c4ced792a3fe.png", widths: [] },
   "bouffon-face": { file: "hf_20261124_211831_7a9d9a94-9fbc-4c83-877d-2edd84efc413.png", widths: [480, 800, 1200, 1792] },
   "bouffon-applaudit": { file: "hf_20261124_211828_c2cae7e6-464b-4dbd-ad49-57ebb026a115.png", widths: [480, 800, 1200, 1792] },
-  // La deuxième slide du hero, « −30 % sur le deuxième pot » : générée le 2026-11-25 sur Higgsfield
-  // (GPT Image 2.6), avec le visuel slide-pots pour le style et pot-packshot pour l'étiquette. Elle ne porte que
-  // le lettrage et deux pots ; les autres pots sont de vraies photos, ajoutées ici (`pots`, voir addPots) — une
-  // version « enrichie » par génération a été essayée et écartée le même jour : elle faisait trop image générée.
-  "hero-offre-desktop": {
-    file: "hf_20261125_140920_4d6ec21b-2ca3-44e0-b7c9-bea660bb722a.png", widths: [960, 1440, 1920, 2688],
-    pots: [
-      { cut: "trois-quarts", x: 430, y: 250, h: 330, rot: -16, blur: 2.2, shadow: 0.22 },   // au fond, en haut à gauche
-      { cut: "profil", x: 1215, y: 1392, h: 230, rot: 22, blur: 3.2, shadow: 0.2 },        // au fond, sous le grand pot
-      { cut: "face", x: 2600, y: 1330, h: 1250, rot: 14, blur: 15, shadow: 0 },             // flou, au tout premier plan
-    ],
-  },
-  "hero-offre-mobile": {
-    file: "hf_20261125_141250_cd3e1de0-d7c5-491a-9bad-e72b9c38c615.png", widths: [480, 780, 1170],
-    pots: [
-      { cut: "trois-quarts", x: 150, y: 640, h: 290, rot: -18, blur: 2.2, shadow: 0.22 },
-      { cut: "profil", x: 1445, y: 1165, h: 240, rot: 20, blur: 3.2, shadow: 0.2 },
-      { cut: "face", x: 1490, y: 2010, h: 1150, rot: 13, blur: 15, shadow: 0 },
-    ],
-  },
   // Fournie en fichier le 2026-11-25 (pas de lien) : la source est versionnée.
   "slide-pots": { local: "docs/refonte-bouffon/sources/slide-pots.jpg", widths: [960, 1440, 1920] },
 };
@@ -104,37 +84,6 @@ function fetchSource(name, file) {
 
 const manifest = {};
 
-/**
- * Ajoute de vraies photos du pot à un visuel : chaque pot détouré (`cut`, les mêmes fichiers que BLANC) est mis
- * à la hauteur `h`, incliné de `rot` degrés, flouté selon sa distance (`blur`) et posé centré en (`x`, `y`),
- * avec une ombre portée si `shadow` (son opacité). Ce qui dépasse du cadre est coupé.
- */
-async function addPots(path, pots) {
-  const meta = await sharp(path).metadata();
-  const clear = { r: 0, g: 0, b: 0, alpha: 0 };
-  const layers = [];
-  for (const p of pots) {
-    const cut = fetchSource(`detoure-${p.cut}`, BLANC[`pot-blanc-${p.cut}`].cut);
-    const trimmed = await sharp(cut).trim({ threshold: 1 }).toBuffer();
-    const pad = Math.ceil(p.blur * 4) + 40;
-    const pot = await sharp(await sharp(trimmed).resize({ height: p.h }).rotate(p.rot, { background: clear }).png().toBuffer())
-      .extend({ top: pad, bottom: pad, left: pad, right: pad, background: clear }).png().toBuffer();
-    const m = await sharp(pot).metadata();
-    const place = async (buf, dx = 0, dy = 0) => {
-      const left = Math.round(p.x - m.width / 2 + dx), top = Math.round(p.y - m.height / 2 + dy);
-      const cx = Math.max(0, -left), cy = Math.max(0, -top);
-      const width = Math.min(m.width - cx, meta.width - Math.max(0, left)), height = Math.min(m.height - cy, meta.height - Math.max(0, top));
-      return { input: await sharp(buf).extract({ left: cx, top: cy, width, height }).toBuffer(), left: Math.max(0, left), top: Math.max(0, top) };
-    };
-    if (p.shadow) {
-      const alpha = await sharp(pot).ensureAlpha().extractChannel("alpha").blur(p.h * 0.05).linear(p.shadow, 0).toBuffer();
-      const shadow = await sharp({ create: { width: m.width, height: m.height, channels: 3, background: "#000" } }).joinChannel(alpha).png().toBuffer();
-      layers.push(await place(shadow, p.h * 0.05, p.h * 0.1));
-    }
-    layers.push(await place(p.blur ? await sharp(pot).blur(p.blur).png().toBuffer() : pot));
-  }
-  return sharp(path).composite(layers).png().toBuffer();
-}
 
 async function emit(name, pipeline, widths, sourceWidth, sourceHeight) {
   const kept = widths.filter((w) => w <= sourceWidth);
@@ -148,15 +97,14 @@ async function emit(name, pipeline, widths, sourceWidth, sourceHeight) {
   manifest[name] = { width: sourceWidth, height: sourceHeight, widths: kept };
 }
 
-for (const [name, { file, local, widths, pots }] of Object.entries(IMAGES)) {
+for (const [name, { file, local, widths }] of Object.entries(IMAGES)) {
   const path = local ?? fetchSource(name, file);
   const meta = await sharp(path).metadata();
   if (name === "pot-vues") {
     await emit(DETAIL.name, () => sharp(path).extract(DETAIL.box), DETAIL.widths, DETAIL.box.width, DETAIL.box.height);
     continue;
   }
-  const source = pots ? await addPots(path, pots) : path;
-  await emit(name, () => sharp(source), widths, meta.width, meta.height);
+  await emit(name, () => sharp(path), widths, meta.width, meta.height);
 }
 
 // Les pots sur fond blanc.

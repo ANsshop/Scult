@@ -60,12 +60,14 @@ export const HERO = {
 };
 
 /**
- * La deuxième slide du hero : la créa de l'offre, dont le titre est peint dans
- * l'image (d'où l'`alt`). ⚠ Le chiffre est dans l'image : si l'offre change
- * (voir ANNONCE), il faut refaire le visuel, pas seulement ce texte.
+ * La deuxième slide du hero : l'offre du pack, en typographie, avec les deux
+ * pots en 3D. Le chiffre est du texte (plus un visuel) : si l'offre change
+ * (voir ANNONCE), on le change ici. Le prix, lui, vient du catalogue.
  */
 export const HERO_OFFRE = {
-  alt: "« −30 % sur le deuxième pot » peint au pinceau, en rose et noir, à côté de deux pots SCULT qui volent devant des éclaboussures d'encre",
+  eyebrow: "Le pack de 2 pots",
+  title: "−30 %",
+  subtitle: "sur le deuxième pot",
   cta: { label: "J'en prends deux", href: ANNONCE.href },
   /** À côté du bouton, quand le catalogue donne le prix du pack : « au lieu de 98 € ». */
   instead: (full: string) => `au lieu de ${full}`,

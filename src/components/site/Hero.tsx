@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
 import { imageSize, imageSrcSet, imageUrl } from "@/lib/content/images";
+import { OffrePots } from "./OffrePots";
 import { HERO, HERO_OFFRE } from "@/lib/content/site";
 import type { FlavourOffer } from "@/lib/catalog/queries";
 import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping";
@@ -11,13 +12,8 @@ import { HeroSlider } from "./HeroSlider";
 const SIZES_MOBILE = "100vw";
 // Plein cadre en `object-cover` : sur un écran plus haut que le 16:9, l'image déborde en largeur.
 const SIZES_DESKTOP = "(min-aspect-ratio: 16/9) 100vw, 178vh";
-const SIZES_PORTRAIT = "(min-aspect-ratio: 9/16) 100vw, 57vh";
-// Toute la largeur, moins si l'écran est très large pour sa hauteur.
-const SIZES_PAYSAGE = "(min-aspect-ratio: 2/1) 190vh, 100vw";
 const MOBILE = "(max-width: 1023px)";
 const DESKTOP = "(min-width: 1024px)";
-/** La créa de l'offre n'a pas de mise en page à elle : on choisit son format sur la forme de l'écran (comme `.hero-offre-image`, globals.css). */
-const PORTRAIT = "(orientation: portrait)";
 
 /**
  * La colonne de texte, calée sur la grille du site (1360 px). `box-content` :
@@ -32,9 +28,9 @@ const COLONNE = "lg:box-content lg:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))
  *
  *  1. Le bouffon (hero dark) : le vrai contenu de la page — le h1, les
  *     dosages, le bouton. C'est lui que l'intro rose recouvre puis révèle.
- *  2. L'offre : la créa « −30 % sur le deuxième pot », titre peint dans
- *     l'image (d'où son `alt`), et un bouton. `offer` (le catalogue) donne le
- *     prix du pack, écrit sur le bouton ; sans lui, le bouton reste seul.
+ *  2. L'offre : « −30 % sur le deuxième pot » en typographie, les deux pots
+ *     en 3D, et un bouton. `offer` (le catalogue) donne le prix du pack,
+ *     écrit sur le bouton ; sans lui, le bouton reste seul.
  */
 export function Hero({ offer }: { offer?: FlavourOffer | null }) {
   return (
@@ -125,40 +121,34 @@ function SlideBouffon() {
 }
 
 /**
- * La créa de l'offre : format paysage ou portrait selon l'écran, jamais
- * recadrée dans son texte (`.hero-offre-image`, globals.css).
- * Elle n'est pas visible à l'arrivée : chargée en basse priorité, pour ne rien
- * prendre à l'image du bouffon.
+ * L'offre du pack, sans visuel : le chiffre en grand, en typographie, et les
+ * deux pots en 3D sur un disque rose. Ordinateur : le texte à gauche, les pots
+ * à droite. Mobile : le texte en haut, les pots au milieu, le bouton en bas.
+ * Les pots ne chargent leur 3D qu'à la première apparition de la slide
+ * (OffrePots) : rien n'est pris à l'image du bouffon.
  */
 function SlideOffre({ pack }: { pack: FlavourOffer["pack"] }) {
   const price = pack ? formatPrice(pack.priceCents) : null;
   const saving = pack && pack.fullPriceCents > pack.priceCents;
   const note = pack && [saving ? HERO_OFFRE.instead(formatPrice(pack.fullPriceCents)) : null, pack.priceCents >= FREE_SHIPPING_THRESHOLD_CENTS ? HERO_OFFRE.shipping : null].filter(Boolean).join(" · ");
-  const desktop = imageSize("hero-offre-desktop");
-  const mobile = imageSize("hero-offre-mobile");
   return (
-    <div className="hero-offre absolute inset-0 overflow-hidden">
-      <picture>
-        <source media={PORTRAIT} type="image/avif" srcSet={imageSrcSet("hero-offre-mobile", "avif")} sizes={SIZES_PORTRAIT} width={mobile.width} height={mobile.height} />
-        <source media={PORTRAIT} type="image/webp" srcSet={imageSrcSet("hero-offre-mobile", "webp")} sizes={SIZES_PORTRAIT} width={mobile.width} height={mobile.height} />
-        <source type="image/avif" srcSet={imageSrcSet("hero-offre-desktop", "avif")} sizes={SIZES_PAYSAGE} width={desktop.width} height={desktop.height} />
-        <source type="image/webp" srcSet={imageSrcSet("hero-offre-desktop", "webp")} sizes={SIZES_PAYSAGE} width={desktop.width} height={desktop.height} />
-        <img
-          src={imageUrl("hero-offre-desktop", 1440)}
-          alt={HERO_OFFRE.alt}
-          width={desktop.width}
-          height={desktop.height}
-          loading="lazy"
-          fetchPriority="low"
-          decoding="async"
-          className="hero-offre-image"
-        />
-      </picture>
-      {/* Le bouton est dans un bloc en absolu : la classe du reflet lui impose `position: relative` */}
-      <div className={`absolute inset-x-0 bottom-10 flex flex-col items-center gap-2.5 px-5 lg:inset-x-auto lg:bottom-[5.5rem] lg:left-0 lg:flex-row lg:gap-5 lg:pr-0 ${COLONNE}`}>
-        {/* Mobile : la précision au-dessus du bouton ; ordinateur : à sa droite */}
-        {note && <p className="label rounded-full bg-white/85 px-3.5 py-1.5 font-bold text-noir backdrop-blur lg:order-2">{note}</p>}
-        <ButtonLink href={HERO_OFFRE.cta.href} className="h-[3.25rem] w-full !text-[0.85rem] lg:h-14 lg:w-auto lg:px-10">{HERO_OFFRE.cta.label}{price && <> · {price}</>}</ButtonLink>
+    <div className="absolute inset-0 overflow-hidden bg-white text-noir">
+      <div className="relative mx-auto flex h-full max-w-[1360px] flex-col px-5 pb-[9.5rem] pt-[calc(var(--entete)+1.25rem)] lg:flex-row lg:items-center lg:gap-6 lg:px-10 lg:pb-[4svh] lg:pt-(--entete)">
+        <div className="text-center lg:w-[54%] lg:text-left">
+          <p className="label text-discret">{HERO_OFFRE.eyebrow}</p>
+          <h2 className="display mt-2 !text-nowrap text-[min(30vw,15.5svh)] !leading-[0.82] text-rose lg:mt-4 lg:text-[min(13.4vw,32svh,12.25rem)]">{HERO_OFFRE.title}</h2>
+          <p className="display mt-1 text-[min(8.3vw,4.4svh)] lg:mt-3 lg:text-[min(3.75vw,8svh)]">{HERO_OFFRE.subtitle}</p>
+          {/* Mobile : le bouton en bas de l'écran, la précision au-dessus ; ordinateur : sous le texte, la précision à droite */}
+          <div className="absolute inset-x-0 bottom-10 flex flex-col items-center gap-2.5 px-5 lg:static lg:mt-10 lg:flex-row lg:gap-5 lg:px-0">
+            {note && <p className="label whitespace-nowrap rounded-full bg-surface px-3.5 py-1.5 font-bold lg:order-2">{note}</p>}
+            <ButtonLink href={HERO_OFFRE.cta.href} className="h-[3.25rem] w-full shrink-0 whitespace-nowrap !text-[0.85rem] lg:h-14 lg:w-auto lg:px-10">{HERO_OFFRE.cta.label}{price && <> · {price}</>}</ButtonLink>
+          </div>
+        </div>
+        {/* Les deux pots, devant un disque rose */}
+        <div className="relative mt-3 flex min-h-0 flex-1 items-center justify-center lg:mt-0">
+          <span aria-hidden className="absolute aspect-square h-[88%] rounded-full bg-rose lg:h-[min(60svh,36vw)]" />
+          <OffrePots className="relative h-[92%] lg:h-[min(54svh,31vw)]" />
+        </div>
       </div>
     </div>
   );
