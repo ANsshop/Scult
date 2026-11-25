@@ -22,7 +22,8 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * les commandes. Sans JavaScript, la première slide — le hero dark, avec le
  * h1 — reste affichée.
  *
- * Mobile : la scène fait un écran ; on change de slide en glissant le doigt ou
+ * Mobile : la scène fait un écran (plus sur un téléphone très court : il faut
+ * la place du pot de l'affiche, 130 % de la largeur, et du bouton) ; on change de slide en glissant le doigt ou
  * aux deux traits du bas. Sous la scène, `pied` (le texte du hero) puis la
  * mention légale. Ordinateur : flèches et compteur en bas à droite, la mention
  * en bas à gauche.
@@ -72,7 +73,7 @@ export function HeroSlider({ slides, pied, legal }: { slides: HeroSlide[]; pied:
   return (
     <section data-clair={clair ? "" : undefined} aria-roledescription="carrousel" aria-label="À la une" className="hero relative isolate">
       <div
-        className="relative grid h-[max(100svh,36rem)] overflow-hidden bg-noir md:h-auto"
+        className="relative grid h-[max(100svh,calc(130vw+6rem))] overflow-hidden bg-noir md:h-auto"
         onPointerEnter={(e) => { if (e.pointerType === "mouse") hold.current = true; }}
         onPointerLeave={() => { hold.current = false; }}
         onFocusCapture={() => { hold.current = true; }}

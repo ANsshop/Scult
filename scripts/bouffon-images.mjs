@@ -25,7 +25,9 @@ const IMAGES = {
   "hero-rose-desktop": { file: "hf_20261125_105536_6c39dcac-2b3d-4334-ae4f-8ee310bdb12e.png", widths: [960, 1440, 1920, 2688] },
   "hero-rose-mobile": { file: "hf_20261125_111007_04cc17cd-ac63-46f8-b005-8d2d70d732fb.png", widths: [480, 780, 1170] },
   "hero-dark-desktop": { file: "hf_20261125_110717_3ae8150c-9161-474b-9ba8-40b36093cdc3.png", widths: [960, 1440, 1920, 2688] },
-  "hero-dark-mobile": { file: "hf_20261125_110717_0e6ecaeb-82e3-4dbf-88df-91275f81ae37.png", widths: [480, 780, 1170] },
+  // Refaite le 2026-11-25 sur Higgsfield à partir de l'affiche d'origine (hf_20261125_110717_0e6ecaeb-…) : le pot
+  // poussé vers l'objectif, et un cadrage fait pour le téléphone — du noir en haut pour le titre, en bas pour le bouton.
+  "hero-dark-mobile": { file: "hf_20261125_151524_27029277-a3b2-4e39-85e2-ff62ebc457cb.png", widths: [480, 780, 1170] },
   "hero-produit-desktop": { file: "hf_20261125_110718_d7afe922-a9d4-4f78-abf3-e0c5ffff68c6.png", widths: [780, 1440, 1920, 2688] },
   "pot-packshot": { file: "hf_20261125_110545_d4a67113-9e74-4b71-b7c3-3448700349e7.png", widths: [400, 800, 1200, 1792] },
   "pot-vues": { file: "hf_20261125_110716_87ef88da-577f-4619-8d2f-c4ced792a3fe.png", widths: [] },

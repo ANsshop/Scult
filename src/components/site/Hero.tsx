@@ -50,10 +50,10 @@ export function Hero() {
  * Ordinateur : image plein cadre, le bouffon à droite ; un voile noir de
  * gauche à droite garde le texte lisible ; le bloc de texte est calé à gauche,
  * un peu au-dessus du milieu.
- * Mobile : tout tient dans un écran. L'affiche 9:16 est réglée sur la hauteur
- * (jamais recadrée en haut ni en bas : le pot reste entier), ses bords fondus
- * dans le noir ; le titre au-dessus du bonnet, le bouton sous le pot. La ligne
- * de dosages est sous le slider (HeroSlider, `pied`).
+ * Mobile : tout tient dans un écran. L'affiche 9:16 remplit l'écran bord à
+ * bord, calée en haut ; elle est composée pour ça — le titre au-dessus du
+ * bonnet, le bouton sous le pot, dans le noir du bas. La ligne de dosages est
+ * sous le slider (HeroSlider, `pied`).
  *
  * L'image est le plus grand élément de la page (LCP) : elle est préchargée,
  * en priorité haute, avec ses dimensions.
@@ -78,8 +78,8 @@ function SlideBouffon() {
         </h1>
       </div>
 
-      {/* L'image. Ordinateur : plein cadre, derrière le texte. Mobile : toute la hauteur moins la place du bouton. */}
-      <div className="absolute inset-x-0 bottom-[6.25rem] top-0 -z-10 md:bottom-0">
+      {/* L'image, plein cadre, derrière le texte */}
+      <div className="absolute inset-0 -z-10">
         <picture>
           <source media={MOBILE} type="image/avif" srcSet={imageSrcSet("hero-dark-mobile", "avif")} sizes={SIZES_MOBILE} width={mobile.width} height={mobile.height} />
           <source media={MOBILE} type="image/webp" srcSet={imageSrcSet("hero-dark-mobile", "webp")} sizes={SIZES_MOBILE} width={mobile.width} height={mobile.height} />
@@ -92,15 +92,15 @@ function SlideBouffon() {
             height={desktop.height}
             fetchPriority="high"
             loading="eager"
-            className="absolute left-1/2 top-0 h-full w-auto max-w-none -translate-x-1/2 max-md:[mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)] md:left-0 md:w-full md:translate-x-0 md:object-cover md:object-[100%_50%]"
+            className="absolute inset-0 h-full w-full object-cover object-top md:object-[100%_50%]"
           />
         </picture>
         {/* Voile de lisibilité : noir à gauche, transparent vers 62 % (ordinateur) */}
         <div aria-hidden className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,rgb(0_0_0/0.72)_0%,rgb(0_0_0/0.5)_30%,transparent_62%)] md:block" />
         {/* Voile du haut, sous la navigation */}
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-black/75 to-transparent" />
-        {/* Mobile : le bas de l'affiche se fond dans le noir, au-dessus du bouton */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-7 bg-gradient-to-t from-fond to-transparent md:hidden" />
+        {/* Mobile : le bas de l'affiche se fond dans le noir, derrière le bouton */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-fond via-fond/70 to-transparent md:hidden" />
       </div>
 
       {/* Texte et boutons. Mobile : le bouton seul, en bas de l'écran. */}
