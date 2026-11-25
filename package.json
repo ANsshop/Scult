@@ -8,6 +8,7 @@
     "start": "next start -p 3002",
     "lint": "eslint",
     "images:optimize": "node scripts/optimize-images.mjs",
+    "images:bouffon": "node scripts/bouffon-images.mjs",
     "gate": "bash scripts/gate.sh"
   },
   "dependencies": {
