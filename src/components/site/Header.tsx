@@ -8,7 +8,7 @@ import { Wordmark } from "./Wordmark";
 
 /**
  * L'en-tête : la bande d'annonce qui défile, puis la navigation
- * (SCULT · Pre-workout · La formule · Le bouffon · Panier). Hauteur totale :
+ * (SCULT · Pre-workout · Pochons · La formule · Le bouffon · Panier). Hauteur totale :
  * `--entete` (globals.css).
  * Sur ordinateur, les liens sont en ligne. Sur mobile, il reste le logo, le
  * panier et un bouton « Menu » qui déplie les liens sous la barre.
