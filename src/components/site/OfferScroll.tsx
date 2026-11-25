@@ -110,10 +110,10 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
             <div className="grid flex-1 items-center gap-6 md:grid-cols-[1fr_auto_1fr] md:gap-14">
               {column(lines.slice(0, half), 0, "right")}
               {/* Sur téléphone, le choix du goût prend une rangée sous le pot : le pot se règle sur la hauteur qui reste. */}
-              <div className={`relative mx-auto md:w-[min(30vw,40svh)] ${flavours.length > 1 ? "w-[max(7rem,min(56vw,calc((100svh-27.75rem)/1.35)))]" : "w-[min(58vw,32svh)]"}`}>
+              <div className={`relative mx-auto md:w-[min(38vw,52svh)] ${flavours.length > 1 ? "w-[max(7rem,min(56vw,calc((100svh-27.75rem)/1.35)))]" : "w-[min(68vw,38svh)]"}`}>
                 <Pot3D
                   alt="Le pot SCULT pré-workout : noir, le nom SCULT en rose métallisé, le bouffon masqué sur l'étiquette"
-                  sizes="(min-width: 768px) 30vw, 58vw"
+                  sizes="(min-width: 768px) 38vw, 68vw"
                   interactive={false}
                   onReady={onReady}
                   still="/models/pot-scult-poster.webp"
