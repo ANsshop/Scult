@@ -8,11 +8,13 @@ import { organizationJsonLd, siteOrigin } from "@/lib/seo";
 import { INTRO_HEAD_SCRIPT } from "@/components/site/intro/script";
 import "./globals.css";
 
-// Police auto-hébergée (fichier Fontsource, licence OFL) : aucun appel à Google
-// Fonts, ni au build ni à l'exécution. Fraunces, une seule police variable pour
-// les titres (très gras) et le texte. Les deux polices du faux site rose
-// (Pacifico, Quicksand) sont dans public/fonts/ et ne se chargent que si l'intro
-// joue (intro.css). Pour changer de police : ce fichier, et `--police` suit.
+// Polices auto-hébergées (fichiers Fontsource, licence OFL) : aucun appel à
+// Google Fonts, ni au build ni à l'exécution. Knewave, un pinceau épais et
+// penché, pour les titres et les boutons (la police libre la plus proche du
+// lettrage peint des créas) ; Fraunces pour le texte. Les deux polices du faux
+// site rose (Pacifico, Quicksand) sont dans public/fonts/ et ne se chargent que
+// si l'intro joue (intro.css). Pour changer de police : ce fichier.
+const titre = localFont({ src: "../fonts/knewave-latin-400-normal.woff2", variable: "--police-titre", weight: "400", display: "swap" });
 const police = localFont({ src: "../fonts/fraunces-latin-wght-normal.woff2", variable: "--police", weight: "100 900", display: "swap" });
 
 export const metadata: Metadata = {
@@ -52,7 +54,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const offer = await cartOffer();
   return (
     // `data-intro` est posé sur <html> par le script du <head>, avant l'hydratation : d'où suppressHydrationWarning.
-    <html lang="fr" className={`${police.variable} h-full`} suppressHydrationWarning>
+    <html lang="fr" className={`${titre.variable} ${police.variable} h-full`} suppressHydrationWarning>
       <head>
         {/* Avant le premier affichage : l'intro rose joue-t-elle ? (voir components/site/intro/script.ts) */}
         <script dangerouslySetInnerHTML={{ __html: INTRO_HEAD_SCRIPT }} />

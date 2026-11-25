@@ -41,7 +41,7 @@ export function Hero() {
       <div className="absolute inset-x-0 top-0 z-10 px-5 pt-[7.1rem] text-center md:static md:w-[min(46rem,50vw)] md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] md:pr-0 md:pt-0 md:text-left">
         <p className="label text-doux">{HERO.eyebrow}</p>
         {/* `data-texte` : le double rose du titre, qui saute pendant le glitch (intro.css) */}
-        <h1 data-texte={`${HERO.title.main}\n${HERO.title.accent}`} className="hero-titre display ombre-titre mt-2 text-[min(11.6vw,4.25rem)] md:mt-5 md:text-[clamp(3.25rem,8vw,7.25rem)]">
+        <h1 data-texte={`${HERO.title.main}\n${HERO.title.accent}`} className="hero-titre display ombre-titre mt-2 text-[min(12.2vw,4.5rem)] md:mt-5 md:text-[clamp(3.5rem,9vw,8.25rem)]">
           {HERO.title.main}<br /><span className="text-rose [text-shadow:none]">{HERO.title.accent}</span>
         </h1>
       </div>
@@ -73,7 +73,7 @@ export function Hero() {
       <div className="px-5 pb-10 pt-6 md:w-[min(46rem,50vw)] md:pb-0 md:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] md:pr-0 md:pt-8">
         <p className="text-balance text-[0.95rem] leading-relaxed text-doux md:text-[1.05rem]">{HERO.text}</p>
         <div className="mt-6 flex flex-col gap-5 md:mt-9 md:flex-row md:items-center md:gap-8">
-          <ButtonLink href={HERO.cta.href} className="h-14 w-full text-[1.1rem] md:w-auto md:px-10">{HERO.cta.label}</ButtonLink>
+          <ButtonLink href={HERO.cta.href} className="h-14 w-full text-[1.3rem] md:w-auto md:px-10">{HERO.cta.label}</ButtonLink>
           <Link href={HERO.secondary.href} className="label self-center underline decoration-rose decoration-2 underline-offset-[6px] hover:text-rose md:self-auto">{HERO.secondary.label}</Link>
         </div>
         <p className="label mt-8 !text-[0.5625rem] leading-relaxed text-discret md:absolute md:bottom-7 md:mt-0">{HERO.legal}</p>

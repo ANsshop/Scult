@@ -20,8 +20,8 @@
 | `rose` | `#FF2E93` | `#FF2E93` | l'accent, unique |
 | `noir` | `#070707` | `#070707` | le texte posé sur le rose |
 
-- **Police** : Fraunces (variable, un seul fichier), pour les titres et le texte. Titres : graisse 900, capitales, interlignage 0,95 (`.display`). Grands titres : ombre dure `5px 2px 0` en rose à 85 %, sans flou (`.ombre-titre`). Étiquettes : petites capitales espacées (`.label`). Elle se change en un endroit : `src/app/layout.tsx`.
-- **Boutons** : pilule rose, texte noir très gras ; un reflet de lumière les traverse au survol. Le même reflet passe sur le logo et sur les cartes.
+- **Polices** : Knewave pour les titres et les boutons — un pinceau épais et penché, la police libre la plus proche du lettrage peint des créas (qui, lui, est un dessin, coulures comprises) ; capitales, interlignage 0,95 (`.display`). Fraunces pour le texte courant et les étiquettes (`.label`). L'ombre dure rose des titres du brief d'origine est coupée (`.ombre-titre`). Les polices se changent en un endroit : `src/app/layout.tsx`.
+- **Boutons** : pilule rose, texte noir au pinceau ; un reflet de lumière les traverse au survol. Le même reflet passe sur le logo et sur les cartes.
 - **Formes** : arrondies — `--radius-btn` (pilule), `--radius-card`, `--radius-chip`.
 - **Grain** : surcouche fixe sur toute la page (`body::after`, `public/noise.svg`), sans effet sur les clics.
 - **Bande d'annonce** : rose, en tête de l'en-tête, texte qui défile (`ANNONCE`, `src/lib/content/site.ts`).

@@ -54,7 +54,7 @@
   --color-ink: #070707;
   --color-stone: #76736d;
 
-  --font-display: var(--police), Georgia, "Times New Roman", serif;
+  --font-display: var(--police-titre), "Marker Felt", "Comic Sans MS", cursive;
   --font-sans: var(--police), Georgia, "Times New Roman", serif;
   --font-mono: var(--police), Georgia, "Times New Roman", serif; /* plus de police à chasse fixe */
 
@@ -101,17 +101,19 @@ body::after {
 
 :focus-visible { outline: 2px solid var(--color-rose); outline-offset: 3px; }
 
-/* Titres : Fraunces très gras, capitales, interlignage 0.95 */
+/* Titres : Knewave (pinceau), capitales, interlignage 0.95 */
 .display {
   font-family: var(--font-display);
-  font-weight: 900;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: -0.015em;
+  letter-spacing: 0.01em;
   line-height: 0.95;
   text-wrap: balance;
 }
-/* …et leur ombre portée, pour les grands titres seulement (illisible en petit corps) */
-.ombre-titre { text-shadow: var(--ombre-titre); }
+/* L'ombre portée des grands titres (brief d'origine : 5px 2px 0 rose à 85 %). Coupée
+   depuis le passage au lettrage pinceau, qui n'en porte pas sur les créas ; pour la
+   rétablir : `text-shadow: var(--ombre-titre)`. */
+.ombre-titre { text-shadow: none; }
 
 /* Étiquettes : petites capitales espacées */
 .label {
