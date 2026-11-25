@@ -42,7 +42,7 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
       <Link href={ANNONCE.href} aria-label={ANNONCE.text} className="block h-8 overflow-hidden bg-rose text-noir">
         <span aria-hidden className="annonce-piste flex h-full w-max items-center whitespace-nowrap">
           {Array.from({ length: 16 }, (_, i) => (
-            <span key={i} className="font-display flex items-center text-[0.9rem] uppercase tracking-[0.06em]">
+            <span key={i} className="label flex items-center font-bold">
               {ANNONCE.text}<span className="mx-5 inline-block h-1.5 w-1.5 rounded-full bg-noir" />
             </span>
           ))}
