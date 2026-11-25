@@ -72,7 +72,25 @@ export const HERO_POCHES = {
   title: { main: "La caféine", accent: "en poche." },
   text: "30 pochons de caféine, à glisser contre la gencive. 200 mg par pochon, goût fraise piquante. Sans nicotine, sans tabac.",
   cta: { label: "Me prévenir", href: "mailto:hello@scult.eu?subject=Pochons%20de%20caf%C3%A9ine%20%3A%20pr%C3%A9venez-moi" },
+  secondary: { label: "Voir la boîte en 3D", href: "/pochons" },
   alt: "Le bouffon tend vers l'objectif une boîte ronde blanche de pochons de caféine SCULT, son portrait sur le couvercle ; de l'autre main, il montre un pochon blanc tenu entre deux doigts",
+};
+
+/**
+ * La page d'annonce des pochons (/pochons) : la boîte en 3D et ce qu'on sait
+ * du produit. Mêmes réserves que HERO_POCHES : ni nom, ni prix, ni date.
+ */
+export const POCHONS = {
+  hint: "Faites tourner la boîte",
+  facts: [
+    { label: "Caféine", value: "200 mg par pochon" },
+    { label: "Boîte", value: "30 pochons" },
+    { label: "Goût", value: "Fraise piquante" },
+    { label: "Sans", value: "Nicotine, tabac" },
+  ],
+  status: "Bientôt disponible. Pas encore de prix ni de date.",
+  legal: "Contient de la caféine. Réservé aux adultes. Déconseillé aux enfants et aux femmes enceintes.",
+  alt3d: "La boîte de pochons de caféine SCULT en 3D : ronde, blanche, le bouffon sur le couvercle, une bande rose sur la tranche",
 };
 
 /**

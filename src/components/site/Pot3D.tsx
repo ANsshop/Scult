@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { createElement, useEffect, useRef, useState } from "react";
+import { POT, type Modele3D } from "@/lib/content/modeles-3d";
 
 /** Le navigateur sait-il afficher de la 3D ? Sinon on garde l'image fixe, sans charger la visionneuse. */
 function hasWebGL(): boolean {
@@ -40,15 +41,11 @@ type Viewer = HTMLElement & { model?: { materials: Material[] }; createTexture: 
  *    blancs et le rose gardent leur éclat quel que soit l'angle.
  * L'exposition se règle sur la balise (EXPOSURE).
  */
-const METAL_MAPS: Record<string, string> = {
-  POT_etiquette: "/models/pot-scult-metal-etiquette.jpg",
-  POT_dessus: "/models/pot-scult-metal-dessus.jpg",
-};
 const EMISSIVE = 0.3;
 const ROUGHNESS = 0.42; // matériaux sans carte
 const EXPOSURE = "1.3";
 
-async function relight(viewer: Viewer) {
+async function relight(viewer: Viewer, maps: Record<string, string>) {
   for (const m of viewer.model?.materials ?? []) {
     try {
       const pbr = m.pbrMetallicRoughness;
@@ -57,7 +54,7 @@ async function relight(viewer: Viewer) {
         m.emissiveTexture.setTexture(base);
         m.setEmissiveFactor([EMISSIVE, EMISSIVE, EMISSIVE]);
       }
-      const map = METAL_MAPS[m.name];
+      const map = maps[m.name];
       if (map && pbr.metallicRoughnessTexture) {
         // La carte porte les valeurs ; les facteurs à 1 la laissent parler.
         pbr.metallicRoughnessTexture.setTexture(await viewer.createTexture(map));
@@ -71,7 +68,7 @@ async function relight(viewer: Viewer) {
 }
 
 /**
- * Le pot en 3D (public/models/pot-scult.glb, 0,8 Mo).
+ * Un produit en 3D : le pot (par défaut) ou un autre modèle (`model`).
  *
  * La visionneuse (@google/model-viewer) et le modèle ne se chargent qu'à
  * l'approche du bloc, jamais au premier affichage. `still` : l'image fixe
@@ -93,6 +90,7 @@ export function Pot3D({
   still = null,
   orbit = "0deg 80deg 135%",
   spin = false,
+  model = POT,
   className = "",
 }: {
   alt: string;
@@ -102,6 +100,7 @@ export function Pot3D({
   still?: string | null;
   orbit?: string;
   spin?: boolean;
+  model?: Modele3D;
   className?: string;
 }) {
   const box = useRef<HTMLDivElement>(null);
@@ -132,7 +131,7 @@ export function Pot3D({
     if (!ready || !el) return;
     const onLoad = () => {
       // Le pot s'affiche une fois éclairé, pour ne pas changer d'aspect sous les yeux.
-      relight(el as Viewer).finally(() => {
+      relight(el as Viewer, model.metal).finally(() => {
         setShown(true);
         onReady?.(el);
       });
@@ -144,16 +143,16 @@ export function Pot3D({
       el.removeEventListener("load", onLoad);
       el.removeEventListener("error", onError);
     };
-  }, [ready, onReady]);
+  }, [ready, onReady, model]);
 
   return (
-    <div ref={box} className={`relative aspect-[900/1096] ${className}`}>
+    <div ref={box} style={{ aspectRatio: `${model.width} / ${model.height}` }} className={`relative ${className}`}>
       {still && (
         <Image
           src={still}
           alt={alt}
-          width={900}
-          height={1096}
+          width={model.width}
+          height={model.height}
           sizes={sizes}
           className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${shown ? "pointer-events-none opacity-0" : "opacity-100"}`}
         />
@@ -161,7 +160,7 @@ export function Pot3D({
       {ready &&
         createElement("model-viewer", {
           ref: viewer,
-          src: "/models/pot-scult.glb",
+          src: model.src,
           alt,
           ...(interactive ? { "camera-controls": "", "disable-zoom": "", "disable-pan": "", "touch-action": "pan-y" } : {}),
           ...(spin && !calm ? { "auto-rotate": "", "auto-rotate-delay": "0", "rotation-per-second": "26deg" } : {}),

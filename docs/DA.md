@@ -40,6 +40,8 @@
 
 **Le complexe Focus** (`FocusComplex.tsx`, tout en bas de la fiche produit) : un bloc noir, le titre en deux couleurs, une carte arrondie par ingrédient (numéro rose, nom en Archivo Black, ce qu'il est en une ligne) et une dernière case rose pour le poids du complexe.
 
+**La boîte de pochons en 3D** (`public/models/boite-pochons.glb`, même visionneuse que le pot, `modeles-3d.ts`) : blanche, donc montrée sur un panneau noir (`/pochons`). Fabrication : `scripts/3d/build-pochons.sh`.
+
 **Le slider de l'accueil** (`Slider.tsx`, slides dans `site.ts`) : visuels plein cadre sur fond papier, titre peint dans l'image, bouton en bas à gauche.
 
 **Les textes** : tous dans `src/lib/content/site.ts`, provisoires (voir `ASSUMPTIONS.md`).
