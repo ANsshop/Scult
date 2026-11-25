@@ -60,18 +60,18 @@ export const HERO = {
 };
 
 /**
- * La deuxième slide du hero : l'annonce du prochain produit, les poches de
- * caféine. ⚠ Une annonce seulement — ni nom, ni dosage, ni nombre de poches,
- * ni prix, ni date : rien de tout ça n'a été fourni et rien n'est inventé
- * (ASSUMPTIONS.md). Le bouton ouvre un e-mail ; il pointera vers la fiche
- * quand le produit sera au catalogue.
+ * La deuxième slide du hero : l'annonce du prochain produit, les pochons de
+ * caféine. Fournis le 2026-11-25 : 80 mg de caféine par pochon, 30 pochons par
+ * boîte, goût fraise piquante. ⚠ Toujours manquants, donc pas affichés : le
+ * nom du produit, le prix, la date de sortie (ASSUMPTIONS.md). Le bouton ouvre
+ * un e-mail ; il pointera vers la fiche quand le produit sera au catalogue.
  */
 export const HERO_POCHES = {
   badge: "Nouveau · bientôt",
   title: { main: "La caféine", accent: "en poche." },
-  text: "Des poches de caféine, à glisser contre la gencive. Sans poudre, sans shaker.",
-  cta: { label: "Me prévenir", href: "mailto:hello@scult.eu?subject=Poches%20de%20caf%C3%A9ine%20%3A%20pr%C3%A9venez-moi" },
-  alt: "Le bouffon tend vers l'objectif une petite boîte ronde noire frappée du sourire rose ; de l'autre main, il montre une poche blanche tenue entre deux doigts",
+  text: "30 pochons de caféine, à glisser contre la gencive. 80 mg par pochon, goût fraise piquante. Sans poudre, sans shaker.",
+  cta: { label: "Me prévenir", href: "mailto:hello@scult.eu?subject=Pochons%20de%20caf%C3%A9ine%20%3A%20pr%C3%A9venez-moi" },
+  alt: "Le bouffon tend vers l'objectif une petite boîte ronde noire frappée du sourire rose ; de l'autre main, il montre un pochon blanc tenu entre deux doigts",
 };
 
 /**

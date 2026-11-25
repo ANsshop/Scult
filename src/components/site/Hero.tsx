@@ -40,7 +40,7 @@ type Affiche = {
  *
  *  1. Le pré-workout : le vrai contenu de la page — le h1, les dosages, le
  *     bouton. C'est cette slide que l'intro rose recouvre puis révèle.
- *  2. Le nouveau produit, les poches de caféine : une annonce, sans prix ni
+ *  2. Le nouveau produit, les pochons de caféine : une annonce, sans prix ni
  *     fiche tant qu'il n'est pas au catalogue.
  */
 export function Hero() {
@@ -57,7 +57,7 @@ export function Hero() {
       legal={HERO.legal}
       slides={[
         { id: "pre-workout", label: "le pré-workout", node: <SlideAffiche first {...pre} />, pied: pied(pre) },
-        { id: "poches", label: "les poches de caféine", node: <SlideAffiche {...poches} />, pied: pied(poches) },
+        { id: "poches", label: "les pochons de caféine", node: <SlideAffiche {...poches} />, pied: pied(poches) },
       ]}
     />
   );
