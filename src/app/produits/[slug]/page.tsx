@@ -37,7 +37,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <>
       <JsonLd data={productJsonLd(product)} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: product.name, path: `/produits/${product.slug}` }])} />
-      <Header />
+      <Header overlay />
       <main><ProductPage product={product} offer={await getFlavourOffer(product.slug)} /></main>
       <Footer />
     </>

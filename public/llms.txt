@@ -2,14 +2,13 @@
 
 > SCULT est une marque européenne de compléments alimentaires en poudre,
 > fabriqués dans l'Union européenne chez un fabricant certifié. Elle vend un
-> seul produit : CRI, un pré-workout en trois goûts dont chaque dosage est
-> écrit sur le pot. Site : https://scult.eu — contact : hello@scult.eu.
+> seul produit : CRI, un pré-workout goût fraise piquante dont chaque dosage
+> est écrit sur le pot. Site : https://scult.eu — contact : hello@scult.eu.
 
 ## Produit
 
-- CRI (pré-workout) — 49 € : poudre avec édulcorant, en trois goûts (fruits
-  rouges, cassis framboise, ice tea pêche) ; même formule, seuls l'arôme et le
-  colorant changent. Par dose de 23 g : L-citrulline 8 g, bêta-alanine 3,2 g, créatine 3 g,
+- CRI (pré-workout) — 49 € : poudre avec édulcorant, goût fraise piquante.
+  Par dose de 23 g : L-citrulline 8 g, bêta-alanine 3,2 g, créatine 3 g,
   L-théanine 400 mg, dicaféine malate 300 mg, caféine anhydre 170 mg (environ
   390 mg de caféine au total), théacrine 100 mg, sodium 300 mg, extrait de
   poivre noir 4,8 mg, capsaïcine 3 mg, et un complexe Focus de 5 523 mg (DMAE
@@ -20,8 +19,8 @@
   maximum. Contient des stimulants interdits en compétition par l'antidopage.
   URL : /produits/cri
 - CRI, pack de 2 pots — 83,30 € au lieu de 98 € (−15 %) : 2 × 690 g, soit 60
-  doses, livraison offerte. Deux pots du même goût ou de deux goûts différents,
-  au même prix. Se choisit sur la fiche de CRI. URL : /produits/cri
+  doses, livraison offerte. Deux pots goût fraise piquante. Se choisit sur la
+  fiche de CRI. URL : /produits/cri
 
 ## Bénéfices
 
@@ -39,7 +38,7 @@ Détails : /methode
 
 ## Service
 
-- Retours : 14 jours après réception, pot scellé (pastille rouge intacte)
+- Retours : 14 jours après réception, pot scellé (opercule intact)
 - Paiement : Stripe (carte bancaire, Apple Pay, Google Pay)
 - Fabrication : Union européenne, lots numérotés sur le pot
 - FAQ : /faq — Livraison : /livraison-retours

@@ -6,8 +6,8 @@ import { useEffect, useRef } from "react";
  * Bandeau sur deux lignes, sous le hero : la première en lettres pleines, la
  * seconde au contour. Il ne défile pas tout seul : il glisse avec le
  * défilement de la page — la ligne 1 part à gauche quand on descend, la
- * ligne 2 à droite, et l'inverse quand on remonte. Les points rouges
- * reprennent la pastille du pot. Le texte vise l'entraînement, dans les
+ * ligne 2 à droite, et l'inverse quand on remonte. Les points roses
+ * séparent les mots. Le texte vise l'entraînement, dans les
  * limites du règlement 1924/2006 : des dosages, le moment de prise, une
  * allégation autorisée — jamais de promesse d'effet (scripts/gate.sh).
  */
@@ -16,7 +16,7 @@ const ROW_2 = [
   "Rien ne se sculpte en silence",
   "20 à 30 minutes avant la séance",
   "400 mg de théanine",
-  "Trois goûts",
+  "Goût fraise piquante",
   "Une dose, 400 ml d'eau",
 ];
 
@@ -30,7 +30,7 @@ function Row({ items, outline = false, rowRef }: { items: string[]; outline?: bo
       {items.map((item) => (
         <li key={item} className="flex items-center">
           <span className={outline ? "text-outline" : ""}>{item}</span>
-          <span aria-hidden className="mx-[0.45em] inline-block h-[0.17em] w-[0.17em] shrink-0 rounded-full bg-ruby" />
+          <span aria-hidden className="mx-[0.45em] inline-block h-[0.17em] w-[0.17em] shrink-0 rounded-full bg-rose" />
         </li>
       ))}
     </ul>
@@ -82,7 +82,7 @@ export function Marquee() {
   }, []);
 
   return (
-    <section aria-label="En bref" className="overflow-hidden bg-white py-6 md:py-9">
+    <section aria-label="En bref" className="overflow-hidden border-y bg-fond py-6 md:py-9">
       <Row items={ROW_1} rowRef={row1} />
       <div className="mt-2 md:mt-3">
         <Row items={ROW_2} outline rowRef={row2} />

@@ -1,5 +1,37 @@
 # SCULT — direction artistique (contrat)
 
+> **2026-11-25 — la DA « bouffon » remplace tout ce qui suit.** Les sections plus bas (Klein, marbre, statue, pot blanc, goûts en couleur, pot 3D d'origine) décrivent l'ancienne direction ; elles sont gardées comme archive.
+
+## DA « bouffon » (2026-11-25)
+
+**Le concept.** Le visiteur arrive sur ce qui ressemble à un site de pré-workout « girly » tout rose. Au bout d'une seconde l'écran glitche et révèle le vrai site : noir et blanc sale, un bouffon d'horreur musclé qui tend le pot. Le rose du faux site devient la couleur du glitch et de la marque. Le site rose est la blague du bouffon.
+
+**La règle.** Tout est noir et blanc granuleux ; la seule couleur est le rose vif `#FF2E93`.
+
+| Token (`src/app/globals.css`) | Valeur | Usage |
+|---|---|---|
+| `fond` | `#070707` | fond de page |
+| `surface` | `#121212` | cartes, champs, tiroir du panier |
+| `clair` | `#F2F0EA` | texte principal |
+| `doux` | `#D2CFC7` | texte secondaire |
+| `discret` | `#8D8A83` | étiquettes, mentions |
+| `rose` | `#FF2E93` | l'accent, unique |
+
+- **Titres** : Anton, capitales, interlignage 0,95 (`.display`). Grands titres : ombre dure `5px 2px 0` en rose à 85 %, sans flou (`.ombre-titre`).
+- **Texte courant, navigation, étiquettes** : Inter (`.label` pour les petites capitales espacées).
+- **Boutons** : pilule rose, texte noir en Anton ; un reflet de lumière les traverse au survol. Le même reflet passe sur le logo et sur les cartes.
+- **Formes** : arrondies — `--radius-btn` (pilule), `--radius-card`, `--radius-chip`.
+- **Grain** : surcouche fixe sur toute la page (`body::after`, `public/noise.svg`), sans effet sur les clics.
+- **Bande d'annonce** : rose, en tête de l'en-tête, texte qui défile (`ANNONCE`, `src/lib/content/site.ts`).
+
+**Le thème rose** n'existe que dans la couche d'intro (`src/components/site/intro/intro.css`) : titre en Pacifico blanc à ombre douce, texte en Quicksand `#B0246A`, bouton en pilule `#FF5FA8`.
+
+**L'intro** (`src/components/site/intro/`, détail dans `script.ts`). Le hero dark est le vrai DOM ; la couche rose est un décor fixe, plein écran, `aria-hidden`, `inert`, `data-nosnippet`, écrit dans la page par un script inline seulement pour qui ne l'a jamais vu. 0 → 1200 ms : site rose, immobile. 1200 → 1900 ms : glitch (douze bandes de hauteurs inégales découpées par `clip-path`, décalées en X par pas francs, quatre passes de moins en moins roses, barres pleines `#FF2E93`, double rose du H1) — uniquement `transform`, `clip-path`, `opacity`. 1900 ms : couche retirée, clé `scult_intro_vue` enregistrée. Le glitch part aussi au premier défilement, clic ou appui clavier. Mouvement réduit : fondu de 200 ms. Une bande éteinte ne se rallume jamais : aucun clignotement.
+
+**Les visuels** (`public/bouffon/`, AVIF + WebP en plusieurs largeurs, produits par `npm run images:bouffon`) : `hero-rose-*` (fond de l'intro), `hero-dark-*` (hero de l'accueil, image LCP), `hero-produit-desktop` (bandeau de la fiche), `pot-packshot` et sept `pot-vue-*` (galerie, cartes, panier), `bouffon-face` (section « Le bouffon », 404), `bouffon-applaudit` (confirmation de commande). Les fonds ne portent aucun texte : titres et boutons sont en HTML.
+
+**Les textes** : tous dans `src/lib/content/site.ts`, provisoires (voir `ASSUMPTIONS.md`).
+
 Source : `docs/assets/da-ref-1.jpg` (buste de marbre sur bleu Klein, grain,
 rubis rouge) et `docs/assets/da-ref-2.jpg` (affiche éditoriale : wordmark
 géant, labels mono aux coins, filets fins, photo sombre granuleuse).

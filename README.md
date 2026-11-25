@@ -10,7 +10,7 @@ cp .env.example .env            # PP_MOCK=1 par défaut : aucun appel réseau
 npm run dev                     # http://localhost:3002
 ```
 
-Visuels : télécharger `scult-visuels.zip` et le dézipper dans `public/` (il contient `home/`, `products/`, `lifestyle/` et `hero-iso.png` pour la vidéo hero). Créas pub : `scult-ads-crea.zip` → `ads-crea/statics/<angle>/`.
+Visuels de la DA « bouffon » (`public/bouffon/`, versionnés) : `npm run images:bouffon` les régénère depuis leurs sources. Anciens visuels : télécharger `scult-visuels.zip` et le dézipper dans `public/` (il contient `home/`, `products/`, `lifestyle/` et `hero-iso.png` pour la vidéo hero). Créas pub : `scult-ads-crea.zip` → `ads-crea/statics/<angle>/`.
 
 ## Vérifier
 

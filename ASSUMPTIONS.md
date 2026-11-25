@@ -2,6 +2,40 @@
 
 Format : `- [NN] hypothèse — raison`. L'humain valide ou corrige.
 
+## Refonte « bouffon » (2026-11-25, branche `refonte-bouffon`)
+
+Cette section remplace, là où elles se contredisent, les hypothèses [04], [14], [17], [22], [25] et [27] ci-dessous (pot à la statue, trois goûts, couleurs de goût). Direction artistique : `docs/DA.md`, première section.
+
+**Contenu provisoire — tout est dans `src/lib/content/site.ts`**
+- [30] **Tous les textes de la refonte sont provisoires** : intro rose, hero, navigation, bandeau de la fiche produit, 404, bande d'annonce. Un seul fichier à modifier.
+- [31] **`TODO` de contenu** (affichés tels quels sur le site) : le texte de la section « Le bouffon » de l'accueil. Aucun autre texte n'a été inventé, sauf [32].
+- [32] **Titre de l'intro rose remplacé** — le brief disait « Ton boost tout doux » ; `scripts/gate.sh` refuse « boost ». Mis à la place : « Ton pré-workout tout doux » (mots du brief uniquement). À valider ou remplacer.
+- [33] **« …qui te met de bonne humeur avant ta séance »** (texte de l'intro rose, fourni) passe le gate mais reste une promesse d'effet affichée à l'écran, même en décor. À faire relire avec l'étiquetage.
+
+**Produit**
+- [34] **Dosages : le site suit `cri-formule.json`, pas l'étiquette des images.** Le hero affiche citrulline 8 g, bêta-alanine 3,2 g, caféine 390 mg (formule en place, inchangée, lue dans `cri-formule.json` : une seule source). Le pot des visuels fournis porte « bêta-alanine 4 g », « caféine 150 mg » et « 400 g » ; le site vend 690 g, 30 doses. Tant que les visuels ne sont pas refaits (ou la formule changée), l'image et le texte se contredisent.
+- [35] **Un seul goût : fraise piquante.** Les trois goûts précédents sont retirés du site et du mock. Arôme (« arôme naturel ») et colorant (« rouge de betterave ») sont repris de l'ancien goût fruits rouges : liste d'ingrédients estimée, à remplacer par celle du façonnier (`cri-formule.json`). **À créer dans le socle avant mise en ligne** : `SCULT-CRI-690-FP` sur `cri`, `SCULT-CRI-690-FP-X2` sur `cri-duo` (le mock les contient). Le code de goût est `FP`.
+- [36] **Le nom « CRI » est gardé** (nom au catalogue, adresse `/produits/cri`, SKU) alors que le nouveau pot ne le porte plus : il dit « SCULT PRE-WORKOUT N°001 ».
+- [37] **Prix inchangés** : 49 € le pot, 83,30 € le pack de 2. La bande d'annonce « −30 % sur le deuxième pot » n'est pas calculée : elle correspond à ce prix de pack (14,70 € de moins sur un deuxième pot à 49 €). Si le pack change, changer le texte (`ANNONCE`, `site.ts`). Le panier, lui, affiche toujours « −15 % » sur le pack : c'est le même montant.
+- [38] **« Pastille rouge intacte » devient « opercule intact »** (FAQ, livraison & retours, `llms.txt`, réassurance) : le nouveau pot n'a plus de pastille. Condition de retour à valider.
+- [39] **Visuels = maquettes générées, fournies le 2026-11-25** (`public/bouffon/`, produits par `npm run images:bouffon` depuis les neuf liens du brief). Aucune image n'a été générée ni retouchée au-delà du redimensionnement et de la découpe de la planche `pot-vues` en sept vues. L'image de partage (Open Graph) est un recadrage de `hero-dark-desktop`.
+
+**Direction artistique**
+- [40] **Écarts au brief, demandés en cours de route (2026-11-25)** : boutons et cartes arrondis (le brief disait angles droits) ; texte courant en Inter (le brief disait Space Mono, jugée trop carrée) ; reflets de lumière au survol sur le logo, les boutons et les cartes, comme sur l'ancien site ; bande d'annonce défilante au-dessus de la navigation. Anton reste la police des titres.
+- [41] **Navigation mobile** : logo, panier et bouton « Menu » (le brief disait logo + menu ; le panier est gardé visible).
+- [42] **Logo et signature gardés** : le wordmark SCULT en blocs et « Rien ne se sculpte en silence. » (pied de page, bandeau, balises title/description) ne renvoient ni à la statue ni au bleu ; à confirmer.
+
+**Intro rose → glitch → dark** (`src/components/site/intro/`)
+- [43] Une fois par visiteur : clé `localStorage` `scult_intro_vue`. Si le stockage est illisible (navigation privée stricte), l'intro ne joue pas — plutôt pas de blague qu'une blague à chaque visite.
+- [44] « À l'arrivée sur le site » = chargement de la page d'accueil sans page du site comme provenance. Elle ne joue pas pour les robots d'indexation (filtre sur le user-agent). `?intro=0` la coupe, `?intro=1` la force, le lien « Rejouer la blague » du pied de page utilise `?intro=1`.
+- [45] Mouvement réduit : pas de glitch, fondu de 200 ms. Pendant l'intro, un clic lance le glitch et n'active aucun lien du site dark en dessous.
+
+**Technique**
+- [46] **Panier et tunnel d'achat non modifiés** (`src/components/cart/`, `src/lib/orders/`, `src/app/checkout/page.tsx`). Ils prennent le thème par des alias de couleurs (`klein`, `marble`, `ink`, `white`… dans `globals.css`) et quelques règles CSS par sélecteur. À nettoyer quand ces fichiers pourront être modifiés. Seule la page de confirmation (`checkout/merci`) a reçu l'image du bouffon qui applaudit.
+- [47] **Le travail non commité sur le shaker n'est pas dans cette branche** (elle part de `ad60163`). À la fusion, conflits probables dans `layout.tsx`, `ASSUMPTIONS.md` et `docs/mock/catalogue.json` ; le visuel du shaker porte encore la statue.
+- [48] **Pas retirés, hors du site** : `scripts/3d/` et `docs/3d/` (ancien pot), `docs/da/`, `public/products/` et `public/lifestyle/` (visuels du catalogue de test non vendu, référencés seulement par le mock), les produits whey / créatine / collagène / trio du mock, les angles pub `3g` et `lisible` d'`ads-crea/`.
+- [49] **Existant, non traité** : pas de favicon (404 sur `/favicon.ico`) ; `npm run lint` ne tourne pas (eslint n'est pas installé).
+
 ## À trancher avant toute vente (bloquant)
 - [00] **Conformité compléments alimentaires** — choix utilisateur « on verra après ». Le site n'écrit que les allégations autorisées (règlement UE 432/2012) et `scripts/gate.sh` bloque les tournures interdites, mais la **déclaration DGCCRF (Teleicare)** et la désignation d'une **personne responsable dans l'UE** n'existent pas. Sans ça : pas de mise sur le marché.
 - [01] **Entité vendeuse** — placeholders `[à compléter]` dans CGV / mentions légales / confidentialité (raison sociale, SIREN, siège, médiateur, responsable de traitement). Une adresse Wyoming ne peut pas tenir le rôle de personne responsable UE.

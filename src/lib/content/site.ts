@@ -1,0 +1,95 @@
+/**
+ * Tous les textes de la DA « bouffon » : l'intro rose, le hero dark, la
+ * navigation, le bandeau de la fiche produit, la section « Le bouffon », la
+ * 404, la page de confirmation. Un seul fichier : on change un texte ici,
+ * sans ouvrir un composant.
+ *
+ * ⚠ Tout est provisoire (voir ASSUMPTIONS.md). Les textes passent par
+ * scripts/gate.sh comme le reste du site : aucune promesse d'effet.
+ * `TODO` = texte à fournir ; il s'affiche tel quel sur le site, exprès.
+ */
+import FORMULE from "./cri-formule.json";
+import { shortAmount } from "./formula";
+
+/** La dose d'un actif telle qu'elle s'écrit sur le site : « 8 000 mg » → « 8 g ». */
+const dose = (nom: string) => shortAmount(FORMULE.actifs.find((a) => a.nom === nom)?.quantite ?? "TODO");
+
+/**
+ * La ligne de dosages du hero. Une seule source de vérité : cri-formule.json,
+ * la même que la fiche produit, la FAQ et l'avertissement caféine. Quand la
+ * formule change là-bas, cette ligne suit.
+ */
+const DOSAGES = `Citrulline ${dose("L-citrulline")}. Bêta-alanine ${dose("Bêta-alanine")}. Caféine ${FORMULE.cafeineTotale}.`;
+
+/** Phase rose : le faux site. Décor pur — jamais lu par un lecteur d'écran, jamais indexé. */
+export const INTRO = {
+  nav: ["Scult", "Boutique", "Nos saveurs", "Notre histoire", "Panier"],
+  badge: "Nouveau · saveur fraise bonbon",
+  // TODO titre à valider : le brief disait « Ton boost tout doux », que scripts/gate.sh refuse (« boost »).
+  title: "Ton pré-workout tout doux",
+  text: "Le pré-workout tout mignon qui te met de bonne humeur avant ta séance.",
+  button: "Je craque",
+  line: "100 % douceur · 0 % prise de tête",
+};
+
+/**
+ * La bande qui défile au-dessus de la navigation, sur toutes les pages.
+ * ⚠ Le chiffre n'est pas calculé : il correspond au prix actuel du pack de 2
+ * (83,30 € au lieu de 98 €, soit 14,70 € de moins sur un deuxième pot à 49 €).
+ * Si le prix du pack change dans le catalogue, changer ce texte.
+ */
+export const ANNONCE = { text: "−30 % sur le deuxième pot", href: "/produits/cri" };
+
+/** Navigation du vrai site. Le panier est le bouton du tiroir, à droite. */
+export const NAV = [
+  { label: "Pre-workout", href: "/produits/cri" },
+  { label: "La formule", href: "/#formule" },
+  { label: "Le bouffon", href: "/#bouffon" },
+];
+
+/** Hero dark de l'accueil. */
+export const HERO = {
+  eyebrow: "N°001 — PRE-WORKOUT",
+  /** Le H1 : `accent` est la partie en rose. */
+  title: { main: "T'as cru", accent: "quoi ?" },
+  text: `${DOSAGES} Zéro paillettes.`,
+  cta: { label: "Prends ta dose", href: "/produits/cri" },
+  secondary: { label: "Voir la formule", href: "/#formule" },
+  legal: "Complément alimentaire · Réservé aux adultes · Contient de la caféine",
+  alt: "Un bouffon musclé au masque blanc fendu d'un sourire tend un pot SCULT noir et rose vers l'objectif, dans une salle de sport en sous-sol",
+};
+
+/** Bandeau en tête de la fiche produit. */
+export const PRODUCT_BANNER = {
+  title: "La blague est finie.",
+  text: "Le pré-workout qui ne fait pas semblant.",
+  cta: { label: "Commander", href: "#commander" },
+  alt: "Le pot SCULT posé au sol au premier plan ; derrière lui, le bouffon accroupi, les mains à plat",
+};
+
+/** Section « Le bouffon » de l'accueil. */
+export const BOUFFON = {
+  eyebrow: "La mascotte",
+  title: "Le bouffon.",
+  text: "TODO — texte de la section « Le bouffon » à fournir.",
+  alt: "Le bouffon de face : bonnet à grelots, masque blanc craquelé au large sourire, débardeur noir, poings serrés",
+};
+
+/** Page 404. */
+export const NOT_FOUND = {
+  title: "T'as cru quoi ?",
+  text: "Cette page n'existe pas.",
+  link: "Retour à l'accueil",
+  alt: BOUFFON.alt,
+};
+
+/** Page de confirmation de commande : la légende de l'image. */
+export const MERCI = {
+  alt: "Le bouffon applaudit, de la magnésie plein les mains, dans le sous-sol",
+};
+
+/** Pied de page. */
+export const FOOTER = {
+  signature: "Rien ne se sculpte en silence.",
+  replay: "Rejouer la blague",
+};

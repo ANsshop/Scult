@@ -21,8 +21,8 @@ export default function FaqPage() {
       <Header />
       <main>
         <Container className="py-16 md:py-24">
-          <p className="label text-stone">FAQ</p>
-          <h1 className="display mt-4 text-[clamp(2.4rem,7vw,6rem)]">Questions fréquentes.</h1>
+          <p className="label text-rose">FAQ</p>
+          <h1 className="display ombre-titre mt-4 text-[clamp(2.4rem,7vw,6rem)]">Questions fréquentes.</h1>
           <FaqList items={FAQ_ITEMS} group="faq" className="mt-12 max-w-3xl text-lg" />
         </Container>
       </main>

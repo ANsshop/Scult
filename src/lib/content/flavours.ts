@@ -1,79 +1,73 @@
 import type { PpImage } from "@/lib/pp/client";
 import FORMULE from "./cri-formule.json";
-import { visuel } from "./visuels";
+import { imageAt, imageUrl } from "./images";
 
 /**
- * Les goûts de CRI. Même pot, même formule : seuls changent le nom du goût,
- * écrit dans sa couleur sur la face, et, au dos, la ligne « Saveur … » et la
- * liste d'ingrédients (arôme et colorant). Nom, couleur, arôme et colorant de
- * chaque goût sont dans cri-formule.json, que l'étiquette lit aussi.
+ * Les goûts de CRI. Un seul pour l'instant : fraise piquante. Nom, couleur,
+ * arôme et colorant sont dans cri-formule.json ; le reste du site lit ce
+ * fichier, si bien qu'ajouter un goût revient à l'ajouter là-bas et ici.
  *
  * Ce fichier dit comment chaque goût se présente (nom, visuels, ingrédients).
  * Ce qui se vend — prix, stock, SKU — vient du catalogue du socle : une
  * variante par goût sur le produit, reconnue à son SKU (`code`).
  *
- * Les visuels sont produits par scripts/3d/gouts.mjs (étiquettes) et
- * scripts/3d/gouts-visuels.mjs (photos du site).
+ * Le pot est le même quel que soit le goût (visuels de la DA « bouffon »,
+ * public/bouffon/, produits par scripts/bouffon-images.mjs).
  *
- * ⚠ Listes d'ingrédients estimées (voir ASSUMPTIONS.md) : elles se remplacent
- * par celles du fabricant, ici et dans scripts/3d/gouts.mjs.
+ * ⚠ Liste d'ingrédients estimée (voir ASSUMPTIONS.md) : elle se remplace par
+ * celle du fabricant.
  */
-export type FlavourId = "fruits-rouges" | "cassis-framboise" | "ice-tea-peche";
+export type FlavourId = "fraise-piquante";
 
 export type Flavour = {
   id: FlavourId;
   /** Le code du goût dans les SKU : SCULT-CRI-690-<code>. */
   code: string;
   label: string;
-  /** Le nom sur deux lignes, comme sur le pot. */
+  /** Le nom sur deux lignes. */
   lines: [string, string];
-  /** La couleur du goût : celle de son nom sur le pot, reprise par le site. */
+  /** La couleur du goût : le rose de la marque, seule couleur du site. */
   color: string;
-  /** Le pot détouré : image fixe de la visionneuse 3D. */
+  /** Le pot de face, en grand. */
   still: string;
   /** Le petit pot des vignettes et de l'animation d'ajout au panier. */
   mini: string;
-  /** L'étiquette à enrouler sur le modèle 3D. */
-  texture: string;
   /** La galerie de la fiche produit. */
   images: PpImage[];
   ingredients: string;
 };
 
-/** Les visuels du goût, produits par scripts/3d/gouts-visuels.mjs. */
-const visuelDe = (id: FlavourId, nom: string) => visuel(`${id}-${nom}`);
+/** La galerie : le packshot, puis les vues découpées dans la planche du pot. */
+const GALLERY: PpImage[] = [
+  imageAt("pot-packshot", 1200, "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué en noir et blanc sur l'étiquette"),
+  imageAt("pot-vue-trois-quarts", 659, "Le pot SCULT tourné d'un quart vers la gauche"),
+  imageAt("pot-vue-profil", 660, "Le pot SCULT de trois quarts, le bord gauche de l'étiquette visible"),
+  imageAt("pot-vue-dos", 657, "Le dos du pot SCULT : noir mat, traits roses, bandeau rose en bas"),
+  imageAt("pot-vue-couvercle", 721, "Le couvercle du pot SCULT vu de dessus : un sourire rose métallisé"),
+  imageAt("pot-vue-detail", 1073, "Gros plan sur le nom SCULT en rose métallisé et le cœur N°001 de l'étiquette"),
+  imageAt("pot-vue-ouvert", 850, "Le pot SCULT ouvert, opercule en place, couvercle posé à côté"),
+];
 
 function flavour(id: FlavourId, code: string): Flavour {
   const { nom: label, lignes, couleur, arome, colorant } = FORMULE.gouts[id];
-  const nom = label.toLowerCase();
-  const lines: [string, string] = [lignes[0], lignes[1]];
   return {
     id,
     code,
     label,
-    lines,
+    lines: [lignes[0], lignes[1]],
     color: couleur,
-    still: visuelDe(id, "detoure"),
-    mini: visuelDe(id, "mini"),
-    texture: `/models/etiquette-${id}.jpg`,
-    images: [
-      { url: visuelDe(id, "face"), alt: `Pot SCULT CRI ${nom} vu de face : le nom CRI en bleu imprimé sur le visage d'une statue qui hurle, strap rouge autour du couvercle`, width: 1344, height: 1680 },
-      { url: visuelDe(id, "dos"), alt: `Dos du pot SCULT CRI ${nom} : tableau nutritionnel, liste d'ingrédients, conseils d'utilisation et précautions d'emploi`, width: 1656, height: 2208 },
-      { url: visuelDe(id, "ambiance"), alt: `Une statue de marbre qui hurle tend le pot SCULT CRI ${nom} vers l'objectif, devant un mur bleu`, width: 1792, height: 2240 },
-    ],
-    // La liste commune, avec l'arôme et le colorant du goût (cri-formule.json, partagé avec l'étiquette).
+    still: imageUrl("pot-packshot", 1200),
+    mini: imageUrl("pot-packshot", 400),
+    images: GALLERY,
+    // La liste commune, avec l'arôme et le colorant du goût (cri-formule.json).
     ingredients: FORMULE.ingredients.replace("{AROME}", arome).replace("{COLORANT}", colorant),
   };
 }
 
-export const FLAVOURS: Flavour[] = [
-  flavour("fruits-rouges", "FR"),
-  flavour("cassis-framboise", "CF"),
-  flavour("ice-tea-peche", "ITP"),
-];
+export const FLAVOURS: Flavour[] = [flavour("fraise-piquante", "FP")];
 
-/** Le goût d'origine : celui des visuels de l'accueil, et celui affiché avant tout choix. */
-export const DEFAULT_FLAVOUR: FlavourId = "fruits-rouges";
+/** Le goût affiché avant tout choix. */
+export const DEFAULT_FLAVOUR: FlavourId = "fraise-piquante";
 
 const BY_ID = new Map(FLAVOURS.map((f) => [f.id, f]));
 const BY_CODE = new Map(FLAVOURS.map((f) => [f.code, f.id]));
@@ -87,9 +81,9 @@ export function isFlavourId(id: string | null | undefined): id is FlavourId {
 }
 
 /**
- * Les goûts que désigne un SKU, pot par pot : « SCULT-CRI-690-CF » → un pot
- * cassis framboise ; « …-CF-X2 » → deux ; « …-FR-ITP-X2 » → un fruits rouges
- * et un ice tea pêche. `null` si le SKU ne suit pas cette convention.
+ * Les goûts que désigne un SKU, pot par pot : « SCULT-CRI-690-FP » → un pot
+ * fraise piquante ; « …-FP-X2 » → deux. Avec plusieurs goûts, « …-AA-BB-X2 »
+ * désigne un pot de chaque. `null` si le SKU ne suit pas cette convention.
  */
 export function flavoursOfSku(sku: string): FlavourId[] | null {
   const tokens = sku.split("-");
@@ -100,12 +94,12 @@ export function flavoursOfSku(sku: string): FlavourId[] | null {
   return ids.length === 2 ? ids : null;
 }
 
-/** La clé d'un pack de deux pots, indépendante de l'ordre : « cassis-framboise+ice-tea-peche ». */
+/** La clé d'un pack de deux pots, indépendante de l'ordre. */
 export function packKey(a: string, b: string): string {
   return [a, b].sort().join("+");
 }
 
-/** « Fruits rouges » pour un pot, « 2 × Fruits rouges » ou « Cassis framboise + Ice tea pêche » pour un pack. */
+/** « Fraise piquante » pour un pot, « 2 × Fraise piquante » pour un pack du même goût. */
 export function flavoursLabel(ids: string[]): string {
   if (ids.length === 2 && ids[0] === ids[1]) return `2 × ${getFlavour(ids[0]).label}`;
   return ids.map((id) => getFlavour(id).label).join(" + ");

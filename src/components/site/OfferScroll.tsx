@@ -1,13 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AddToCart } from "@/components/cart/AddToCart";
 import type { FlavourOffer, Product } from "@/lib/catalog/queries";
 import { DEFAULT_FLAVOUR, getFlavour, type FlavourId } from "@/lib/content/flavours";
 import { formatPrice } from "@/lib/utils";
+import { imageAt } from "@/lib/content/images";
 import { FlavourPicker } from "./FlavourPicker";
-import { Pot3D } from "./Pot3D";
 
 type Line = { name: string; amount: string };
 
@@ -15,23 +16,35 @@ type Line = { name: string; amount: string };
 const TURN = 0.82;
 
 /**
+ * Le tour du pot, en quatre photos (découpées dans la planche pot-vues) : face,
+ * un quart de tour, dos, trois quarts de tour. Elles se succèdent par à-coups
+ * pendant le défilement, puis le pot revient de face.
+ */
+const TURN_FRAMES = [
+  imageAt("pot-vue-face", 660, "Le pot SCULT pré-workout de face : noir, le nom SCULT en rose métallisé, le bouffon masqué sur l'étiquette"),
+  imageAt("pot-vue-trois-quarts", 659, ""),
+  imageAt("pot-vue-dos", 657, ""),
+  imageAt("pot-vue-profil", 660, ""),
+];
+
+/**
  * Section 2 de l'accueil : le pot au milieu de l'écran, qui fait un tour
- * complet pendant qu'on défile.
+ * complet, photo par photo, pendant qu'on défile.
  *
  * La section est plus haute que l'écran (250 svh) et son contenu reste collé :
- * la position dans ce défilement donne l'angle du pot. Les dosages
+ * la position dans ce défilement donne la photo du pot affichée. Les dosages
  * apparaissent un à un à mesure qu'il tourne ; à la fin du tour le pot revient
- * de face et le bouton d'achat se dévoile, puis reste. Le prix (la pastille)
+ * de face et le bouton d'achat se dévoile, puis reste. Le prix (l'étiquette rose)
  * est visible dès le début. Sur mobile, un seul dosage à la fois sous le pot,
  * et le bouton d'achat reste en bas d'écran pendant tout le tour.
  * En mouvement réduit : rien n'est collé ni animé, tout est affiché d'emblée.
  *
- * `offer` : les goûts. Le choix se fait à côté du bouton d'achat et change
- * l'étiquette du pot 3D sur-le-champ ; le bouton ajoute le pot du goût choisi.
+ * `offer` : les goûts. S'il y en a plusieurs, le choix se fait à côté du
+ * bouton d'achat ; le bouton ajoute le pot du goût choisi.
  */
 export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: { product: Product; offer: FlavourOffer | null; lines: Line[]; doses: number; caffeineWarning: string | null }) {
   const wrap = useRef<HTMLDivElement>(null);
-  const viewer = useRef<HTMLElement | null>(null);
+  const [frame, setFrame] = useState(0);   // la photo du tour affichée
   const [step, setStep] = useState(0);     // nombre de dosages dévoilés
   const [end, setEnd] = useState(false);   // le tour est fini : l'achat se montre
   const [calm, setCalm] = useState(false);
@@ -51,7 +64,7 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
     const total = rect.height - window.innerHeight;
     const p = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 1;
     const turn = Math.min(1, p / TURN);
-    if (viewer.current) (viewer.current as HTMLElement & { cameraOrbit: string }).cameraOrbit = `${(turn * 360).toFixed(1)}deg 84deg 120%`;
+    setFrame(Math.min(TURN_FRAMES.length, Math.floor(turn * (TURN_FRAMES.length + 1))) % TURN_FRAMES.length);
     setStep(Math.min(n, Math.floor(turn * (n + 1))));
     setEnd(p >= TURN - 0.02);
   }, [n]);
@@ -77,8 +90,6 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
     };
   }, [n, update]);
 
-  const onReady = useCallback((el: HTMLElement) => { viewer.current = el; update(); }, [update]);
-
   const half = Math.ceil(n / 2);
   const column = (items: Line[], offset: number, align: "right" | "left") => (
     <ol className={`hidden flex-col gap-7 md:flex ${align === "right" ? "items-end text-right" : "items-start pl-10 text-left"}`}>
@@ -86,7 +97,7 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
         const on = step > offset + i;
         return (
           <li key={line.name} className={`transition-all duration-500 ease-(--ease-scult) ${on ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}>
-            <p className="display text-[clamp(2rem,3.4vw,3.25rem)] leading-none text-klein tabular-nums">{line.amount}</p>
+            <p className="display text-[clamp(2rem,3.4vw,3.25rem)] leading-none text-rose tabular-nums">{line.amount}</p>
             <p className="display mt-1.5 text-[1.05rem] leading-none">{line.name}</p>
           </li>
         );
@@ -96,11 +107,11 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
   const current = step > 0 ? lines[step - 1] : null;
 
   return (
-    <section id="formule" className="scroll-mt-14 border-b bg-white">
+    <section id="formule" className="scroll-mt-(--entete) border-b bg-fond">
       <div ref={wrap} className={calm ? "" : "h-[250svh]"}>
-        <div className={`px-3 pb-3 pt-[4.25rem] md:px-5 md:pb-5 ${calm ? "" : "sticky top-0 h-svh"}`}>
-          <div className="relative flex h-full flex-col overflow-hidden rounded-card bg-white px-5 py-5 md:px-10 md:py-7">
-            <p className="label grid grid-cols-2 text-stone md:grid-cols-3">
+        <div className={`px-3 pb-3 pt-[calc(var(--entete)+0.75rem)] md:px-5 md:pb-5 ${calm ? "" : "sticky top-0 h-svh"}`}>
+          <div className="relative flex h-full flex-col overflow-hidden rounded-card border bg-surface px-5 py-5 md:px-10 md:py-7">
+            <p className="label grid grid-cols-2 text-discret md:grid-cols-3">
               <span>CRI · Lot 001</span>
               <span className="hidden text-center md:block">La formule · par dose de 23 g</span>
               <span className="text-right">690 g · {doses} doses</span>
@@ -110,17 +121,15 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
             <div className="grid flex-1 items-center gap-6 md:grid-cols-[1fr_auto_1fr] md:gap-14">
               {column(lines.slice(0, half), 0, "right")}
               {/* Sur téléphone, le choix du goût prend une rangée sous le pot : le pot se règle sur la hauteur qui reste. */}
-              <div className={`relative mx-auto md:w-[min(30vw,40svh)] ${flavours.length > 1 ? "w-[max(7rem,min(56vw,calc((100svh-27.75rem)/1.35)))]" : "w-[min(58vw,36svh)]"}`}>
-                <Pot3D
-                  alt="Le pot SCULT CRI : le mot CRI en bleu sur le visage d'une statue qui hurle, strap rouge autour du couvercle"
-                  sizes="(min-width: 768px) 30vw, 58vw"
-                  interactive={false}
-                  onReady={onReady}
-                  still={flavour.still}
-                  texture={flavours.length > 1 ? flavour.texture : null}
-                />
-                {/* La pastille : le seul rouge, et c'est le prix */}
-                <p className="pointer-events-none absolute -right-[20%] top-[4%] flex h-[5.75rem] w-[5.75rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-ruby text-white outline outline-1 -outline-offset-[5px] outline-white/45 md:h-[7.25rem] md:w-[7.25rem]">
+              <div className={`relative mx-auto md:w-[min(30vw,40svh)] ${flavours.length > 1 ? "w-[max(7rem,min(56vw,calc((100svh-27.75rem)/1.35)))]" : "w-[min(58vw,32svh)]"}`}>
+                {/* Les photos du tour, empilées : une seule est visible à la fois */}
+                <div className="relative aspect-[660/754] overflow-hidden rounded-chip">
+                  {TURN_FRAMES.map((f, i) => (
+                    <Image key={f.url} src={f.url} alt={i === 0 ? f.alt : ""} aria-hidden={i !== 0} fill sizes="(min-width: 768px) 30vw, 58vw" className={`object-cover ${i === frame ? "opacity-100" : "opacity-0"}`} />
+                  ))}
+                </div>
+                {/* L'étiquette du prix : le rose, et c'est le prix */}
+                <p className="pointer-events-none absolute -right-[20%] top-[4%] flex h-[5.75rem] w-[5.75rem] rotate-[9deg] flex-col items-center justify-center rounded-full bg-rose text-fond md:h-[7.25rem] md:w-[7.25rem]">
                   <span className="display text-[1.75rem] tabular-nums md:text-[2.2rem]">{formatPrice(product.priceCents)}</span>
                   <span className="label mt-1 !text-[0.6rem]">{doses} doses</span>
                 </p>
@@ -132,11 +141,11 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
             <div className="flex h-[4.5rem] flex-col items-center justify-center text-center md:hidden" aria-live="polite">
               {current ? (
                 <>
-                  <p key={current.name} className="display text-[2.25rem] leading-none text-klein tabular-nums">{current.amount}</p>
+                  <p key={current.name} className="display text-[2.25rem] leading-none text-rose tabular-nums">{current.amount}</p>
                   <p className="display mt-1.5 text-[1rem] leading-none">{current.name}</p>
                 </>
               ) : (
-                <p className="label text-stone">La formule · faites défiler ↓</p>
+                <p className="label text-discret">La formule · faites défiler ↓</p>
               )}
             </div>
 
@@ -145,7 +154,7 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
               <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-center md:gap-8">
                 <div className="hidden md:block">
                   <p className="display text-[2.25rem] leading-none">{product.name}</p>
-                  <p className="label mt-1.5 text-stone">Pré-workout · {flavours.length > 1 ? `${flavours.length} goûts` : flavour.label}</p>
+                  <p className="label mt-1.5 text-discret">Pré-workout · {flavours.length > 1 ? `${flavours.length} goûts` : flavour.label}</p>
                 </div>
                 <div className="flex flex-col gap-3 md:w-[23rem]">
                   {flavours.length > 1 && (
@@ -153,19 +162,19 @@ export function OfferScroll({ product, offer, lines, doses, caffeineWarning }: {
                   )}
                   <AddToCart key={item.sku} item={item} inStock={chosen?.inStock ?? product.inStock} preorderEta={chosen ? chosen.preorderEta : product.preorderEta} className="!h-14 w-full" />
                 </div>
-                <p className="label hidden text-stone md:block">
+                <p className="label hidden text-discret md:block">
                   {perDose} la dose<br />
-                  <Link href={`/produits/${product.slug}${flavour.id === DEFAULT_FLAVOUR ? "" : `?gout=${flavour.id}`}`} className="underline underline-offset-4 hover:text-klein">Voir la fiche →</Link>
+                  <Link href={`/produits/${product.slug}${flavour.id === DEFAULT_FLAVOUR ? "" : `?gout=${flavour.id}`}`} className="underline underline-offset-4 hover:text-rose">Voir la fiche →</Link>
                 </p>
               </div>
-              <p className="label mt-3 text-center leading-relaxed text-stone">
+              <p className="label mt-3 text-center leading-relaxed text-discret">
                 <span className="md:hidden">{perDose} la dose · </span>Livraison Europe 2–8 jours · Retour 14 jours
               </p>
-              {caffeineWarning && <p className="mt-1.5 text-center text-[0.75rem] leading-snug text-stone">{caffeineWarning}</p>}
+              {caffeineWarning && <p className="mt-1.5 text-center text-[0.75rem] leading-snug text-discret">{caffeineWarning}</p>}
             </div>
 
             {/* Ordinateur : l'invitation à défiler, tant que rien n'est dévoilé */}
-            <p aria-hidden className={`label pointer-events-none absolute inset-x-0 bottom-7 hidden text-center text-stone transition-opacity duration-500 md:block ${step === 0 && !end ? "opacity-100" : "opacity-0"}`}>
+            <p aria-hidden className={`label pointer-events-none absolute inset-x-0 bottom-7 hidden text-center text-discret transition-opacity duration-500 md:block ${step === 0 && !end ? "opacity-100" : "opacity-0"}`}>
               Faites défiler ↓
             </p>
           </div>
