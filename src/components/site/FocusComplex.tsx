@@ -1,5 +1,4 @@
 import { Container } from "@/components/ui/Container";
-import { ButtonLink } from "@/components/ui/Button";
 import FORMULE from "@/lib/content/cri-formule.json";
 import { FOCUS } from "@/lib/content/site";
 
@@ -15,19 +14,18 @@ function split(nom: string): { name: string; detail: string | null } {
 }
 
 /**
- * Le complexe Focus mis en avant : un bloc noir, une carte par ingrédient.
+ * Le complexe Focus mis en avant, tout en bas de la fiche produit : un bloc
+ * noir, une carte par ingrédient.
  * Les ingrédients et la quantité viennent de cri-formule.json — la source de
  * la fiche produit et de l'étiquette — ; les textes sont dans site.ts (FOCUS).
  * Aucune promesse d'effet : le nom de chaque ingrédient, ce qu'il est, et le
  * poids du complexe par dose (le détail par ingrédient n'est pas communiqué).
- *
- * `cta` : le bouton sous les cartes (accueil : vers la fiche ; fiche : aucun).
  */
-export function FocusComplex({ cta }: { cta?: { label: string; href: string } }) {
+export function FocusComplex() {
   const { nom, quantite, ingredients } = FORMULE.complexe;
   const [first, ...rest] = nom.split(" ");
   return (
-    <section id="focus" aria-labelledby="focus-titre" className="sombre scroll-mt-(--entete) border-b bg-fond">
+    <section id="focus" aria-labelledby="focus-titre" className="sombre scroll-mt-(--entete) bg-fond">
       <Container className="py-20 md:py-28">
         <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-16">
           <div>
@@ -62,7 +60,6 @@ export function FocusComplex({ cta }: { cta?: { label: string; href: string } })
           </li>
         </ul>
 
-        {cta && <ButtonLink href={cta.href} variant="outline" className="mt-10 md:mt-12">{cta.label}</ButtonLink>}
       </Container>
     </section>
   );

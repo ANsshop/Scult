@@ -73,7 +73,7 @@ export const HERO_OFFRE = {
 };
 
 /**
- * La section « Complexe Focus » (accueil et fiche produit). Le nom du
+ * La section « Complexe Focus », en bas de la fiche produit. Le nom du
  * complexe, son poids et ses ingrédients viennent de cri-formule.json ; ici,
  * seulement les textes autour.
  * `glosses` : ce qu'est chaque ingrédient, en clair — son identité, jamais un
@@ -86,7 +86,6 @@ export const FOCUS = {
   text: (count: number, amount: string) => `${count} ingrédients réunis en un seul complexe : ${amount} par dose. Les voici, un par un.`,
   total: "Le complexe",
   per: "par dose",
-  cta: { label: "Toute la composition", href: "/produits/cri" },
   glosses: {
     "DMAE bitartrate": "Diméthylaminoéthanol, sous forme de bitartrate.",
     "Hericium erinaceus (lion's mane)": "Un champignon, la « crinière de lion ».",

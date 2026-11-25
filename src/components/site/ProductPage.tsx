@@ -128,8 +128,9 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
           </div>
         </div>
       </Container>
-      {product.slug === "cri" && <FocusComplex />}
       <FaqPreview count={3} />
+      {/* Tout en bas de la fiche, juste avant le pied de page */}
+      {product.slug === "cri" && <FocusComplex />}
     </FlavourProvider>
   );
 }
