@@ -86,13 +86,12 @@
     ]
   },
   "hero-poches-mobile": {
-    "width": 1505,
-    "height": 1520,
+    "width": 1520,
+    "height": 2688,
     "widths": [
       480,
       780,
-      1170,
-      1505
+      1170
     ]
   },
   "slide-pots": {
