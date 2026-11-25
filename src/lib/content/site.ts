@@ -60,18 +60,18 @@ export const HERO = {
 };
 
 /**
- * La deuxième slide du hero : l'offre du pack, en typographie, avec les deux
- * pots en 3D. Le chiffre est du texte (plus un visuel) : si l'offre change
- * (voir ANNONCE), on le change ici. Le prix, lui, vient du catalogue.
+ * La deuxième slide du hero : l'annonce du prochain produit, les poches de
+ * caféine. ⚠ Une annonce seulement — ni nom, ni dosage, ni nombre de poches,
+ * ni prix, ni date : rien de tout ça n'a été fourni et rien n'est inventé
+ * (ASSUMPTIONS.md). Le bouton ouvre un e-mail ; il pointera vers la fiche
+ * quand le produit sera au catalogue.
  */
-export const HERO_OFFRE = {
-  eyebrow: "Le pack de 2 pots",
-  title: "−30 %",
-  subtitle: "sur le deuxième pot",
-  cta: { label: "J'en prends deux", href: ANNONCE.href },
-  /** À côté du bouton, quand le catalogue donne le prix du pack : « au lieu de 98 € ». */
-  instead: (full: string) => `au lieu de ${full}`,
-  shipping: "livraison offerte",
+export const HERO_POCHES = {
+  badge: "Nouveau · bientôt",
+  title: { main: "La caféine", accent: "en poche." },
+  text: "Des poches de caféine, à glisser contre la gencive. Sans poudre, sans shaker.",
+  cta: { label: "Me prévenir", href: "mailto:hello@scult.eu?subject=Poches%20de%20caf%C3%A9ine%20%3A%20pr%C3%A9venez-moi" },
+  alt: "Le bouffon tend vers l'objectif une petite boîte ronde noire frappée du sourire rose ; de l'autre main, il montre une poche blanche tenue entre deux doigts",
 };
 
 /**

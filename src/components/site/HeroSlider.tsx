@@ -10,6 +10,8 @@ export type HeroSlide = {
   /** Visuel clair : l'en-tête garde son fond noir, les commandes passent en noir sur blanc. */
   clair?: boolean;
   node: ReactNode;
+  /** Mobile : le texte de la slide, affiché sous la scène. */
+  pied?: ReactNode;
 };
 
 /** Temps d'affichage d'une slide avant de passer seule à la suivante. */
@@ -24,8 +26,8 @@ const pad = (n: number) => String(n).padStart(2, "0");
  *
  * Mobile : la scène fait un écran (plus sur un téléphone très court : il faut
  * la place du pot de l'affiche, 130 % de la largeur, et du bouton) ; on change de slide en glissant le doigt ou
- * aux deux traits du bas. Sous la scène, `pied` (le texte du hero) puis la
- * mention légale. Ordinateur : flèches et compteur en bas à droite, la mention
+ * aux deux traits du bas. Sous la scène, le texte de la slide (`pied`) puis
+ * la mention légale. Ordinateur : flèches et compteur en bas à droite, la mention
  * en bas à gauche.
  *
  * Défilement automatique : toutes les 6,5 s, jamais pendant l'intro rose, ni
@@ -33,7 +35,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * défilée. Il s'arrête pour de bon au premier geste (flèche, trait,
  * glissement, bouton pause) et n'existe pas en mouvement réduit.
  */
-export function HeroSlider({ slides, pied, legal }: { slides: HeroSlide[]; pied: ReactNode; legal: string }) {
+export function HeroSlider({ slides, legal }: { slides: HeroSlide[]; legal: string }) {
   const count = slides.length;
   const [index, setIndex] = useState(0);
   const [auto, setAuto] = useState(true);
@@ -130,7 +132,12 @@ export function HeroSlider({ slides, pied, legal }: { slides: HeroSlide[]; pied:
 
       {/* Mobile : le texte du hero, sous la scène. Ordinateur : il ne reste que la mention, posée en bas à gauche de la scène. */}
       <div className="sombre bg-fond px-5 pb-9 pt-6 lg:absolute lg:bottom-7 lg:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] lg:z-20 lg:bg-transparent lg:p-0">
-        <div className="lg:hidden">{pied}</div>
+        {/* Les textes des slides, empilés : la hauteur du bloc ne change pas d'une slide à l'autre */}
+        <div className="grid lg:hidden">
+          {slides.map((s, i) => (
+            <div key={s.id} aria-hidden={i !== index} className={`col-start-1 row-start-1 transition-opacity duration-500 ${i === index ? "opacity-100" : "invisible opacity-0"}`}>{s.pied}</div>
+          ))}
+        </div>
         <p className={`label mt-7 !text-[0.5625rem] leading-relaxed text-discret lg:mt-0 ${clair ? "lg:text-noir/70" : ""}`}>{legal}</p>
       </div>
     </section>

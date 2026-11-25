@@ -23,7 +23,7 @@ export default async function Home() {
       <IntroRose />
       <Header overlay />
       <main>
-        <Hero offer={offer} />
+        <Hero />
         <Marquee />
         {cri && <Offer product={cri} offer={offer} />}
         <Slider />

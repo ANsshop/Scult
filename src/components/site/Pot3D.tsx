@@ -84,7 +84,6 @@ async function relight(viewer: Viewer) {
  * le tourne, via l'élément reçu dans `onReady`.
  * `orbit` : l'angle de vue de départ (« 0deg 80deg 135% » : de face, légèrement du dessus).
  * `spin` : le pot tourne seul, lentement (jamais en mouvement réduit).
- * `hold` : tant qu'il est vrai, rien n'est chargé — l'image fixe reste.
  */
 export function Pot3D({
   alt,
@@ -94,7 +93,6 @@ export function Pot3D({
   still = null,
   orbit = "0deg 80deg 135%",
   spin = false,
-  hold = false,
   className = "",
 }: {
   alt: string;
@@ -104,7 +102,6 @@ export function Pot3D({
   still?: string | null;
   orbit?: string;
   spin?: boolean;
-  hold?: boolean;
   className?: string;
 }) {
   const box = useRef<HTMLDivElement>(null);
@@ -117,7 +114,7 @@ export function Pot3D({
     // eslint-disable-next-line react-hooks/set-state-in-effect -- lecture one-shot du réglage système
     setCalm(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     const el = box.current;
-    if (hold || !el || !hasWebGL()) return;
+    if (!el || !hasWebGL()) return;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
@@ -128,7 +125,7 @@ export function Pot3D({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [hold]);
+  }, []);
 
   useEffect(() => {
     const el = viewer.current;

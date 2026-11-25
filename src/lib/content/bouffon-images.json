@@ -75,6 +75,25 @@
       1792
     ]
   },
+  "hero-poches-desktop": {
+    "width": 2688,
+    "height": 1520,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2688
+    ]
+  },
+  "hero-poches-mobile": {
+    "width": 1520,
+    "height": 2688,
+    "widths": [
+      480,
+      780,
+      1170
+    ]
+  },
   "slide-pots": {
     "width": 1920,
     "height": 1086,
