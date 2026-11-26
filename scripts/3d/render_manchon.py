@@ -164,6 +164,15 @@ def film_setup(kind):
 #    reflet (satiné, pas mat) ;
 #  - le rose est du chrome : partout où l'étiquette est rose (plus de rouge que de
 #    vert — le bouffon, en noir et blanc, n'en a pas), la matière devient un métal poli.
+# Le rose du chrome. Repères : le vrai pot, mesuré sur les photos du produit (lettres SCULT et bandeau), est un
+# rose framboise, #CC1C6B en moyenne — plus rouge que le rose du site (#FF2E93), sans rien de violet. Et le rendu
+# retenu par le porteur du projet le 2026-11-26 : le pot vu sous le film rose translucide, d'un rose-rouge franc.
+# Un métal multiplie la lumière par sa couleur, et à l'écran le rouge sature le premier : avec du bleu dans la
+# teinte, les reflets forts virent au violet. La teinte est donc presque sans bleu ; ce sont les reflets qui
+# l'éclaircissent vers le rose vif.
+CHROME_ROSE = (0.80, 0.0054, 0.073, 1.0)
+
+
 def polish(name):
     mat = bpy.data.materials[name]
     nt = mat.node_tree
@@ -187,10 +196,10 @@ def polish(name):
     # avec le rose de la photo (riche en bleu), les reflets forts viraient au violet.
     tint = nt.nodes.new("ShaderNodeMix")
     tint.data_type = "RGBA"
-    tint.inputs["B"].default_value = (0.80, 0.015, 0.11, 1.0)
+    tint.inputs["B"].default_value = CHROME_ROSE
     fac = nt.nodes.new("ShaderNodeMath")
     fac.operation = "MULTIPLY"
-    fac.inputs[1].default_value = 0.8
+    fac.inputs[1].default_value = 0.9
     nt.links.new(pink.outputs["Result"], fac.inputs[0])
     nt.links.new(fac.outputs[0], tint.inputs["Factor"])
     nt.links.new(deep.outputs["Color"], tint.inputs["A"])
@@ -213,7 +222,7 @@ noir.inputs["Roughness"].default_value = 0.42
 noir.inputs["Specular IOR Level"].default_value = 0.10
 rose = next(n for n in bpy.data.materials["POT_rose"].node_tree.nodes if n.type == "BSDF_PRINCIPLED")
 rose.inputs["Roughness"].default_value = float(os.environ.get("CHROME", 0.28))
-rose.inputs["Base Color"].default_value = (0.80, 0.015, 0.11, 1.0)
+rose.inputs["Base Color"].default_value = CHROME_ROSE
 
 # --- Le studio ------------------------------------------------------------------
 # Studio noir, comme le site : fond sombre avec un halo derrière le pot, sol
@@ -285,8 +294,9 @@ except Exception as err:
 scene.render.resolution_x, scene.render.resolution_y = 1200, 1440
 scene.render.image_settings.file_format = "JPEG"
 scene.render.image_settings.quality = 92
-# Courbe « Standard » : le rose de la marque reste franc et le noir du pot reste noir (essayé : AgX, qui délave tout).
-COURBES = {"agx": [("AgX", "AgX - Punchy"), ("AgX", "Punchy")], "filmic": [("Filmic", "High Contrast")], "standard": [("Standard", "None")]}
+# Courbe « Standard » : les couleurs sortent franches et le noir reste noir. (Essayés : AgX, qui délave tout ;
+# « Khronos PBR Neutral », sans dérive de teinte mais qui pâlit le chrome en rose bonbon.)
+COURBES = {"neutre": [("Khronos PBR Neutral", "None")], "agx": [("AgX", "AgX - Punchy"), ("AgX", "Punchy")], "filmic": [("Filmic", "High Contrast")], "standard": [("Standard", "None")]}
 for transform, look in COURBES[os.environ.get("COURBE", "standard")] + [("Standard", "None")]:
     try:
         scene.view_settings.view_transform = transform
@@ -310,11 +320,62 @@ bare.hide_render = True
 for c in bare.children:
     c.hide_render = True
 
+# Le vernis du pot : une coque transparente et brillante sur le corps, une autre sur le couvercle. C'est elle qui
+# donne les longs reflets nets des boîtes à lumière, comme sous le film translucide — sans rien changer au noir
+# dessous. Elle ne reçoit pas le panneau du sol (voir plus bas), qui la voilerait de blanc.
+def lathe_shell(name, prof, parent):
+    vs, fs = [], []
+    for (r, z) in prof:
+        for j in range(SEG):
+            t = -math.pi + 2 * math.pi * j / SEG
+            vs.append((r * math.sin(t), -r * math.cos(t), z))
+    for i in range(len(prof) - 1):
+        for j in range(SEG):
+            j2 = (j + 1) % SEG
+            fs.append((i * SEG + j, i * SEG + j2, (i + 1) * SEG + j2, (i + 1) * SEG + j))
+    m = bpy.data.meshes.new(name)
+    m.from_pydata(vs, [], fs)
+    m.update()
+    for poly in m.polygons:
+        poly.use_smooth = True
+    o = bpy.data.objects.new(name, m)
+    scene.collection.objects.link(o)
+    o.parent = parent
+    return o
+
+
+vernis = bpy.data.materials.new("POT_vernis")
+vernis.use_nodes = True
+vt = vernis.node_tree
+for n in list(vt.nodes):
+    vt.nodes.remove(n)
+v_out = vt.nodes.new("ShaderNodeOutputMaterial")
+v_clear = vt.nodes.new("ShaderNodeBsdfTransparent")
+v_gloss = vt.nodes.new("ShaderNodeBsdfGlossy")
+v_gloss.inputs["Roughness"].default_value = 0.07
+v_mix = vt.nodes.new("ShaderNodeMixShader")
+v_mix.inputs[0].default_value = float(os.environ.get("VERNIS", 0.12))
+vt.links.new(v_clear.outputs[0], v_mix.inputs[1])
+vt.links.new(v_gloss.outputs[0], v_mix.inputs[2])
+vt.links.new(v_mix.outputs[0], v_out.inputs["Surface"])
+E = 0.00015
+BODY_SHELL = arc(R - F_BOT, F_BOT, F_BOT + E, -90, 0) + arc(R - F_SHOULDER, Z_BODY - F_SHOULDER, F_SHOULDER + E, 0, 80)
+LID_SHELL = [(R_LID + 0.0004, Z_LID + RING_H + 0.0004), (R_LID + 0.0004, H - F_TOP)] + arc(R_LID - F_TOP, H - F_TOP, F_TOP + 0.0004, 0, 90)[1:] + [(0.004, H + 0.0004)]
+shells = []
+for parent in (root, bare):
+    for nm, prof in (("POT_vernis_corps", BODY_SHELL), ("POT_vernis_couvercle", LID_SHELL)):
+        sh = lathe_shell(nm, prof, parent)
+        sh.data.materials.append(vernis)
+        shells.append(sh)
+for sh in shells[2:]:
+    sh.hide_render = True      # ceux du pot nu : montrés avec lui
+
 # Le panneau du sol n'éclaire que le pot : sur le film plastique, il poserait un voile blanc.
 try:
     pots = bpy.data.collections.new("POTS")
     for o in [c for c in root.children if c.name != "MANCHON"] + list(bare.children):
-        pots.objects.link(o)
+        if not o.name.startswith("POT_vernis"):
+            pots.objects.link(o)
     ciel.light_linking.receiver_collection = pots
     print("RENDU_LIAISON ok")
 except Exception as err:
@@ -480,7 +541,9 @@ def film_pose(obj, base, front, f):
     p1 = (f - 2) / 26
     p2 = (f - (T_FALL + 12)) / 46
     p = p1 if 0 <= p1 <= 1 else p2 if 0 <= p2 <= 1 else None
-    sweep.data.energy = 0.0 if p is None else 16.0 * K * math.sin(math.pi * p)
+    # Le premier passage est bien plus doux : le film rose renvoie toute la lumière qu'il reçoit et blanchirait.
+    force = 4.0 if 0 <= p1 <= 1 else 16.0
+    sweep.data.energy = 0.0 if p is None else force * K * math.sin(math.pi * p)
     sweep.location = (-0.55 + 1.10 * (p or 0.0), -0.62, 0.18)
     # Une fois le pot nu : la boîte de face baisse, les contre-jours montent — le noir se creuse, le chrome ressort.
     reveal = smooth((f - T_FALL) / 24)
