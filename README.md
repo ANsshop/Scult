@@ -21,7 +21,7 @@ npm run db:seed -- --demo        # le catalogue + 90 jours de fausses commandes 
 npm run db:admin -- vous@exemple.fr "Prénom"      # crée un compte admin, affiche son mot de passe une fois
 ```
 
-Dans `.env` : `DATABASE_URL` (voir `.env.example`) et `ADMIN_SESSION_SECRET` (`openssl rand -base64 36`). Puis `npm run dev` et http://localhost:3002/admin.
+Dans `.env.local` (pas `.env`, que le déploiement Vercel embarque) : `DATABASE_URL` (voir `.env.example`) et `ADMIN_SESSION_SECRET` (`openssl rand -base64 36`). Puis `npm run dev` et http://localhost:3002/admin.
 
 En ligne (Neon) : mettre l'adresse « pooled » dans `DATABASE_URL`, puis `npm run db:migrate`, `npm run db:seed -- --stock=<pots en stock>` (jamais `--demo`), `npm run db:admin`. Le prix de revient se renseigne ensuite dans Produits : sans lui, pas de marge.
 
