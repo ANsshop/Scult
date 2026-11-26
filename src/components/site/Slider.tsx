@@ -64,7 +64,7 @@ export function Slider({ buy = null }: { buy?: { item: CartLine; inStock: boolea
                   D'abord l'achat (rose), puis la fiche (blanc cerné de noir : lisible sur le pot noir comme sur le fond clair). */}
               <div className="absolute inset-x-5 bottom-5 flex gap-2.5 md:inset-x-auto md:bottom-10 md:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] md:gap-3">
                 {buy && <AddToCart key={buy.item.sku} item={buy.item} inStock={buy.inStock} preorderEta={buy.preorderEta} className="flex-1 !px-4 md:h-14 md:flex-none md:!px-10" />}
-                <ButtonLink href={s.cta.href} className="flex-1 !bg-white !px-4 shadow-[0_0_0_1.5px_var(--color-noir)] md:h-14 md:flex-none md:!px-10">{s.cta.label}</ButtonLink>
+                <ButtonLink href={s.cta.href} className="flex-1 !bg-white !px-4 shadow-[0_0_0_1.5px_var(--color-noir)] [--btn-reflet:rgb(255_46_147/0.4)] md:h-14 md:flex-none md:!px-10">{s.cta.label}</ButtonLink>
               </div>
             </div>
           );

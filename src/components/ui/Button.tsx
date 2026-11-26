@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-/** Boutons : pilule rose, texte noir en petites capitales mono, comme sur l'ancien site ; au survol, un reflet de lumière la traverse (`btn-shine`, globals.css). */
-const base = "btn-shine inline-flex h-12 items-center justify-center gap-2 rounded-btn px-7 label !text-[0.75rem] font-bold transition-colors";
+/**
+ * Boutons : pilule rose, texte noir en petites capitales mono, comme sur l'ancien site.
+ * Au survol, le bouton grossit un peu et un reflet de lumière le traverse
+ * (`btn-shine`, globals.css) ; sous le doigt ou le clic, il s'enfonce.
+ */
+const base = "btn-shine inline-flex h-12 items-center justify-center gap-2 rounded-btn px-7 label !text-[0.75rem] font-bold transition-[scale,background-color,color,border-color,box-shadow] duration-200 ease-(--ease-scult) hover:scale-[1.06] active:scale-[0.96] disabled:hover:scale-100 disabled:active:scale-100";
 const variants = {
   rose: "bg-rose text-noir",
   // lien secondaire : un filet, pas d'aplat
