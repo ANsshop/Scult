@@ -84,14 +84,6 @@ export const FOCUS = {
   },
 };
 
-/** Bandeau en tête de la fiche produit. */
-export const PRODUCT_BANNER = {
-  title: "La blague est finie.",
-  text: "Le pré-workout qui ne fait pas semblant.",
-  cta: { label: "Commander", href: "#commander" },
-  alt: "Le pot SCULT posé au sol au premier plan ; derrière lui, le bouffon accroupi, les mains à plat",
-};
-
 /**
  * Le slider de l'accueil (ancre #bouffon), sous la section « formule ». Une
  * slide = un visuel plein cadre, dont le titre est peint dans l'image (d'où

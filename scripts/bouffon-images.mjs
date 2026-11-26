@@ -30,7 +30,6 @@ const IMAGES = {
   // Refaite le 2026-11-25 sur Higgsfield à partir de l'affiche d'origine (hf_20261125_110717_0e6ecaeb-…) : le pot
   // poussé vers l'objectif, et un cadrage fait pour le téléphone — du noir en haut pour le titre, en bas pour le bouton.
   "hero-dark-mobile": { file: "hf_20261125_151524_27029277-a3b2-4e39-85e2-ff62ebc457cb.png", widths: [480, 780, 1170] },
-  "hero-produit-desktop": { file: "hf_20261125_110718_d7afe922-a9d4-4f78-abf3-e0c5ffff68c6.png", widths: [780, 1440, 1920, 2688] },
   // La planche des sept vues du pot, sur fond gris : seul son gros plan est publié (DETAIL), le reste passe par BLANC.
   "pot-vues": { file: "hf_20261125_110716_87ef88da-577f-4619-8d2f-c4ced792a3fe.png", widths: [] },
   "bouffon-face": { file: "hf_20261124_211831_7a9d9a94-9fbc-4c83-877d-2edd84efc413.png", widths: [480, 800, 1200, 1792] },

@@ -8,7 +8,7 @@
 
 **La règle.** Du noir, du blanc, du grain ; la seule couleur est le rose vif `#FF2E93`.
 
-**Deux ambiances, mêmes tokens** (`src/app/globals.css`). La page est claire par défaut — fond blanc, texte noir, le produit sur blanc. Un bloc marqué `.sombre` passe en noir avec tout ce qu'il contient : l'en-tête, le hero de l'accueil, le bandeau de la fiche produit, le pied de page. Le site alterne ainsi noir et blanc au lieu d'être noir partout.
+**Deux ambiances, mêmes tokens** (`src/app/globals.css`). La page est claire par défaut — fond blanc, texte noir, le produit sur blanc. Un bloc marqué `.sombre` passe en noir avec tout ce qu'il contient : l'en-tête, le hero de l'accueil, la barre d'achat de la fiche produit, le pied de page. Le site alterne ainsi noir et blanc au lieu d'être noir partout.
 
 | Token | Clair (défaut) | `.sombre` | Usage |
 |---|---|---|---|
@@ -30,7 +30,7 @@
 
 **L'intro** (`src/components/site/intro/`, détail dans `script.ts`). Le hero dark est le vrai DOM ; la couche rose est un décor fixe, plein écran, `aria-hidden`, `inert`, `data-nosnippet`, écrit dans la page par un script inline seulement pour qui ne l'a jamais vu. 0 → 1200 ms : site rose, immobile. 1200 → 1900 ms : glitch (douze bandes de hauteurs inégales découpées par `clip-path`, décalées en X par pas francs, quatre passes de moins en moins roses, barres pleines `#FF2E93`, double rose du H1) — uniquement `transform`, `clip-path`, `opacity`. 1900 ms : couche retirée, clé `scult_intro_vue` enregistrée. Le glitch part aussi au premier défilement, clic ou appui clavier. Mouvement réduit : fondu de 200 ms. Une bande éteinte ne se rallume jamais : aucun clignotement.
 
-**Les visuels** (`public/bouffon/`, AVIF + WebP en plusieurs largeurs, produits par `npm run images:bouffon`) : `hero-rose-*` (fond de l'intro), `hero-dark-*` (hero de l'accueil, image LCP), `hero-produit-desktop` (bandeau de la fiche), six `pot-blanc-*` (le pot sur fond blanc, format 4:5, même échelle : galerie de la fiche, catalogue), `pre-workout-scult-cri-etiquette` (gros plan), `pre-workout-scult-cri-detoure` (le pot sans fond : panier), `bouffon-face` (section « Le bouffon », 404), `bouffon-applaudit` (confirmation de commande). Les fonds ne portent aucun texte : titres et boutons sont en HTML.
+**Les visuels** (`public/bouffon/`, AVIF + WebP en plusieurs largeurs, produits par `npm run images:bouffon`) : `hero-rose-*` (fond de l'intro), `hero-dark-*` (hero de l'accueil, image LCP), six `pot-blanc-*` (le pot sur fond blanc, format 4:5, même échelle : galerie de la fiche, catalogue), `pre-workout-scult-cri-etiquette` (gros plan), `pre-workout-scult-cri-detoure` (le pot sans fond : panier), `bouffon-face` (section « Le bouffon », 404), `bouffon-applaudit` (confirmation de commande). Les fonds ne portent aucun texte : titres et boutons sont en HTML.
 
 **Le pot en 3D** (`public/models/pot-scult.glb`, `src/components/site/Pot3D.tsx`) : il tourne au défilement dans la section « formule », sur fond blanc, et se pose sur le visuel du slider de l'accueil, où on le fait tourner à la main. Fabrication et limites : `scripts/3d/build-bouffon.sh` et `ASSUMPTIONS.md` [50].
 

@@ -7,7 +7,7 @@ import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/shipping";
 import { formatPrice } from "@/lib/utils";
 import { FlavourPicker } from "@/components/site/FlavourPicker";
 import { useFlavour } from "@/components/site/FlavourContext";
-import { AddToCart } from "./AddToCart";
+import { BuyButton } from "./BuyButton";
 import { PotPile3D } from "@/components/site/PotPile3D";
 
 /** Doses par pot : sert seulement à afficher le prix par dose. */
@@ -19,6 +19,7 @@ const DOSES_PER_UNIT = 30;
  * autre goût. Tout ce qui se vend vient du catalogue (FlavourOffer) : un
  * article par goût, un article par paire de goûts ; chacun part dans le
  * panier avec son propre SKU, et son lien ramène à cette fiche.
+ * Le bouton d'achat a son double collé en bas de l'écran (BuyButton).
  */
 export function PurchaseOptions({ offer }: { offer: FlavourOffer }) {
   const { flavour, setFlavour } = useFlavour();
@@ -44,7 +45,7 @@ export function PurchaseOptions({ offer }: { offer: FlavourOffer }) {
     return (
       <div className="mt-8">
         {picker}
-        <AddToCart key={selected.item.sku} item={selected.item} inStock={selected.inStock} preorderEta={selected.preorderEta} className="mt-4 !h-14 w-full" />
+        <BuyButton item={selected.item} inStock={selected.inStock} preorderEta={selected.preorderEta} title={offer.name} detail="1 pot" className="mt-4" />
       </div>
     );
   }
@@ -99,7 +100,7 @@ export function PurchaseOptions({ offer }: { offer: FlavourOffer }) {
       {isBundle && seconds.length > 1 && (
         <FlavourPicker name="gout-2" legend="Goût du 2ᵉ pot" flavours={seconds} value={second!} onChange={setPicked} disabled={soldOut} compact className="mt-5" />
       )}
-      <AddToCart key={selected.item.sku} item={selected.item} inStock={selected.inStock} preorderEta={selected.preorderEta} className="mt-5 !h-14 w-full" />
+      <BuyButton item={selected.item} inStock={selected.inStock} preorderEta={selected.preorderEta} title={offer.name} detail={isBundle ? `Pack de ${pack.units} · ${DOSES_PER_UNIT * pack.units} doses` : `1 pot · ${DOSES_PER_UNIT} doses`} className="mt-5" />
     </div>
   );
 }

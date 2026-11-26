@@ -80,7 +80,11 @@ async function relight(viewer: Viewer, maps: Record<string, string>) {
  * pot ne capte aucun geste (la page défile par-dessus) et c'est le parent qui
  * le tourne, via l'élément reçu dans `onReady`.
  * `orbit` : l'angle de vue de départ (« 0deg 80deg 135% » : de face, légèrement du dessus).
- * `spin` : le pot tourne seul, lentement (jamais en mouvement réduit).
+ * `spin` : le pot tourne seul, lentement (jamais en mouvement réduit). S'il est
+ * aussi `interactive`, il s'arrête sous le doigt et repart peu après.
+ * `onTouch` : appelé la première fois que le visiteur fait tourner le pot
+ * (pour retirer l'invitation à le faire, voir TurnHint).
+ * `priority` : l'image fixe est la grande image de la page, à charger d'abord.
  */
 export function Pot3D({
   alt,
@@ -90,6 +94,8 @@ export function Pot3D({
   still = null,
   orbit = "0deg 80deg 135%",
   spin = false,
+  onTouch,
+  priority = false,
   model = POT,
   className = "",
 }: {
@@ -100,6 +106,8 @@ export function Pot3D({
   still?: string | null;
   orbit?: string;
   spin?: boolean;
+  onTouch?: () => void;
+  priority?: boolean;
   model?: Modele3D;
   className?: string;
 }) {
@@ -159,6 +167,18 @@ export function Pot3D({
     };
   }, [ready, onReady, model]);
 
+  useEffect(() => {
+    const el = viewer.current;
+    if (!ready || !el || !onTouch) return;
+    const onChange = (e: Event) => {
+      if ((e as CustomEvent<{ source?: string }>).detail?.source !== "user-interaction") return;
+      el.removeEventListener("camera-change", onChange);
+      onTouch();
+    };
+    el.addEventListener("camera-change", onChange);
+    return () => el.removeEventListener("camera-change", onChange);
+  }, [ready, onTouch]);
+
   return (
     <div ref={box} style={{ aspectRatio: `${model.width} / ${model.height}` }} className={`relative ${className}`}>
       {still && (
@@ -168,6 +188,7 @@ export function Pot3D({
           width={model.width}
           height={model.height}
           sizes={sizes}
+          priority={priority}
           className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${shown ? "pointer-events-none opacity-0" : "opacity-100"}`}
         />
       )}
@@ -177,8 +198,9 @@ export function Pot3D({
           src: model.src,
           alt,
           ...(interactive ? { "camera-controls": "", "disable-zoom": "", "disable-pan": "", "touch-action": "pan-y" } : {}),
-          ...(spin && !calm ? { "auto-rotate": "", "auto-rotate-delay": "0", "rotation-per-second": "26deg" } : {}),
-          "interaction-prompt": interactive && !calm ? "auto" : "none",
+          ...(spin && !calm ? { "auto-rotate": "", "auto-rotate-delay": interactive ? "1600" : "0", "rotation-per-second": "26deg" } : {}),
+          // Un pot qui tourne seul n'a pas besoin du petit balancement d'invite : il gênerait la rotation.
+          "interaction-prompt": interactive && !calm && !spin ? "auto" : "none",
           "interaction-prompt-style": "wiggle",
           "interaction-prompt-threshold": "1800",
           "interpolation-decay": "70",

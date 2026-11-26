@@ -42,9 +42,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <>
       <JsonLd data={productJsonLd(product, { label: PRODUCT_INFO[product.slug]?.label, netGrams: PRODUCT_INFO[product.slug]?.netGrams })} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: product.name, path: `/produits/${product.slug}` }])} />
-      <Header overlay />
+      <Header />
       <main><ProductPage product={product} offer={await getFlavourOffer(product.slug)} /></main>
       <Footer />
+      {/* La place de la barre d'achat collée en bas de l'écran (BuyButton) : elle ne cache pas la fin du pied de page */}
+      <div aria-hidden className="sombre h-[4.75rem] bg-fond" />
     </>
   );
 }

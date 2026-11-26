@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { PurchaseOptions } from "@/components/cart/PurchaseOptions";
-import { AddToCart } from "@/components/cart/AddToCart";
-import { ProductBanner } from "./ProductBanner";
+import { BuyButton } from "@/components/cart/BuyButton";
 import { ProductGallery } from "./ProductGallery";
 import { FlavourGallery, FlavourIngredients, FlavourProvider, FlavourSku } from "./FlavourContext";
 import { Reassurance } from "./Reassurance";
@@ -20,11 +19,18 @@ import { formatPrice } from "@/lib/utils";
 const answer = (q: string) => FAQ_ITEMS.find((i) => i.question === q)?.answer ?? "";
 
 /**
- * La fiche produit : le bandeau, puis la galerie et le bloc d'achat (ancre
- * #commander, cible du bouton du bandeau). `offer` : le produit décliné en goûts (un pot par goût,
- * packs de deux). Le goût choisi commande la galerie, la référence, le bloc
- * d'achat et la liste d'ingrédients. Sans offre par goût, la fiche vend la
- * première variante du catalogue, telle quelle.
+ * La fiche produit : faite pour vendre. Pas de bandeau : on arrive sur le
+ * produit (le pot en 3D, qu'on fait tourner) et le bloc d'achat.
+ *
+ * `offer` : le produit décliné en goûts (un pot par goût, packs de deux). Le
+ * goût choisi commande la galerie, la référence, le bloc d'achat et la liste
+ * d'ingrédients. Sans offre par goût, la fiche vend la première variante du
+ * catalogue, telle quelle.
+ *
+ * L'ordre de la colonne : nom, prix, bloc d'achat (un pot ou le pack), puis
+ * seulement la description et les détails — sur téléphone, on n'a plus à
+ * descendre jusqu'en bas pour acheter. Le bouton d'achat reste à l'écran
+ * pendant toute la lecture (BuyButton).
  */
 export function ProductPage({ product, offer }: { product: Product; offer?: FlavourOffer | null }) {
   const claims = CLAIMS.filter((c) => c.slug === product.slug);
@@ -33,9 +39,11 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
   const skus = Object.fromEntries((offer?.flavours ?? []).map((id) => [id, offer!.singles[id]!.item.sku])) as Partial<Record<FlavourId, string>>;
   return (
     <FlavourProvider flavours={offer?.flavours ?? []}>
-      <ProductBanner />
-      <Container className="grid gap-10 pb-20 pt-10 md:grid-cols-[1.15fr_1fr] md:gap-16 md:pb-28 md:pt-16">
-        {offer ? <FlavourGallery fallback={product.images} /> : <ProductGallery images={product.images} />}
+      <Container className="grid gap-7 pb-20 pt-4 md:grid-cols-[1.15fr_1fr] md:gap-16 md:pb-28 md:pt-12">
+        {/* Ordinateur : la galerie reste à l'écran pendant qu'on lit la colonne de droite */}
+        <div className="min-w-0 md:sticky md:top-28 md:self-start">
+          {offer ? <FlavourGallery fallback={product.images} /> : <ProductGallery images={product.images} />}
+        </div>
         <div id="commander" className="scroll-mt-28 md:sticky md:top-28 md:self-start">
           <p className="label text-discret">{product.categorySlug === "packs" ? "Pack" : "Poudre"} · <FlavourSku skus={skus} fallback={product.variant.sku} /></p>
           {/* Le nom, et ce que c'est : les deux dans le titre de la page, pour les lecteurs comme pour les moteurs */}
@@ -55,22 +63,25 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
           {info && product.categorySlug !== "packs" && (
             <p className="mt-2 text-sm text-discret tabular-nums">Soit {formatPrice(Math.round(pricePerKg(product.priceCents, info.netGrams) * 100))} le kilo · {formatPrice(Math.round(product.priceCents / info.servings))} la dose · pot de {info.netGrams} g, {info.servings} doses</p>
           )}
-          <p className="mt-6 max-w-md leading-relaxed text-doux">{product.description}</p>
-          {info?.caffeineWarning && (
-            <p className="mt-6 rounded-chip border border-rose px-4 py-3 text-sm">{info.caffeineWarning}</p>
-          )}
           {offer ? (
             <PurchaseOptions offer={offer} />
           ) : (
-            <AddToCart
+            <BuyButton
               item={{ sku: product.variant.sku, slug: product.slug, name: product.name, priceCents: product.priceCents, image: product.images[0]?.url ?? null }}
               inStock={product.inStock}
               preorderEta={product.preorderEta}
-              className="mt-8 w-full"
+              title={product.name}
+              detail={info?.label}
+              className="mt-8"
             />
           )}
-          <Reassurance className="mt-8" />
-          <div className="mt-10 divide-y border-y">
+          {/* La mention caféine reste collée au bouton d'achat : on la lit avant de commander */}
+          {info?.caffeineWarning && (
+            <p className="mt-4 rounded-chip border border-rose px-4 py-3 text-sm">{info.caffeineWarning}</p>
+          )}
+          <Reassurance className="mt-7" />
+          <p className="mt-8 max-w-md leading-relaxed text-doux">{product.description}</p>
+          <div className="mt-8 divide-y border-y">
             {claims.length > 0 && (
               <details className="group py-5" open>
                 <summary className="flex cursor-pointer list-none items-center justify-between font-bold [&::-webkit-details-marker]:hidden">Performance<ToggleArrow /></summary>

@@ -13,7 +13,7 @@ import { Wordmark } from "./Wordmark";
  * Sur ordinateur, les liens sont en ligne. Sur mobile, il reste le logo, le
  * panier et un bouton « Menu » qui déplie les liens sous la barre.
  *
- * `overlay` : posée par-dessus un hero plein écran (accueil, fiche produit).
+ * `overlay` : posée par-dessus un hero plein écran (l'accueil).
  * Elle est alors fixe et transparente en haut de page, et prend son fond dès
  * qu'on défile. Sinon elle est collante, sur le fond de la page.
  */

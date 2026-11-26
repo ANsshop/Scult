@@ -277,6 +277,10 @@ label:has(> input[name="quantite"])::after {
 }
 label:has(> input[name="quantite"]):hover::after { animation: carte-reflet 1.1s cubic-bezier(0.45, 0, 0.55, 1); }
 
+/* L'invitation à faire tourner un modèle 3D (TurnHint) : le doigt glisse de gauche à droite. */
+@keyframes invite-geste { 0%, 100% { transform: translateX(-3px); } 50% { transform: translateX(3px); } }
+.invite-geste { animation: invite-geste 1.4s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

@@ -41,11 +41,11 @@ export function useFlavour(): Ctx {
   return useContext(FlavourContext) ?? { flavour: DEFAULT_FLAVOUR, setFlavour: () => {} };
 }
 
-/** La galerie du goût choisi. `fallback` : les images du catalogue, si le goût n'a pas les siennes. */
+/** La galerie du goût choisi : le pot en 3D d'abord (le même quel que soit le goût), puis ses photos. `fallback` : les images du catalogue, si le goût n'a pas les siennes. */
 export function FlavourGallery({ fallback }: { fallback: PpImage[] }) {
   const { flavour } = useFlavour();
   const images = getFlavour(flavour).images;
-  return <ProductGallery images={images.length ? images : fallback} />;
+  return <ProductGallery pot3d images={images.length ? images : fallback} />;
 }
 
 /** La liste d'ingrédients du goût choisi. */
