@@ -166,8 +166,6 @@ body::after {
 
 /* L'ombre dure sous les vignettes du pot (carte produit, panier) */
 .flash-shadow { filter: drop-shadow(5px 4px 0 rgb(7 7 7 / 0.9)); }
-/* Bandeau sous le hero : la ligne au contour (le glissement suit le défilement, voir Marquee.tsx) */
-.text-outline { color: transparent; -webkit-text-stroke: 1.5px var(--texte); }
 
 /* Questions en accordéon : la réponse se déplie en douceur là où le navigateur sait animer vers `auto` */
 @supports (interpolate-size: allow-keywords) {
