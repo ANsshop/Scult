@@ -11,6 +11,7 @@
 //   manchon-dechire.png  le même, déchiré par le milieu (le trou est transparent)
 //   manchon-coeur.png    opaque, avec une fenêtre en cœur sur le masque du bouffon
 //   manchon-givre.png    film rose translucide : seules les impressions blanches sont opaques
+//   manchon-fente.png    pour l'animation : la ligne de déchirure (blanc = le film se fend)
 //
 // Le dessin est en millimètres. Largeur = le tour du pot (271,4 mm ; le centre
 // de la face est au milieu, la soudure au dos). Hauteur = le film de bas en
@@ -171,6 +172,24 @@ const html = (svg) => `<!doctype html><meta charset="utf-8"><style>
 html, body { margin: 0; background: transparent; } svg { display: block; }
 </style>${svg}`;
 
+/**
+ * La fente du film d'animation (render_manchon.py, `-- film`) : blanc là où le film se fend quand la déchirure
+ * passe — une ligne en dents de scie sur le devant, de haut en bas. Noir ailleurs.
+ */
+function slit() {
+  seed = 11;
+  const left = [], right = [];
+  for (let y = -2; y <= H + 2; y += 2.3) {
+    const c = CX + (rnd() - 0.5) * 3.2;
+    const w = 0.5 + rnd() * 2.6;
+    left.push([c - w, y]);
+    right.push([c + w, y]);
+  }
+  const pts = [...left, ...right.reverse()];
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${PX}" height="${Math.round(PX * H / W)}">
+    <rect width="${W}" height="${H}" fill="#000"/><path d="M${pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L")}Z" fill="#fff"/></svg>`;
+}
+
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: PX, height: Math.round(PX * H / W) } });
 for (const kind of ["rose", "dechire", "coeur", "givre"]) {
@@ -179,4 +198,7 @@ for (const kind of ["rose", "dechire", "coeur", "givre"]) {
   await page.screenshot({ path: resolve(OUT, `manchon-${kind}.png`), omitBackground: true });
   console.log("écrit", `manchon-${kind}.png`);
 }
+await page.setContent(html(slit()));
+await page.screenshot({ path: resolve(OUT, "manchon-fente.png") });
+console.log("écrit", "manchon-fente.png");
 await browser.close();

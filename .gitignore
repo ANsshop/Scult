@@ -63,3 +63,6 @@ docs/3d/*.blend1
 
 # base locale de développement (npm run db:local)
 /.db-local/
+
+# Les images intermédiaires de la vidéo du manchon (le MP4 final, lui, est gardé)
+/docs/3d/manchon/film/
