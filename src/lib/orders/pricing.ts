@@ -14,6 +14,8 @@ export type PricedCart = {
   vatCents: number;
   totalCents: number;
   allowedCountries: string[];
+  /** Le code appliqué, tel qu'il est enregistré ; `null` sans code. */
+  promoCode: string | null;
 };
 
 /**
@@ -24,6 +26,8 @@ export type PricedCart = {
 export async function priceCart(lines: PpCartLine[], countryCode: string, promoCode?: string): Promise<PricedCart | { error: string }> {
   if (lines.length === 0) return { error: "Panier vide." };
   const quote = await quoteCart(lines, promoCode);
+  // Un code saisi mais refusé : on le dit, au lieu de laisser payer plein tarif sans explication.
+  if (promoCode?.trim() && quote.promoError) return { error: quote.promoError };
   const shipping = shippingCentsFor(countryCode, quote.subtotalCents - quote.discountCents);
   if (!shipping) return { error: "Nous ne livrons pas encore ce pays." };
   const base = quote.subtotalCents + shipping.cents - quote.discountCents;
@@ -38,5 +42,6 @@ export async function priceCart(lines: PpCartLine[], countryCode: string, promoC
     vatCents: vat,
     totalCents: base + vat,
     allowedCountries: shipping.zone.countries,
+    promoCode: quote.promoCode,
   };
 }

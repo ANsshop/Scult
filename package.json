@@ -14,7 +14,10 @@
     "db:migrate": "node scripts/db/migrate.mjs",
     "db:seed": "node scripts/db/seed.mjs",
     "db:admin": "node scripts/db/admin.mjs",
-    "test:admin": "node scripts/admin-e2e.mjs"
+    "test:admin": "node scripts/admin-e2e.mjs",
+    "mock:services": "node scripts/mock-services.mjs",
+    "seo:indexnow": "node scripts/indexnow.mjs",
+    "test:seo": "node scripts/seo-check.mjs"
   },
   "dependencies": {
     "@google/model-viewer": "^4.4.0",

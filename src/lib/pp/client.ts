@@ -74,6 +74,8 @@ export type PpQuote = {
   subtotalCents: number;
   discountCents: number;
   promoCode: string | null;
+  /** Un code a été saisi mais ne s'applique pas : la raison, à montrer au client. */
+  promoError?: string | null;
 };
 
 export type PpOrderInput = {
@@ -138,12 +140,7 @@ export async function getCatalogue(): Promise<PpCatalogue> {
 
 export async function quoteCart(lines: PpCartLine[], promoCode?: string): Promise<PpQuote> {
   if (own()) {
-    const { quoteFromDb } = await import("@/lib/store/orders");
-    const quote = await quoteFromDb(lines, promoCode);
-    // Le panier n'est chiffré côté serveur qu'au moment de payer : c'est le « passage en caisse » de l'entonnoir.
-    const { recordEvent } = await import("@/lib/store/events");
-    await recordEvent({ type: "checkout_start", sessionId: `caisse-${crypto.randomUUID()}` });
-    return quote;
+    return (await import("@/lib/store/orders")).quoteFromDb(lines, promoCode);
   }
   if (mock()) {
     const cat = await getCatalogue();
@@ -168,10 +165,14 @@ export async function quoteCart(lines: PpCartLine[], promoCode?: string): Promis
 
 export async function createOrder(input: PpOrderInput): Promise<PpOrder> {
   if (own()) {
-    const order = await (await import("@/lib/store/orders")).createOrderInDb(input);
-    // Le stock vient de baisser : le catalogue en cache est périmé.
-    const { revalidateTag } = await import("next/cache");
-    revalidateTag((await import("@/lib/store/catalogue")).CATALOGUE_TAG, "max");
+    const { created, ...order } = await (await import("@/lib/store/orders")).createOrderInDb(input);
+    if (created) {
+      // Le stock vient de baisser : le catalogue en cache est périmé.
+      const { revalidateTag } = await import("next/cache");
+      revalidateTag((await import("@/lib/store/catalogue")).CATALOGUE_TAG, "max");
+      // La confirmation au client (et l'alerte à la boutique). Une seule fois : pas sur un signal Stripe rejoué.
+      await (await import("@/lib/notify/orders")).onOrderCreated(order.id);
+    }
     return order;
   }
   if (mock()) {

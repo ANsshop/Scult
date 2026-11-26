@@ -17,11 +17,11 @@ export function promoDiscount(promo: Pick<Promo, "discount_type" | "discount_val
 
 /** Pourquoi un code ne s'applique pas, ou `null` s'il s'applique. */
 export function promoProblem(promo: Promo, subtotalCents: number, now = new Date()): string | null {
-  if (!promo.is_active) return "Ce code n'est plus actif.";
-  if (promo.starts_at && now < promo.starts_at) return "Ce code n'est pas encore valable.";
-  if (promo.ends_at && now > promo.ends_at) return "Ce code a expiré.";
-  if (promo.max_uses !== null && promo.uses_count >= promo.max_uses) return "Ce code a atteint son nombre d'utilisations.";
-  if (subtotalCents < promo.min_subtotal_cents) return "Le panier n'atteint pas le minimum de ce code.";
+  if (!promo.is_active) return "Ce code promo n'est plus actif.";
+  if (promo.starts_at && now < promo.starts_at) return "Ce code promo n'est pas encore valable.";
+  if (promo.ends_at && now > promo.ends_at) return "Ce code promo a expiré.";
+  if (promo.max_uses !== null && promo.uses_count >= promo.max_uses) return "Ce code promo a déjà été utilisé le nombre de fois prévu.";
+  if (subtotalCents < promo.min_subtotal_cents) return `Ce code promo demande ${(promo.min_subtotal_cents / 100).toFixed(2).replace(".", ",").replace(",00", "")} € d'achat au minimum.`;
   return null;
 }
 

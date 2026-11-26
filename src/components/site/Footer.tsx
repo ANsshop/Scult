@@ -5,6 +5,7 @@ import { Wordmark } from "./Wordmark";
 
 const COLS = [
   { title: "Boutique", links: [["CRI · pré-workout", "/produits/cri"], ["Pochons de caféine", "/produits/pochons"], ["La formule", "/#formule"], ["Le bouffon", "/#bouffon"], ["Panier", "/panier"]] },
+  { title: "Comprendre", links: [["Guide du pré-workout", "/guide/pre-workout"], ["Citrulline", "/ingredients/citrulline"], ["Bêta-alanine", "/ingredients/beta-alanine"], ["Créatine", "/ingredients/creatine"], ["Caféine", "/ingredients/cafeine"], ["L-théanine", "/ingredients/l-theanine"]] },
   { title: "Aide", links: [["Performance & sources", "/methode"], ["Questions fréquentes", "/faq"], ["Livraison & retours", "/livraison-retours"], ["Nous écrire", "mailto:hello@scult.eu"]] },
   { title: "Légal", links: [["CGV", "/cgv"], ["Mentions légales", "/mentions-legales"], ["Confidentialité", "/confidentialite"]] },
 ];
@@ -33,9 +34,9 @@ export function Footer() {
             <ButtonLink href="/produits/cri" className="mt-7">Commander · 49 €</ButtonLink>
           </div>
 
-          <nav aria-label="Pied de page" className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3">
+          <nav aria-label="Pied de page" className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4">
             {COLS.map((c) => (
-              <div key={c.title} className={c.title === "Aide" ? "row-span-2 sm:row-span-1" : ""}>
+              <div key={c.title}>
                 <p className="label text-discret">{c.title}</p>
                 <ul className="mt-3 space-y-3 md:mt-4 md:space-y-2.5">
                   {c.links.map(([label, href]) => (

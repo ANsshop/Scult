@@ -6,6 +6,8 @@ import { Marquee } from "@/components/site/Marquee";
 import { Offer } from "@/components/site/Offer";
 import { Slider } from "@/components/site/Slider";
 import { FaqPreview } from "@/components/site/FaqPreview";
+import { JsonLd } from "@/components/site/JsonLd";
+import { organizationJsonLd } from "@/lib/seo";
 import { getFlavourOffer, getProductBySlug } from "@/lib/catalog/queries";
 
 export const revalidate = 60;
@@ -20,6 +22,8 @@ export default async function Home() {
   const [cri, offer] = await Promise.all([getProductBySlug("cri"), getFlavourOffer("cri")]);
   return (
     <>
+      {/* La boutique, sa livraison, ses retours, le nom du site : Google les lit sur la page d'accueil */}
+      <JsonLd data={organizationJsonLd()} />
       <IntroRose />
       <Header overlay />
       <main>

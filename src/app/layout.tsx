@@ -3,9 +3,8 @@ import localFont from "next/font/local";
 import { CartProvider, type BundleRule } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { getFlavourOffer, type FlavourOffer } from "@/lib/catalog/queries";
-import { JsonLd } from "@/components/site/JsonLd";
 import { Suivi } from "@/components/site/Suivi";
-import { organizationJsonLd, siteOrigin } from "@/lib/seo";
+import { INDEXNOW_KEY, indexable, siteOrigin } from "@/lib/seo";
 import { INTRO_HEAD_SCRIPT } from "@/components/site/intro/script";
 import "./globals.css";
 
@@ -26,8 +25,16 @@ export const metadata: Metadata = {
   applicationName: "SCULT",
   openGraph: { siteName: "SCULT", type: "website", locale: "fr_FR", title: "SCULT — CRI, le pré-workout.", description: "Rien ne se sculpte en silence. Créatine 3 g, citrulline 8 g, bêta-alanine 3,2 g, 390 mg de caféine par dose. 30 doses, goût fraise piquante." },
   twitter: { card: "summary_large_image", title: "SCULT — CRI, le pré-workout.", description: "Rien ne se sculpte en silence. Créatine 3 g, citrulline 8 g, bêta-alanine 3,2 g, 390 mg de caféine par dose. 30 doses, goût fraise piquante." },
-  // Les aperçus Vercel se partagent par lien mais ne doivent pas sortir dans les moteurs de recherche.
-  robots: process.env.VERCEL ? { index: false, follow: false } : { index: true, follow: true },
+  // Une adresse de démonstration se partage par lien mais ne sort pas dans les moteurs. En production : indexable,
+  // avec le droit d'afficher de grandes images et des extraits entiers (c'est aussi ce que lisent les moteurs de réponse).
+  robots: indexable() ? { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } } : { index: false, follow: false },
+  // Les jetons de propriété de Google Search Console et de Bing Webmaster Tools, quand ils sont renseignés.
+  // La clé IndexNow, lue par scripts/indexnow.mjs (le fichier public/<clé>.txt la confirme aux moteurs).
+  other: { "indexnow-key": INDEXNOW_KEY },
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+    ...(process.env.BING_SITE_VERIFICATION ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } } : {}),
+  },
 };
 
 /**
@@ -61,7 +68,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <script dangerouslySetInnerHTML={{ __html: INTRO_HEAD_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">
-        <JsonLd data={organizationJsonLd()} />
         <CartProvider bundle={bundleRule(offer)}>
           {children}
           <CartDrawer offer={offer} />

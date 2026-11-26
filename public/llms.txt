@@ -7,7 +7,7 @@
 
 ## Produit
 
-- CRI (pré-workout) — 49 € : poudre avec édulcorant, goût fraise piquante.
+- CRI (pré-workout) — 49 € le pot de 690 g, soit 71,01 € le kilo et 1,63 € la dose : poudre avec édulcorant, goût fraise piquante.
   Par dose de 23 g : L-citrulline 8 g, bêta-alanine 3,2 g, créatine 3 g,
   L-théanine 400 mg, dicaféine malate 300 mg, caféine anhydre 170 mg (environ
   390 mg de caféine au total), théacrine 100 mg, sodium 300 mg, extrait de
@@ -28,6 +28,15 @@
   successives d'exercices très intenses de courte durée » (règlement (UE)
   n° 432/2012).
 Détails : /methode
+
+## Comprendre
+
+- Guide du pré-workout : ce que c'est, composition, lire une étiquette, caféine, précautions. URL : /guide/pre-workout
+- Citrulline (L-citrulline ou citrulline malate, comment comparer) : /ingredients/citrulline
+- Bêta-alanine (picotements) : /ingredients/beta-alanine
+- Créatine (la seule allégation de santé autorisée, pour 3 g par jour) : /ingredients/creatine
+- Caféine (repères de l'EFSA : 200 mg en une prise, 400 mg par jour ; CRI en apporte environ 390 mg par dose) : /ingredients/cafeine
+- L-théanine : /ingredients/l-theanine
 
 ## Livraison (Europe)
 

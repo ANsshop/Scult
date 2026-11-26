@@ -62,20 +62,23 @@ async function priced(on: Db, lines: PpCartLine[], onlyOnSale: boolean) {
 
 /**
  * Le prix d'un panier : les lignes aux prix de la base, et la remise du code
- * s'il s'applique. Un code inconnu ou refusé ne bloque pas : il est ignoré
- * (`promoCode: null`, remise 0).
+ * s'il s'applique. Un code inconnu ou refusé ne s'applique pas (`promoCode:
+ * null`, remise 0) et `promoError` dit pourquoi : c'est à l'appelant de le
+ * montrer au client plutôt que de le laisser payer plein tarif sans comprendre.
  */
 export async function quoteFromDb(lines: PpCartLine[], promoCode?: string): Promise<PpQuote> {
   const items = await priced(db, lines, true);
   const subtotalCents = items.reduce((s, l) => s + l.lineCents, 0);
-  const promo = promoCode ? await findPromo(promoCode) : null;
-  const applies = promo && !promoProblem(promo, subtotalCents);
+  const promo = promoCode?.trim() ? await findPromo(promoCode) : null;
+  const problem = !promoCode?.trim() ? null : promo ? promoProblem(promo, subtotalCents) : "Ce code promo n'existe pas.";
+  const applies = promo && !problem;
   return {
     currency: "EUR",
     lines: items.map((l) => ({ sku: l.sku, name: l.variant.product_name, unitPriceCents: l.variant.price_cents, quantity: l.quantity, lineCents: l.lineCents })),
     subtotalCents,
     discountCents: applies ? promoDiscount(promo, subtotalCents) : 0,
     promoCode: applies ? promo.code : null,
+    promoError: problem,
   };
 }
 
@@ -105,10 +108,10 @@ export async function moveStock(on: Db, variantId: string, delta: number, reason
  * Le stock sort ici, même s'il passe sous zéro : le client a payé, la commande
  * ne se refuse pas (la rupture se voit dans l'admin).
  */
-export async function createOrderInDb(input: PpOrderInput): Promise<PpOrder> {
+export async function createOrderInDb(input: PpOrderInput): Promise<PpOrder & { created: boolean }> {
   return tx(async (on) => {
     const existing = input.externalRef ? await on.one<{ id: string; reference: string; total_cents: number }>("select id, reference, total_cents from orders where external_ref = $1", [input.externalRef]) : null;
-    if (existing) return { id: existing.id, reference: existing.reference, totalCents: existing.total_cents };
+    if (existing) return { id: existing.id, reference: existing.reference, totalCents: existing.total_cents, created: false };
 
     const items = await priced(on, input.lines, false);
     if (items.length === 0) throw new PpError(422, "empty", "Commande sans article.");
@@ -157,7 +160,7 @@ export async function createOrderInDb(input: PpOrderInput): Promise<PpOrder> {
     for (const id of holders) await moveStock(on, id, -out.get(id)!, "order", { orderId: order.id });
     if (promo) await on.query("update promo_codes set uses_count = uses_count + 1, updated_at = now() where id = $1", [promo.id]);
     await logEvent(on, order.id, "paid", input.paymentMethod === "stripe" ? "Paiement confirmé par Stripe" : "Paiement enregistré", null);
-    return { id: order.id, reference: order.reference, totalCents: total };
+    return { id: order.id, reference: order.reference, totalCents: total, created: true };
   });
 }
 
@@ -260,6 +263,82 @@ export async function noteOrder(id: string, actor: string, note: string): Promis
   return { ok: true };
 }
 
+// — L'étiquette Sendcloud d'une commande —
+
+/** Le poids du colis, en kilos : celui des articles (fiche produit), 150 g d'emballage en plus. `null` si un poids manque. */
+export async function parcelWeightKg(orderId: string): Promise<number | null> {
+  const row = await db.one<{ grams: number | null; missing: number }>(
+    `select sum(v.weight_grams * l.quantity)::int as grams, count(*) filter (where v.weight_grams is null)::int as missing
+       from order_lines l left join variants v on v.id = l.variant_id where l.order_id = $1`,
+    [orderId],
+  );
+  return row && row.grams && row.missing === 0 ? Math.round(row.grams + 150) / 1000 : null;
+}
+
+/** Note l'étiquette créée sur la commande, qui passe en préparation. Refuse s'il y en a déjà une : pas de doublon payé. */
+export async function attachLabel(id: string, actor: string, label: { parcelId: number; trackingNumber: string | null; trackingUrl: string | null; carrier: string | null; status: string | null }): Promise<ActionResult> {
+  return tx(async (on) => {
+    const order = await on.one<{ status: OrderStatus; sendcloud_parcel_id: string | null }>("select status, sendcloud_parcel_id from orders where id = $1 for update", [id]);
+    if (!order) return { ok: false, error: "Commande introuvable." };
+    if (order.sendcloud_parcel_id) return { ok: false, error: "Cette commande a déjà une étiquette." };
+    await on.query(
+      `update orders set sendcloud_parcel_id = $2, tracking_number = $3, tracking_url = $4, tracking_carrier = coalesce($5, tracking_carrier), sendcloud_status = $6,
+              label_created_at = now(), status = case when status = 'paid' then 'preparing' else status end, prepared_at = coalesce(prepared_at, now()), updated_at = now()
+        where id = $1`,
+      [id, label.parcelId, label.trackingNumber, label.trackingUrl, label.carrier, label.status],
+    );
+    await logEvent(on, id, "label", [label.carrier, label.trackingNumber].filter(Boolean).join(" · ") || `Colis ${label.parcelId}`, actor);
+    return { ok: true };
+  });
+}
+
+/** Retire l'étiquette d'une commande pas encore partie (après annulation chez Sendcloud) : on peut en refaire une. */
+export async function clearLabel(id: string, actor: string): Promise<ActionResult> {
+  return tx(async (on) => {
+    const order = await lock(on, id);
+    if (!order) return { ok: false, error: "Commande introuvable." };
+    if (order.status !== "paid" && order.status !== "preparing") return { ok: false, error: "Le colis est déjà parti : l'étiquette ne s'annule plus." };
+    await on.query("update orders set sendcloud_parcel_id = null, sendcloud_status = null, tracking_number = null, tracking_url = null, label_created_at = null, updated_at = now() where id = $1", [id]);
+    await logEvent(on, id, "label_cancelled", null, actor);
+    return { ok: true };
+  });
+}
+
+/**
+ * Applique à la commande ce que le transporteur dit du colis : numéro de
+ * suivi, dernier état, et le statut qui avance (expédiée, livrée) — jamais en
+ * arrière, jamais deux fois. Rend ce qui a changé, pour savoir s'il faut
+ * prévenir le client.
+ */
+export async function applyParcelState(parcelId: number | string, state: { status: string | null; trackingNumber: string | null; trackingUrl: string | null; carrier: string | null; orderStatus: "shipped" | "delivered" | null }): Promise<{ orderId: string; became: "shipped" | "delivered" | null } | null> {
+  return tx(async (on) => {
+    const order = await on.one<{ id: string; status: OrderStatus }>("select id, status from orders where sendcloud_parcel_id = $1 for update", [parcelId]);
+    if (!order) return null;
+    await on.query(
+      "update orders set sendcloud_status = coalesce($2, sendcloud_status), tracking_number = coalesce($3, tracking_number), tracking_url = coalesce($4, tracking_url), tracking_carrier = coalesce(tracking_carrier, $5), updated_at = now() where id = $1",
+      [order.id, state.status, state.trackingNumber, state.trackingUrl, state.carrier],
+    );
+    let became: "shipped" | "delivered" | null = null;
+    const waiting = order.status === "paid" || order.status === "preparing";
+    if (waiting && state.orderStatus) {
+      // Un colis livré sans que le départ ait été signalé : la commande passe par « expédiée » puis « livrée » d'un coup.
+      await on.query("update orders set status = 'shipped', shipped_at = now(), prepared_at = coalesce(prepared_at, now()) where id = $1", [order.id]);
+      await logEvent(on, order.id, "shipped", state.status ? `Signalé par le transporteur : ${state.status}` : "Signalé par le transporteur", "Sendcloud");
+      became = "shipped";
+    }
+    if (state.orderStatus === "delivered" && (waiting || order.status === "shipped")) {
+      await on.query("update orders set status = 'delivered', delivered_at = now() where id = $1", [order.id]);
+      await logEvent(on, order.id, "delivered", state.status ? `Signalé par le transporteur : ${state.status}` : null, "Sendcloud");
+      if (!became) became = "delivered";
+    }
+    return { orderId: order.id, became };
+  });
+}
+
+/** Les colis encore en route, à réinterroger si un signal de suivi s'est perdu. */
+export const parcelsToSync = () =>
+  db.query<{ id: string; sendcloud_parcel_id: string }>("select id, sendcloud_parcel_id from orders where sendcloud_parcel_id is not null and status in ('preparing', 'shipped') and label_created_at > now() - interval '45 days' order by label_created_at limit 200");
+
 // — Lire les commandes —
 
 export type OrderRow = {
@@ -320,6 +399,8 @@ export type OrderDetail = {
   promo_code: string | null; payment_method: string; external_ref: string | null; tracking_carrier: string | null; tracking_number: string | null;
   admin_note: string | null; stock_returned: boolean; paid_at: Date; prepared_at: Date | null; shipped_at: Date | null; delivered_at: Date | null;
   cancelled_at: Date | null; refunded_at: Date | null;
+  /** Sendcloud : le colis, son dernier état en clair, le lien de suivi, la date de l'étiquette. pg rend un bigint en texte. */
+  sendcloud_parcel_id: string | null; sendcloud_status: string | null; tracking_url: string | null; label_created_at: Date | null;
 };
 export type OrderLine = { id: string; sku: string; name: string; unit_price_cents: number; unit_cost_cents: number | null; quantity: number; units: number; line_cents: number; product_id: string | null };
 export type OrderEvent = { id: string; type: string; detail: string | null; actor: string | null; created_at: Date };

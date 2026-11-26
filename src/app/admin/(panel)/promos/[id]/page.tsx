@@ -39,7 +39,7 @@ export default async function PromoPage({ params, searchParams }: { params: Prom
             </div>
           </form>
         </Card>
-        <p className="mt-3 text-[0.8rem] text-discret">Un code refusé (expiré, épuisé, minimum non atteint) est simplement ignoré au paiement : le client paie le prix normal, sans message d&apos;erreur.</p>
+        <p className="mt-3 text-[0.8rem] text-discret">Un code refusé (expiré, épuisé, minimum non atteint) est signalé au client sur la page de commande, avec la raison, avant qu&apos;il paie.</p>
       </div>
     </>
   );

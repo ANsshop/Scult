@@ -34,6 +34,8 @@ export async function startCheckoutAction(input: unknown): Promise<StartCheckout
 
   const priced = await priceCart(items, countryCode, promoCode);
   if ("error" in priced) return { ok: false, error: priced.error };
+  // Le « passage en caisse » de l'entonnoir de l'admin : compté ici, une fois le panier accepté.
+  if (process.env.DATABASE_URL) await (await import("@/lib/store/events")).recordEvent({ type: "checkout_start", sessionId: `caisse-${crypto.randomUUID()}` });
 
   try {
     const session = await stripe().checkout.sessions.create({
@@ -72,6 +74,27 @@ export async function startCheckoutAction(input: unknown): Promise<StartCheckout
   } catch (e) {
     console.error("[checkout]", e);
     return { ok: false, error: "Une erreur est survenue. Réessayez." };
+  }
+}
+
+export type CheckPromoResult = { ok: true; code: string; discountCents: number; shippingCents: number; totalCents: number } | { ok: false; error: string };
+
+/**
+ * Vérifie un code promo avant le paiement : le client voit sa remise, ou la
+ * raison du refus, sans quitter la page. Le même calcul que celui du paiement.
+ */
+export async function checkPromoAction(input: unknown): Promise<CheckPromoResult> {
+  const parsed = schema.safeParse(input);
+  if (!parsed.success || !parsed.data.promoCode?.trim()) return { ok: false, error: "Saisissez un code promo." };
+  const { countryCode, items, promoCode } = parsed.data;
+  try {
+    const priced = await priceCart(items, countryCode, promoCode);
+    if ("error" in priced) return { ok: false, error: priced.error };
+    if (priced.discountCents === 0) return { ok: false, error: "Ce code promo n'apporte pas de remise sur ce panier." };
+    return { ok: true, code: priced.promoCode ?? promoCode.trim().toUpperCase(), discountCents: priced.discountCents, shippingCents: priced.shippingCents, totalCents: priced.totalCents };
+  } catch (e) {
+    console.error("[promo]", e);
+    return { ok: false, error: "Impossible de vérifier ce code pour l'instant. Réessayez." };
   }
 }
 

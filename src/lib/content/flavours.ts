@@ -42,13 +42,13 @@ export type Flavour = {
  * même échelle (scripts/bouffon-images.mjs, BLANC), puis le gros plan.
  */
 const GALLERY: PpImage[] = [
-  imageAt("pot-blanc-face", 1200, "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué en noir et blanc sur l'étiquette"),
-  imageAt("pot-blanc-trois-quarts", 880, "Le pot SCULT tourné d'un quart vers la gauche"),
-  imageAt("pot-blanc-profil", 880, "Le pot SCULT de trois quarts, le bord gauche de l'étiquette visible"),
-  imageAt("pot-blanc-dos", 880, "Le dos du pot SCULT : noir mat, traits roses, bandeau rose en bas"),
-  imageAt("pot-blanc-couvercle", 880, "Le couvercle du pot SCULT vu de dessus : un sourire rose métallisé"),
-  imageAt("pot-blanc-detail", 588, "Gros plan sur le cœur N°001 et le nom SCULT en rose métallisé de l'étiquette"),
-  imageAt("pot-blanc-ouvert", 880, "Le pot SCULT ouvert, opercule en place, couvercle posé à côté"),
+  imageAt("pre-workout-scult-cri-face", 1200, "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué en noir et blanc sur l'étiquette"),
+  imageAt("pre-workout-scult-cri-trois-quarts", 880, "Le pot SCULT tourné d'un quart vers la gauche"),
+  imageAt("pre-workout-scult-cri-profil", 880, "Le pot SCULT de trois quarts, le bord gauche de l'étiquette visible"),
+  imageAt("pre-workout-scult-cri-dos", 880, "Le dos du pot SCULT : noir mat, traits roses, bandeau rose en bas"),
+  imageAt("pre-workout-scult-cri-couvercle", 880, "Le couvercle du pot SCULT vu de dessus : un sourire rose métallisé"),
+  imageAt("pre-workout-scult-cri-etiquette", 588, "Gros plan sur le cœur N°001 et le nom SCULT en rose métallisé de l'étiquette"),
+  imageAt("pre-workout-scult-cri-ouvert", 880, "Le pot SCULT ouvert, opercule en place, couvercle posé à côté"),
 ];
 
 function flavour(id: FlavourId, code: string): Flavour {
@@ -59,8 +59,8 @@ function flavour(id: FlavourId, code: string): Flavour {
     label,
     lines: [lignes[0], lignes[1]],
     color: couleur,
-    still: imageUrl("pot-blanc-face", 1200),
-    mini: imageUrl("pot-detoure", 400),
+    still: imageUrl("pre-workout-scult-cri-face", 1200),
+    mini: imageUrl("pre-workout-scult-cri-detoure", 400),
     images: GALLERY,
     // La liste commune, avec l'arôme et le colorant du goût (cri-formule.json).
     ingredients: FORMULE.ingredients.replace("{AROME}", arome).replace("{COLORANT}", colorant),

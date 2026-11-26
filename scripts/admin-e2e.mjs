@@ -7,10 +7,12 @@
  *   npm run test:admin -- http://localhost:3002
  *
  * Il faut : la base LOCALE lancée et remplie (npm run db:local, db:migrate, db:seed -- --demo), le compte de test
- * (npm run db:admin -- demo@scult.eu "Démo" "bouffon-demo-2026"), le site lancé sur cette base, et Google Chrome.
+ * (npm run db:admin -- demo@scult.eu "Démo" "bouffon-demo-2026"), les faux services (npm run mock:services), le site
+ * lancé sur cette base avec le .env.local qui vise ces faux services, et Google Chrome.
  * ⚠ Écrit et efface des commandes : refusé si la base n'est pas locale.
  */
 import { chromium } from "playwright-core";
+import { createHmac } from "node:crypto";
 import pg from "pg";
 import Stripe from "stripe";
 import { databaseUrl, isLocal } from "./db/_env.mjs";
@@ -20,6 +22,9 @@ const base = process.argv[2] ?? "http://localhost:3010";
 const env = process.env;
 const db = new pg.Client({ connectionString: databaseUrl() });
 await db.connect();
+const MOCK = "http://localhost:3099";
+if (!(await fetch(MOCK + "/_reset", { method: "POST" }).then((r) => r.ok).catch(() => false))) { console.error("✗ les faux services ne répondent pas : lancez npm run mock:services."); process.exit(1); }
+const sent = async () => (await fetch(MOCK + "/_sent")).json();
 const one = async (q, p) => (await db.query(q, p)).rows[0];
 let failed = 0;
 const check = (name, ok, detail = "") => { console.log(`${ok ? "✓" : "✗"} ${name}${detail ? " — " + detail : ""}`); if (!ok) failed++; };
@@ -61,6 +66,14 @@ check("journal du stock : −3, motif commande", mv?.delta === -3 && mv.reason =
 check("code promo compté", (await one("select uses_count from promo_codes where code = 'BOUFFON10'")).uses_count === uses0 + 1);
 check("signal rejoué : accepté, pas de doublon", (await hook(sign())).status === 200 && (await one("select count(*)::int n from orders where external_ref = $1", [ref])).n === 1 && (await one("select stock from variants where sku = 'SCULT-CRI-690-FP'")).stock === stock1);
 
+// 3 bis. Les e-mails de la commande
+let mails = await sent();
+const confirmation = mails.filter((m) => m.to === "test.e2e@exemple.fr" && m.subject.includes("confirmée"));
+check("confirmation envoyée au client, une seule fois malgré le signal rejoué", confirmation.length === 1, `${confirmation.length} e-mail(s)`);
+check("la confirmation porte la référence, le total et l'adresse", confirmation[0]?.subject.includes(order.reference) && confirmation[0].html.includes("119,07") && confirmation[0].text.includes("1 rue du Test") && confirmation[0].replyTo === "hello@scult.eu");
+check("alerte « nouvelle commande » envoyée à la boutique", mails.some((m) => m.to === "boutique@exemple.fr" && m.subject.includes(order.reference)));
+check("l'envoi est noté dans l'historique de la commande", (await one("select count(*)::int n from order_events where order_id = $1 and type = 'email'", [order.id])).n === 1);
+
 // 4. Mesure d'audience
 const sid = "e2e-" + Date.now();
 await fetch(base + "/api/suivi", { method: "POST", headers: { "content-type": "application/json", "user-agent": "Mozilla/5.0 Test" }, body: JSON.stringify({ type: "product_view", sid, path: "/produits/cri", source: "instagram", device: "mobile" }) });
@@ -90,6 +103,9 @@ await act(async () => {}, "Je prépare ce colis");
 check("préparer → en préparation", (await status()).status === "preparing");
 await act(async () => { await page.locator('input[name="tracking"]:visible').fill("6A99999999999"); }, "Marquer expédiée");
 check("expédier avec suivi → expédiée", (await status()).status === "shipped" && (await status()).tracking_number === "6A99999999999");
+mails = await sent();
+const parti = mails.filter((m) => m.to === "test.e2e@exemple.fr" && m.subject.includes("est partie"));
+check("avis d'expédition envoyé, avec le numéro et le lien de suivi", parti.length === 1 && parti[0].html.includes("6A99999999999") && parti[0].html.includes("laposte.fr"));
 await page.goto(fiche2);
 check("pas de bouton « Annuler » sur une commande partie", (await page.locator('summary:has-text("Annuler la commande")').count()) === 0);
 const openRefund = async (amount, restock = false) => { await page.locator('summary:has-text("Consigner un remboursement")').click(); if (amount) await page.locator('input[name="amount"]').fill(amount); if (restock) await page.locator('input[name="restock"]').check(); };
@@ -100,6 +116,8 @@ check("rembourser plus que payé : refusé", (await status()).refund_cents === 1
 await act(() => openRefund(null, true), "Consigner le remboursement");
 const st = await status();
 check("remboursement du reste, stock remis → remboursée", st.status === "refunded" && st.refund_cents === 11907 && st.stock_returned);
+mails = await sent();
+check("avis de remboursement envoyé pour chaque remboursement consigné", mails.filter((m) => m.to === "test.e2e@exemple.fr" && m.subject.startsWith("Remboursement")).length === 2 && mails.some((m) => m.subject.includes("19,07")));
 check("le stock est revenu à sa valeur de départ", (await one("select stock from variants where sku = 'SCULT-CRI-690-FP'")).stock === stock0);
 
 // Annulation d'une commande en attente, avec retour en stock
@@ -150,6 +168,67 @@ await page.fill('input[name="value"]', "15");
 await Promise.all([page.waitForURL(/erreur=/), page.click('button:has-text("Créer le code")')]);
 check("code promo en double : refusé", (await one("select count(*)::int n from promo_codes where code = $1", [code])).n === 1);
 
+// Sendcloud : étiquette, PDF, annulation, suivi automatique
+const ref2 = "cs_test_e2e_sc_" + Date.now();
+const payload2 = JSON.stringify({ id: "evt_e2e_sc_" + Date.now(), object: "event", type: "checkout.session.completed", data: { object: { ...session, id: ref2, metadata: { lines: JSON.stringify([{ sku: "SCULT-CRI-690-FP", quantity: 1 }]), shippingCents: "590", promoCode: "" }, customer_details: { ...session.customer_details, email: "colis.e2e@exemple.fr", address: { ...session.customer_details.address, line1: "12 bis rue des Lilas" } } } } });
+await fetch(base + "/api/stripe/webhook", { method: "POST", body: payload2, headers: { "stripe-signature": Stripe.webhooks.generateTestHeaderString({ payload: payload2, secret: env.STRIPE_WEBHOOK_SECRET }), "content-type": "application/json" } });
+const o2 = await one("select id, reference from orders where external_ref = $1", [ref2]);
+const row2 = async () => one("select status, sendcloud_parcel_id, tracking_number, tracking_url, sendcloud_status from orders where id = $1", [o2.id]);
+const fiche3 = `${base}/admin/commandes/${o2.id}`;
+await page.goto(fiche3);
+const choices = await page.locator('select[name="option"]:visible option').allTextContents();
+check("modes d'envoi : à domicile seulement, le moins cher d'abord, avec le prix", choices.length === 2 && choices[0].startsWith("Colissimo Domicile") && choices[0].includes("6,50") && !choices.join().includes("Relais"), choices.join(" | "));
+check("poids proposé d'après les articles (780 g + 150 g d'emballage)", (await page.locator('input[name="weight"]:visible').inputValue()) === "0,93");
+const makeLabel = async () => { await page.goto(fiche3); await Promise.all([page.waitForURL(/ok=/), page.locator('button:has-text("Créer l\'étiquette"):visible').first().click()]); };
+await makeLabel();
+let r2 = await row2();
+check("étiquette créée : colis noté, suivi reçu, commande en préparation", Boolean(r2.sendcloud_parcel_id) && /^6A/.test(r2.tracking_number ?? "") && r2.status === "preparing", JSON.stringify(r2));
+const shipped = (await (await fetch(MOCK + "/_shipments")).json()).at(-1);
+check("envoyée à Sendcloud avec la marque et l'adresse de SCULT", shipped.brand_id === 111 && shipped.from_address.sender_address_id === 222 && shipped.order_number === o2.reference);
+check("adresse découpée : numéro « 12 bis », voie « rue des Lilas »", shipped.to_address.house_number === "12 bis" && shipped.to_address.address_line_1 === "rue des Lilas" && shipped.to_address.email === "colis.e2e@exemple.fr");
+check("mode d'envoi et poids transmis", shipped.ship_with.properties.shipping_option_code === "colissimo:home" && shipped.ship_with.properties.contract_id === 4242 && shipped.parcels[0].weight.value === "0.930");
+const pdf = await page.request.get(`${base}/admin/etiquette/${o2.id}`);
+check("le PDF de l'étiquette s'ouvre (après l'attente du premier essai)", pdf.status() === 200 && pdf.headers()["content-type"] === "application/pdf" && (await pdf.body()).subarray(0, 4).toString() === "%PDF");
+check("le PDF est fermé sans session", (await fetch(`${base}/admin/etiquette/${o2.id}`)).status === 401);
+await page.goto(fiche3);
+await page.locator('summary:has-text("Annuler cette étiquette"):visible').first().click();
+await Promise.all([page.waitForURL(/ok=/), page.locator('button:has-text("Annuler l\'étiquette chez Sendcloud"):visible').first().click()]);
+check("étiquette annulée : la commande n'en a plus", (await row2()).sendcloud_parcel_id === null);
+await makeLabel();
+r2 = await row2();
+check("une nouvelle étiquette se crée après l'annulation", Boolean(r2.sendcloud_parcel_id));
+const signal = async (statusId, message, secret = env.SENDCLOUD_WEBHOOK_SECRET) => {
+  const raw = JSON.stringify({ action: "parcel_status_changed", timestamp: Date.now(), parcel: { id: Number(r2.sendcloud_parcel_id), tracking_number: r2.tracking_number, tracking_url: "https://suivi.exemple/x", status: { id: statusId, message }, carrier: { code: "colissimo", name: "Colissimo" } } });
+  return (await fetch(base + "/api/webhooks/sendcloud", { method: "POST", body: raw, headers: { "sendcloud-signature": createHmac("sha256", secret).update(raw).digest("hex"), "content-type": "application/json" } })).status;
+};
+check("signal de suivi mal signé : refusé", (await signal(3, "En route", "mauvais-secret")) === 401);
+check("signal « prêt à envoyer » : accepté, rien ne change", (await signal(1000, "Prêt à envoyer")) === 200 && (await row2()).status === "preparing");
+check("signal « en route » : commande expédiée", (await signal(3, "En route vers le centre de tri")) === 200 && (await row2()).status === "shipped" && (await row2()).sendcloud_status === "En route vers le centre de tri");
+await signal(3, "En route vers le centre de tri");
+mails = await sent();
+const avis = mails.filter((m) => m.to === "colis.e2e@exemple.fr" && m.subject.includes("est partie"));
+check("avis d'expédition envoyé une seule fois, avec le lien de suivi de Sendcloud", avis.length === 1 && avis[0].html.includes("https://suivi.exemple/"), `${avis.length} e-mail(s)`);
+check("signal « livré » : commande livrée", (await signal(11, "Livré")) === 200 && (await row2()).status === "delivered");
+check("un signal en retard ne fait pas reculer la commande", (await signal(3, "En route")) === 200 && (await row2()).status === "delivered");
+check("rattrapage du suivi : fermé sans clé, ouvert avec", (await fetch(base + "/api/cron/suivi-colis")).status === 401 && (await fetch(base + "/api/cron/suivi-colis", { headers: { authorization: `Bearer ${env.CRON_SECRET}` } })).status === 200);
+
+// Code promo sur la page de commande : la raison du refus, puis la remise
+const shop = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
+await shop.goto(base + "/produits/cri?intro=0");
+await shop.locator('button:has-text("Ajouter"):visible').first().click();
+await shop.waitForTimeout(1200);
+await shop.goto(base + "/checkout");
+await shop.fill("#code-promo", "NEXISTEPAS");
+await shop.click('button:has-text("Appliquer")');
+await shop.waitForFunction(() => document.querySelector("#code-promo-etat")?.textContent?.trim().length > 0);
+check("code inconnu : le client lit pourquoi", (await shop.textContent("#code-promo-etat")).includes("n'existe pas"));
+await shop.fill("#code-promo", "bouffon10");
+await shop.click('button:has-text("Appliquer")');
+await shop.waitForFunction(() => document.querySelector("#code-promo-etat")?.textContent?.includes("appliqué"));
+const totals = await shop.textContent("dl");
+check("code valable : remise affichée et total recalculé (49 − 4,90 + 5,90 = 50 €)", totals.includes("BOUFFON10") && totals.includes("4,90") && /Total\s*50\s?€/.test(totals.replace(/\u00a0/g, " ")), totals.replace(/\s+/g, " ").slice(0, 160));
+await shop.close();
+
 // Déconnexion : l'accès se referme
 await page.goto(base + "/admin");
 await Promise.all([page.waitForURL(/connexion/), page.click('button:has-text("Se déconnecter")')]);
@@ -178,6 +257,9 @@ await db.query("delete from login_attempts where key in ('email:intrus@exemple.f
 await browser.close();
 // Nettoyage des traces de test
 await db.query("delete from orders where external_ref = $1", [ref]);
+await db.query("delete from orders where external_ref = $1", [ref2]);
+await db.query("delete from customers where email = 'colis.e2e@exemple.fr'");
+await db.query("update variants set stock = stock + 1 where sku = 'SCULT-CRI-690-FP'"); // le pot de la commande de test Sendcloud
 await db.query("delete from customers where email = 'test.e2e@exemple.fr'");
 await db.query("delete from promo_codes where code = $1", [code]);
 await db.query("delete from events where session_id like 'e2e-%'");

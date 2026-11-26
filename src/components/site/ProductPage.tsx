@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { PurchaseOptions } from "@/components/cart/PurchaseOptions";
 import { AddToCart } from "@/components/cart/AddToCart";
@@ -13,6 +14,7 @@ import { FAQ_ITEMS } from "@/lib/content/faq";
 import { PRODUCT_INFO } from "@/lib/content/product-info";
 import type { FlavourOffer, Product } from "@/lib/catalog/queries";
 import type { FlavourId } from "@/lib/content/flavours";
+import { pricePerKg } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
 const answer = (q: string) => FAQ_ITEMS.find((i) => i.question === q)?.answer ?? "";
@@ -36,7 +38,11 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
         {offer ? <FlavourGallery fallback={product.images} /> : <ProductGallery images={product.images} />}
         <div id="commander" className="scroll-mt-28 md:sticky md:top-28 md:self-start">
           <p className="label text-discret">{product.categorySlug === "packs" ? "Pack" : "Poudre"} · <FlavourSku skus={skus} fallback={product.variant.sku} /></p>
-          <h1 className="display mt-4 text-[clamp(2.6rem,6vw,5rem)]">{product.name}</h1>
+          {/* Le nom, et ce que c'est : les deux dans le titre de la page, pour les lecteurs comme pour les moteurs */}
+          <h1 className="mt-4">
+            <span className="display block text-[clamp(2.6rem,6vw,5rem)]">{product.name}</span>
+            {info?.label && <span className="display mt-2 block text-[clamp(1.1rem,2.2vw,1.6rem)] text-doux">{info.label}</span>}
+          </h1>
           <p className="mt-6 flex items-baseline gap-3">
             <span className="text-2xl tabular-nums">{formatPrice(product.priceCents)}</span>
             {product.compareAtCents && product.compareAtCents > product.priceCents && (
@@ -46,6 +52,9 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
               </>
             )}
           </p>
+          {info && product.categorySlug !== "packs" && (
+            <p className="mt-2 text-sm text-discret tabular-nums">Soit {formatPrice(Math.round(pricePerKg(product.priceCents, info.netGrams) * 100))} le kilo · {formatPrice(Math.round(product.priceCents / info.servings))} la dose · pot de {info.netGrams} g, {info.servings} doses</p>
+          )}
           <p className="mt-6 max-w-md leading-relaxed text-doux">{product.description}</p>
           {info?.caffeineWarning && (
             <p className="mt-6 rounded-chip border border-rose px-4 py-3 text-sm">{info.caffeineWarning}</p>
@@ -102,6 +111,9 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
                     </div>
                   )}
                   {hasNrv && <p className="mt-2 text-sm">*VNR : valeurs nutritionnelles de référence. — : pas de valeur de référence établie.</p>}
+                  {product.slug === "cri" && (
+                    <p className="mt-4 text-sm">Chaque ingrédient a sa fiche : <Link href="/ingredients/citrulline" className="underline underline-offset-4 hover:text-rose">citrulline</Link>, <Link href="/ingredients/beta-alanine" className="underline underline-offset-4 hover:text-rose">bêta-alanine</Link>, <Link href="/ingredients/creatine" className="underline underline-offset-4 hover:text-rose">créatine</Link>, <Link href="/ingredients/cafeine" className="underline underline-offset-4 hover:text-rose">caféine</Link>, <Link href="/ingredients/l-theanine" className="underline underline-offset-4 hover:text-rose">L-théanine</Link>. Et le <Link href="/guide/pre-workout" className="underline underline-offset-4 hover:text-rose">guide du pré-workout</Link> explique comment lire l&apos;étiquette.</p>
+                  )}
                 </div>
               </details>
             )}

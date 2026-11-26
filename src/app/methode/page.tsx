@@ -74,7 +74,7 @@ export default function MethodePage() {
 
         <section className="border-b">
           <Container className="grid gap-10 py-20 md:grid-cols-2 md:gap-16 md:py-28">
-            <Picture name="pot-blanc-ouvert" alt="Le pot SCULT ouvert, opercule en place, couvercle posé à côté" sizes="(min-width: 768px) 28rem, 100vw" className="mx-auto block h-auto w-full max-w-[28rem] rounded-card border" />
+            <Picture name="pre-workout-scult-cri-ouvert" alt="Le pot SCULT ouvert, opercule en place, couvercle posé à côté" sizes="(min-width: 768px) 28rem, 100vw" className="mx-auto block h-auto w-full max-w-[28rem] rounded-card border" />
             <div className="md:py-10">
               <p className="label text-discret">Transparence</p>
               <h2 className="display mt-4 text-[clamp(2rem,5vw,4rem)]">Le tableau au dos. Le lot sur le pot.</h2>

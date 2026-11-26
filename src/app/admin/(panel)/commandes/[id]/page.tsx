@@ -1,28 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { orderAction } from "../../../actions";
+import { labelAction, orderAction } from "../../../actions";
 import { BTN_DANGER, BTN_DARK, BTN_GHOST, BTN_PRIMARY, Card, Field, Flash, INPUT, Icon, PageHeader, STATE, StatusBadge, TABLE, TD, TH, TableWrap, Tag } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/admin/auth";
-import { ago, centsInput, country, dateLong, dateTime, eur, pct } from "@/lib/admin/format";
-import { getOrder } from "@/lib/store/orders";
+import { ago, centsInput, country, dateLong, dateTime, eur, num, pct } from "@/lib/admin/format";
+import { emailReady } from "@/lib/notify/email";
+import { CARRIERS, trackingUrl } from "@/lib/notify/tracking";
+import { sendcloudReady, shippingOptions, type ShippingOption } from "@/lib/sendcloud";
+import { getOrder, parcelWeightKg } from "@/lib/store/orders";
 import { getSettings } from "@/lib/store/settings";
 
 export const metadata: Metadata = { title: "Commande" };
 
-const CARRIERS = ["Colissimo", "Chronopost", "Mondial Relay", "DHL", "UPS", "Autre"];
-/** Le lien de suivi public, pour les transporteurs dont l'adresse est stable. */
-function trackingUrl(carrier: string | null, number: string | null): string | null {
-  if (!number) return null;
-  const n = encodeURIComponent(number);
-  if (carrier === "Colissimo") return `https://www.laposte.fr/outils/suivre-vos-envois?code=${n}`;
-  if (carrier === "Chronopost") return `https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLT=${n}`;
-  return null;
-}
-
 const EVENT: Record<string, string> = {
   paid: "Payée", preparing: "Passée en préparation", shipped: "Expédiée", delivered: "Livrée", cancelled: "Annulée", refunded: "Remboursée",
-  partial_refund: "Remboursement partiel", note: "Note", tracking: "Suivi modifié",
+  partial_refund: "Remboursement partiel", note: "Note", tracking: "Suivi modifié", email: "E-mail", email_failed: "E-mail non envoyé", label: "Étiquette créée", label_cancelled: "Étiquette annulée",
 };
 
 function Hidden({ id, intent }: { id: string; intent: string }) {
@@ -54,13 +47,62 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const margin = o.cost_cents === null ? null : net - o.cost_cents;
   const refundable = o.total_cents - o.refund_cents;
   const canRefund = ["paid", "preparing", "shipped", "delivered"].includes(o.status) && refundable > 0;
-  const url = trackingUrl(o.tracking_carrier, o.tracking_number);
+  const url = o.tracking_url || trackingUrl(o.tracking_carrier, o.tracking_number);
+  // Sendcloud : sur une commande à préparer et sans étiquette, on demande les modes d'envoi possibles pour ce colis.
+  const sendcloud = sendcloudReady();
+  const canLabel = sendcloud && waiting && !o.sendcloud_parcel_id;
+  const weight = canLabel ? (await parcelWeightKg(o.id)) ?? 1 : 0;
+  let options: ShippingOption[] = [];
+  let optionsError: string | null = null;
+  if (canLabel) {
+    try { options = await shippingOptions(o.country_code, weight); } catch (e) { optionsError = e instanceof Error ? e.message : "Sendcloud ne répond pas."; }
+  }
   const units = lines.reduce((s, l) => s + l.units, 0);
+  const mails = emailReady();
 
 
   // L'étape suivante, selon le statut. Rendue deux fois : en tête sur téléphone, dans la colonne de droite sur grand écran.
   const next = (
     <>
+          {/* L'étiquette Sendcloud : la créer, l'imprimer, suivre le colis */}
+          {canLabel && (
+            <Card title="Étiquette Sendcloud" hint="Créée sur le compte Peptide Partners, à la marque et à l'adresse de SCULT.">
+              {optionsError ? (
+                <p className="flex items-start gap-2 text-[0.85rem]"><Icon name="alert" size={14} className="mt-0.5 shrink-0" style={{ color: STATE.critical }} /><span>{optionsError}</span></p>
+              ) : options.length === 0 ? (
+                <p className="text-[0.85rem] text-doux">Aucun mode d&apos;envoi à domicile n&apos;est disponible vers {country(o.country_code)} sur ce compte Sendcloud.</p>
+              ) : (
+                <form action={labelAction} className="space-y-3">
+                  <input type="hidden" name="id" value={o.id} /><input type="hidden" name="intent" value="create" />
+                  <Field label="Mode d'envoi" hint="Du moins cher au plus cher, tarif hors taxes pour le poids proposé.">
+                    <select name="option" className={INPUT}>
+                      {options.map((opt) => <option key={`${opt.code}|${opt.contractId}`} value={`${opt.code}|${opt.contractId ?? ""}`}>{opt.name}{opt.priceEur !== null ? ` · ${num(opt.priceEur, 2)} €` : ""}{opt.signature ? " · contre signature" : ""}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="Poids du colis (kg)" hint="Proposé d'après les articles, emballage compris. Corrigez-le si besoin."><input name="weight" inputMode="decimal" required defaultValue={String(weight).replace(".", ",")} className={INPUT} /></Field>
+                  <button type="submit" className={`${BTN_PRIMARY} h-11 w-full`}>Créer l&apos;étiquette</button>
+                  <p className="text-[0.76rem] text-discret">Une étiquette créée est facturée par Sendcloud : elle s&apos;annule tant que le colis n&apos;est pas remis au transporteur.</p>
+                </form>
+              )}
+            </Card>
+          )}
+          {o.sendcloud_parcel_id && (
+            <Card title="Étiquette Sendcloud" hint={o.label_created_at ? `Créée le ${dateTime(o.label_created_at)}` : undefined}>
+              <p className="text-[0.9rem]">{o.tracking_carrier ?? "Colis"}{o.tracking_number && <> · <span className="font-mono text-[0.85rem]">{o.tracking_number}</span></>}</p>
+              {o.sendcloud_status && <p className="mt-1 text-[0.82rem] text-doux">Dernier état : {o.sendcloud_status}</p>}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a href={`/admin/etiquette/${o.id}`} target="_blank" rel="noopener noreferrer" className={BTN_DARK}>Imprimer l&apos;étiquette</a>
+                {sendcloud && <form action={labelAction}><input type="hidden" name="id" value={o.id} /><input type="hidden" name="intent" value="sync" /><button type="submit" className={BTN_GHOST}>Actualiser le suivi</button></form>}
+              </div>
+              {waiting && <p className="mt-3 text-[0.76rem] text-discret">La commande passe à « expédiée » toute seule quand le transporteur prend le colis, et le client reçoit alors son numéro de suivi.</p>}
+              {waiting && sendcloud && (
+                <details className="mt-4 border-t pt-4">
+                  <summary className="cursor-pointer text-[0.85rem] text-doux hover:text-texte">Annuler cette étiquette</summary>
+                  <form action={labelAction} className="mt-3"><input type="hidden" name="id" value={o.id} /><input type="hidden" name="intent" value="cancel" /><button type="submit" className={`${BTN_DANGER} w-full`}>Annuler l&apos;étiquette chez Sendcloud</button></form>
+                </details>
+              )}
+            </Card>
+          )}
           {o.status === "paid" && (
             <Card title="Étape suivante">
               <form action={orderAction}><Hidden id={o.id} intent="prepare" /><button type="submit" className={`${BTN_PRIMARY} h-11 w-full`}>Je prépare ce colis</button></form>
@@ -71,7 +113,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             </Card>
           )}
           {o.status === "preparing" && (
-            <Card title="Étape suivante" hint="Collez le numéro de suivi de l'étiquette.">
+            <Card title={o.sendcloud_parcel_id ? "Ou marquer expédiée à la main" : "Étape suivante"} hint={o.sendcloud_parcel_id ? "Si le transporteur tarde à signaler le départ." : mails ? "Collez le numéro de suivi : le client le reçoit par e-mail." : "Collez le numéro de suivi de l'étiquette."}>
               <form action={orderAction} className="space-y-3"><Hidden id={o.id} intent="ship" /><TrackingFields carrier={o.tracking_carrier} number={o.tracking_number} /><button type="submit" className={`${BTN_PRIMARY} h-11 w-full`}>Marquer expédiée</button></form>
             </Card>
           )}
@@ -82,7 +124,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
               {o.status === "shipped" && <form action={orderAction} className="mt-4"><Hidden id={o.id} intent="deliver" /><button type="submit" className={`${BTN_PRIMARY} w-full`}>Marquer livrée</button></form>}
               <details className="mt-4 border-t pt-4">
                 <summary className="cursor-pointer text-[0.85rem] text-doux hover:text-texte">Corriger le suivi</summary>
-                <form action={orderAction} className="mt-4 space-y-3"><Hidden id={o.id} intent="tracking" /><TrackingFields carrier={o.tracking_carrier} number={o.tracking_number} /><button type="submit" className={`${BTN_GHOST} w-full`}>Enregistrer le suivi</button></form>
+                <form action={orderAction} className="mt-4 space-y-3"><Hidden id={o.id} intent="tracking" /><TrackingFields carrier={o.tracking_carrier} number={o.tracking_number} /><label className="flex items-start gap-2.5 text-[0.875rem]"><input type="checkbox" name="notify" defaultChecked className="mt-1 accent-[#ff2e93]" /><span>Renvoyer l&apos;avis d&apos;expédition au client</span></label><button type="submit" className={`${BTN_GHOST} w-full`}>Enregistrer le suivi</button></form>
               </details>
             </Card>
           )}
@@ -155,6 +197,11 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
                 {o.customer_id && <> <Link href={`/admin/clients/${o.customer_id}`} className="underline underline-offset-2 hover:text-texte">Voir sa fiche</Link></>}
               </p>
             )}
+            <div className="mt-4 flex flex-wrap gap-2 border-t pt-4">
+              <form action={orderAction}><Hidden id={o.id} intent="email-confirmation" /><button type="submit" disabled={!mails} className={`${BTN_GHOST} !h-9 !px-3.5 !text-[0.78rem]`}>Renvoyer la confirmation</button></form>
+              {(o.status === "shipped" || o.status === "delivered") && <form action={orderAction}><Hidden id={o.id} intent="email-shipped" /><button type="submit" disabled={!mails} className={`${BTN_GHOST} !h-9 !px-3.5 !text-[0.78rem]`}>Renvoyer l&apos;avis d&apos;expédition</button></form>}
+              {!mails && <p className="w-full text-[0.76rem] text-discret">Les e-mails ne sont pas encore branchés : rien ne part pour l&apos;instant (voir Réglages).</p>}
+            </div>
             <address className="mt-4 border-t pt-4 text-[0.875rem] not-italic leading-relaxed">
               <span className="mb-1 block text-[0.76rem] text-discret">Adresse de livraison</span>
               {o.name}<br />{o.address_line1}{o.address_line2 && <><br />{o.address_line2}</>}<br />{o.postal_code} {o.city}<br />{country(o.country_code)}
@@ -174,6 +221,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
                     <Hidden id={o.id} intent="cancel" />
                     <Field label="Raison (facultatif)"><input name="reason" placeholder="Demande du client, doublon" className={INPUT} /></Field>
                     <label className="flex items-start gap-2.5 text-[0.875rem]"><input type="checkbox" name="restock" defaultChecked className="mt-1 accent-[#ff2e93]" /><span>Remettre les {units} pot{units > 1 ? "s" : ""} en stock</span></label>
+                    <label className="flex items-start gap-2.5 text-[0.875rem]"><input type="checkbox" name="notify" defaultChecked className="mt-1 accent-[#ff2e93]" /><span>Prévenir le client par e-mail</span></label>
                     <p className="flex items-start gap-2 text-[0.8rem] text-doux"><Icon name="alert" size={14} className="mt-0.5 shrink-0" style={{ color: STATE.serious }} />L&apos;annulation ne rembourse pas le client : le remboursement se fait dans Stripe.</p>
                     <button type="submit" className={`${BTN_DANGER} w-full`}>Confirmer l&apos;annulation</button>
                   </form>
@@ -187,6 +235,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
                     <Field label="Montant remboursé (€)" hint={`Jusqu'à ${eur(refundable)}. Le montant entier passe la commande en « Remboursée ».`}><input name="amount" inputMode="decimal" defaultValue={centsInput(refundable)} className={INPUT} /></Field>
                     <Field label="Raison (facultatif)"><input name="reason" placeholder="Colis abîmé, retour" className={INPUT} /></Field>
                     <label className="flex items-start gap-2.5 text-[0.875rem]"><input type="checkbox" name="restock" className="mt-1 accent-[#ff2e93]" /><span>Remettre les pots en stock (retour reçu, pot scellé)</span></label>
+                    <label className="flex items-start gap-2.5 text-[0.875rem]"><input type="checkbox" name="notify" defaultChecked className="mt-1 accent-[#ff2e93]" /><span>Prévenir le client par e-mail (à cocher une fois le remboursement fait dans Stripe)</span></label>
                     <p className="flex items-start gap-2 text-[0.8rem] text-doux"><Icon name="alert" size={14} className="mt-0.5 shrink-0" style={{ color: STATE.serious }} />Cet écran consigne le remboursement pour que les chiffres restent justes. L&apos;argent, lui, se rend dans Stripe.</p>
                     <button type="submit" className={`${BTN_DARK} w-full`}>Consigner le remboursement</button>
                   </form>

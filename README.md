@@ -25,13 +25,24 @@ Dans `.env.local` (pas `.env`, que le déploiement Vercel embarque) : `DATABASE_
 
 En ligne (Neon) : mettre l'adresse « pooled » dans `DATABASE_URL`, puis `npm run db:migrate`, `npm run db:seed -- --stock=<pots en stock>` (jamais `--demo`), `npm run db:admin`. Le prix de revient se renseigne ensuite dans Produits : sans lui, pas de marge.
 
+## Référencement
+
+Tout est dans `src/lib/seo.ts` (données structurées, droit d'être indexé), `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/feeds/google.xml/` (flux Merchant Center) et `src/lib/content/guides.ts` (guide et fiches d'ingrédients). À la mise en ligne sur le vrai domaine :
+
+1. `SITE_INDEXABLE=1` et `NEXT_PUBLIC_SITE_URL=https://scult.eu` (sans ça, le site reste hors des moteurs).
+2. Search Console et Bing Webmaster Tools : vérifier la propriété (`GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`), soumettre `/sitemap.xml`.
+3. `npm run seo:indexnow -- https://scult.eu` : envoie toutes les adresses à Bing et aux moteurs IndexNow.
+4. Merchant Center : déclarer le flux `/feeds/google.xml` (après vérification de la formule, voir ASSUMPTIONS.md [76]).
+
 ## Vérifier
 
 ```bash
 bash scripts/gate.sh            # allégations interdites (règlement 1924/2006)
 npx tsc --noEmit
 PP_MOCK=1 npm run build
-npm run test:admin              # 36 contrôles de bout en bout du backend et de l'admin (base locale, site lancé sur le port 3010)
+npm run mock:services           # faux Resend et faux Sendcloud, à laisser tourner pour les tests
+npm run test:admin              # 61 contrôles de bout en bout : commandes, stock, e-mails, étiquettes, admin (base locale, site sur le port 3010)
+npm run test:seo -- http://localhost:3010   # 30 contrôles de ce qu'un moteur lit (site lancé avec SITE_INDEXABLE=1)
 ```
 
 ## Structure
@@ -43,6 +54,9 @@ src/components/admin/    ses briques : habillage, tuiles, tableaux, pastilles, g
 src/lib/db.ts            l'accès à la base (Postgres)
 src/lib/store/           le métier : catalogue, commandes et stock, clients, codes promo, chiffres, mesure d'audience
 src/lib/admin/           session et formats de l'admin
+src/lib/notify/          e-mails aux clients (Resend) et liens de suivi
+src/lib/sendcloud.ts     étiquettes et suivi des colis (compte Peptide Partners, comme PTM)
+src/lib/seo.ts           référencement : données structurées, indexation, IndexNow
 db/schema.sql            les tables ; scripts/db/ : base locale, migration, remplissage, comptes
 src/lib/pp/client.ts     la porte d'entrée des données pour le site : la base si elle est configurée, sinon le catalogue de test ou le socle
 src/lib/catalog/         forme des produits pour les pages

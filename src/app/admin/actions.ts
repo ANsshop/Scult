@@ -6,9 +6,13 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { LOGIN_PATH, adminReady, changePassword, login, logout, requireAdmin } from "@/lib/admin/auth";
 import { fromInputDateTime, toCents } from "@/lib/admin/format";
+import { submitIndexNow } from "@/lib/indexnow";
+import { sendOrderEmail } from "@/lib/notify/orders";
 import { CATALOGUE_TAG } from "@/lib/store/catalogue";
 import { saveCustomerNote } from "@/lib/store/customers";
-import { advanceOrder, cancelOrder, noteOrder, refundOrder, setTracking, type ActionResult } from "@/lib/store/orders";
+import { cancelParcel, createLabel, isCancelled, readParcel, sendcloudProblem } from "@/lib/sendcloud";
+import { advanceOrder, attachLabel, cancelOrder, clearLabel, getOrder, noteOrder, refundOrder, setTracking, type ActionResult } from "@/lib/store/orders";
+import { applyTracking } from "@/lib/store/shipping";
 import { adjustStock, saveProduct, saveVariant } from "@/lib/store/products";
 import { removePromo, savePromo } from "@/lib/store/promos";
 import { saveSettings } from "@/lib/store/settings";
@@ -63,28 +67,111 @@ export async function orderAction(form: FormData) {
   const page = `/admin/commandes/${id.data}`;
   const intent = str(form, "intent");
   const tracking = { carrier: str(form, "carrier") || null, number: str(form, "tracking") || null };
+  const notify = form.get("notify") === "on";
   let result: ActionResult;
   let done = "";
+  // L'e-mail à envoyer au client une fois l'action réussie, s'il y en a un.
+  let mail: Parameters<typeof sendOrderEmail>[1] | null = null;
+  let refundCents: number | undefined;
   switch (intent) {
     case "prepare": result = await advanceOrder(id.data, "preparing", admin.name); done = "Commande passée en préparation."; break;
-    case "ship": result = await advanceOrder(id.data, "shipped", admin.name, tracking); done = tracking.number ? "Commande expédiée, suivi enregistré." : "Commande expédiée (sans numéro de suivi)."; break;
+    case "ship": result = await advanceOrder(id.data, "shipped", admin.name, tracking); done = tracking.number ? "Commande expédiée, suivi enregistré." : "Commande expédiée (sans numéro de suivi)."; mail = "shipped"; break;
     case "deliver": result = await advanceOrder(id.data, "delivered", admin.name); done = "Commande marquée livrée."; break;
-    case "tracking": result = await setTracking(id.data, admin.name, tracking); done = "Suivi mis à jour."; break;
-    case "cancel": result = await cancelOrder(id.data, admin.name, { restock: form.get("restock") === "on", reason: str(form, "reason") || null }); done = "Commande annulée."; break;
+    case "tracking": result = await setTracking(id.data, admin.name, tracking); done = "Suivi mis à jour."; if (notify) mail = "shipped"; break;
+    case "cancel": result = await cancelOrder(id.data, admin.name, { restock: form.get("restock") === "on", reason: str(form, "reason") || null }); done = "Commande annulée."; if (notify) mail = "cancelled"; break;
     case "refund": {
       const amount = toCents(str(form, "amount"));
       if (amount === null) back(page, { erreur: "Montant à rembourser invalide." });
       result = await refundOrder(id.data, admin.name, { amountCents: amount, restock: form.get("restock") === "on", reason: str(form, "reason") || null });
       done = "Remboursement consigné. Pensez à le faire dans Stripe : cet écran ne déplace pas d'argent.";
+      refundCents = amount;
+      if (notify) mail = "refunded";
       break;
     }
     case "note": result = await noteOrder(id.data, admin.name, str(form, "note")); done = "Note enregistrée."; break;
+    // Renvoyer un e-mail déjà parti (client qui ne l'a pas reçu, adresse corrigée)
+    case "email-confirmation": result = { ok: true }; mail = "confirmation"; break;
+    case "email-shipped": result = { ok: true }; mail = "shipped"; break;
     default: result = { ok: false, error: "Action inconnue." };
   }
   if (!result.ok) back(page, { erreur: result.error });
+  if (mail) {
+    const sent = await sendOrderEmail(id.data, mail, { actor: admin.name, refundCents });
+    done = `${done} ${sent.message}.`.trim();
+    // Un renvoi qui échoue est une erreur ; ailleurs, l'action a réussi et on signale seulement l'e-mail.
+    if (!sent.ok && intent.startsWith("email-")) { refresh(); back(page, { erreur: `${sent.message}.` }); }
+  }
   // Annuler ou rembourser peut remettre du stock en rayon : le site doit le voir.
   refresh(intent === "cancel" || intent === "refund");
   back(str(form, "retour") === "liste" ? "/admin/commandes" : page, { ok: done });
+}
+
+// — Étiquettes Sendcloud —
+
+export async function labelAction(form: FormData) {
+  const admin = await requireAdmin();
+  const id = uuid.safeParse(str(form, "id"));
+  if (!id.success) back("/admin/commandes", { erreur: "Commande introuvable." });
+  const page = `/admin/commandes/${id.data}`;
+  const intent = str(form, "intent");
+  const data = await getOrder(id.data);
+  if (!data) back("/admin/commandes", { erreur: "Commande introuvable." });
+  const { order, lines } = data;
+  const problem = sendcloudProblem();
+  if (problem) back(page, { erreur: `Sendcloud n'est pas branché : ${problem}.` });
+
+  if (intent === "create") {
+    if (order.status !== "paid" && order.status !== "preparing") back(page, { erreur: "L'étiquette se crée sur une commande à préparer." });
+    if (order.sendcloud_parcel_id) back(page, { erreur: "Cette commande a déjà une étiquette." });
+    const weight = Number(str(form, "weight").replace(",", "."));
+    if (!Number.isFinite(weight) || weight <= 0 || weight > 30) back(page, { erreur: "Poids du colis invalide (en kilos, 30 au plus)." });
+    // « code|contrat » : le mode d'envoi choisi dans la liste donnée par Sendcloud.
+    const [optionCode, contract] = str(form, "option").split("|");
+    if (!optionCode) back(page, { erreur: "Choisissez un mode d'envoi." });
+    let label;
+    try {
+      label = await createLabel({
+        reference: order.reference, name: order.name || order.email, email: order.email, line1: order.address_line1, line2: order.address_line2, postalCode: order.postal_code,
+        city: order.city, countryCode: order.country_code, totalCents: order.total_cents, weightKg: weight, optionCode, contractId: Number(contract) || null,
+        items: lines.map((l) => ({ name: l.name, sku: l.sku, quantity: l.quantity, unitCents: l.unit_price_cents })),
+      });
+    } catch (e) {
+      back(page, { erreur: e instanceof Error ? e.message : "Sendcloud a refusé l'étiquette." });
+    }
+    const saved = await attachLabel(id.data, admin.name, label);
+    // L'étiquette existe chez Sendcloud mais n'a pas pu être notée ici : on le dit avec son numéro, pour ne pas en créer une seconde.
+    if (!saved.ok) back(page, { erreur: `${saved.error} Le colis ${label.parcelId} a pourtant été créé chez Sendcloud : annulez-le là-bas.` });
+    refresh();
+    back(page, { ok: `Étiquette créée${label.trackingNumber ? ` · suivi ${label.trackingNumber}` : ""}. Imprimez-la, collez-la : la commande passera à « expédiée » toute seule quand le transporteur prendra le colis.` });
+  }
+
+  const parcelId = Number(order.sendcloud_parcel_id);
+  if (!parcelId) back(page, { erreur: "Cette commande n'a pas d'étiquette." });
+
+  if (intent === "sync") {
+    try {
+      const result = await applyTracking(parcelId, await readParcel(parcelId));
+      refresh();
+      back(page, { ok: result?.became === "shipped" ? "Le colis est parti : commande expédiée, client prévenu." : result?.became === "delivered" ? "Le colis est livré." : "Suivi à jour : rien de nouveau chez le transporteur." });
+    } catch (e) {
+      if (e instanceof Error && "digest" in e) throw e; // la redirection de `back`
+      back(page, { erreur: e instanceof Error ? e.message : "Sendcloud ne répond pas." });
+    }
+  }
+
+  if (intent === "cancel") {
+    try {
+      const state = await readParcel(parcelId);
+      if (!isCancelled(state.statusCode)) await cancelParcel(parcelId);
+    } catch (e) {
+      back(page, { erreur: `${e instanceof Error ? e.message : "Sendcloud ne répond pas."} L'étiquette n'a pas été annulée.` });
+    }
+    const cleared = await clearLabel(id.data, admin.name);
+    if (!cleared.ok) back(page, { erreur: cleared.error });
+    refresh();
+    back(page, { ok: "Étiquette annulée chez Sendcloud. Vous pouvez en créer une autre." });
+  }
+  back(page, { erreur: "Action inconnue." });
 }
 
 // — Produits et stock —
@@ -98,6 +185,7 @@ export async function productAction(form: FormData) {
   if (!name) back(page, { erreur: "Le nom est requis." });
   await saveProduct(id.data, { name, description: str(form, "description"), seoTitle: str(form, "seoTitle") || null, seoDescription: str(form, "seoDescription") || null, isActive: form.get("isActive") === "on" });
   refresh(true);
+  await submitIndexNow(["/", "/produits/cri"]);
   back(page, { ok: "Produit enregistré. Le site se met à jour dans la minute." });
 }
 
@@ -118,6 +206,7 @@ export async function variantAction(form: FormData) {
   if (!lowStockAt.success) back(page, { erreur: "Seuil d'alerte invalide." });
   await saveVariant(id.data, { priceCents: price, compareAtCents: compareAt, costCents: cost, lowStockAt: lowStockAt.data, isActive: form.get("isActive") === "on" });
   refresh(true);
+  await submitIndexNow(["/", "/produits/cri"]);
   back(page, { ok: "Article enregistré. Le prix de revient s'applique aux prochaines commandes." });
 }
 

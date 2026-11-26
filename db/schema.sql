@@ -200,3 +200,10 @@ create table if not exists settings (
   value      jsonb not null,
   updated_at timestamptz not null default now()
 );
+
+-- — Sendcloud : l'étiquette d'une commande (ajouté le 2026-11-26) —
+alter table orders add column if not exists sendcloud_parcel_id bigint;
+alter table orders add column if not exists sendcloud_status text;        -- le dernier état donné par le transporteur, en clair
+alter table orders add column if not exists tracking_url text;            -- le lien de suivi donné par Sendcloud
+alter table orders add column if not exists label_created_at timestamptz;
+create unique index if not exists orders_sendcloud_parcel_idx on orders (sendcloud_parcel_id) where sendcloud_parcel_id is not null;

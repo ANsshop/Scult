@@ -46,25 +46,27 @@ const IMAGES = {
  * a été retiré sur Higgsfield le 2026-11-25 (`cut` : le fichier détouré) ; ici
  * on pose chaque pot sur un blanc 4:5, sans jamais le déformer : la photo est
  * réduite d'un bloc, toujours à la même échelle (`height` : la hauteur du pot
- * dans le cadre), avec une ombre de contact. Les vues viennent d'une planche
+ * dans le cadre), avec une ombre de contact. Chaque fichier porte le nom de ce qu'il montre
+ * (« pre-workout-scult-cri-face ») : c'est ce que lisent les moteurs de recherche d'images ; `source` désigne
+ * la photo détourée en cache. Les vues viennent d'une planche
  * de 2688 px : elles sont trois fois plus petites que le packshot, d'où leur
  * cadre plus petit.
  */
 const GRAND = [1600, 2000], PETIT = [880, 1100];
 const BLANC = {
-  "pot-blanc-face": { cut: "hf_20261125_152816_fbf256d6-1686-4957-962b-9064f3f833bd.png", canvas: GRAND, height: 0.74, widths: [400, 800, 1200, 1600] },
-  "pot-blanc-trois-quarts": { cut: "hf_20261125_153026_694d8c70-39a3-46d1-a2e8-2700a8f59821.png", canvas: PETIT, height: 0.74, widths: [440, 880] },
-  "pot-blanc-profil": { cut: "hf_20261125_153029_58268625-9d39-4f3d-a518-e077c77a1a0b.png", canvas: PETIT, height: 0.74, widths: [440, 880] },
-  "pot-blanc-dos": { cut: "hf_20261125_153032_a4ccbf71-95d3-4608-b208-e0909942c947.png", canvas: PETIT, height: 0.74, widths: [440, 880] },
+  "pre-workout-scult-cri-face": { source: "detoure-face", cut: "hf_20261125_152816_fbf256d6-1686-4957-962b-9064f3f833bd.png", canvas: GRAND, height: 0.74, widths: [400, 800, 1200, 1600] },
+  "pre-workout-scult-cri-trois-quarts": { source: "detoure-trois-quarts", cut: "hf_20261125_153026_694d8c70-39a3-46d1-a2e8-2700a8f59821.png", canvas: PETIT, height: 0.74, widths: [440, 880] },
+  "pre-workout-scult-cri-profil": { source: "detoure-profil", cut: "hf_20261125_153029_58268625-9d39-4f3d-a518-e077c77a1a0b.png", canvas: PETIT, height: 0.74, widths: [440, 880] },
+  "pre-workout-scult-cri-dos": { source: "detoure-dos", cut: "hf_20261125_153032_a4ccbf71-95d3-4608-b208-e0909942c947.png", canvas: PETIT, height: 0.74, widths: [440, 880] },
   // Le couvercle vu de dessus : au milieu du cadre, à la largeur du pot debout.
-  "pot-blanc-couvercle": { cut: "hf_20261125_153038_6adbfe08-42e7-4e69-b766-e2d41a285065.png", canvas: PETIT, height: 0.56, centre: true, widths: [440, 880] },
+  "pre-workout-scult-cri-couvercle": { source: "detoure-couvercle", cut: "hf_20261125_153038_6adbfe08-42e7-4e69-b766-e2d41a285065.png", canvas: PETIT, height: 0.56, centre: true, widths: [440, 880] },
   // Le pot ouvert et son couvercle posé à côté : le pot, sans couvercle, est un peu moins haut.
-  "pot-blanc-ouvert": { cut: "hf_20261125_153041_50a833cd-3c62-4dbd-ace6-21b496f0ab74.png", canvas: PETIT, height: 0.68, widths: [440, 880] },
+  "pre-workout-scult-cri-ouvert": { source: "detoure-ouvert", cut: "hf_20261125_153041_50a833cd-3c62-4dbd-ace6-21b496f0ab74.png", canvas: PETIT, height: 0.68, widths: [440, 880] },
 };
 /** Le pot détouré, sans fond : les vignettes du panier et l'animation d'ajout au panier. */
-const DETOURE = { name: "pot-detoure", from: "pot-blanc-face", widths: [200, 400] };
+const DETOURE = { name: "pre-workout-scult-cri-detoure", from: "pre-workout-scult-cri-face", widths: [200, 400] };
 /** Le gros plan de la planche pot-vues, recadré en 4:5 sur le cœur N°001 et le début du nom (aucun fond gris dans ce cadre). */
-const DETAIL = { name: "pot-blanc-detail", box: { left: 760, top: 775, width: 588, height: 735 }, widths: [400, 588] };
+const DETAIL = { name: "pre-workout-scult-cri-etiquette", box: { left: 760, top: 775, width: 588, height: 735 }, widths: [400, 588] };
 
 mkdirSync(SRC, { recursive: true });
 mkdirSync(OUT, { recursive: true });
@@ -85,12 +87,19 @@ function fetchSource(name, file) {
 const manifest = {};
 
 
+/**
+ * Tous ces visuels sont des images générées (Higgsfield). On l'inscrit dans chaque fichier, au format que les
+ * moteurs lisent (IPTC « DigitalSourceType », en XMP) : Google Merchant Center l'exige pour les images de produit
+ * générées par IA, et sharp retire sinon toutes les métadonnées.
+ */
+const XMP = `<?xpacket begin="" id="W5M0MpCehiHzreSzNTczkc9d"?><x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:Iptc4xmpExt="http://iptc.org/std/Iptc4xmpExt/2008-02-29/" Iptc4xmpExt:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia"/></rdf:RDF></x:xmpmeta><?xpacket end="w"?>`;
+
 async function emit(name, pipeline, widths, sourceWidth, sourceHeight) {
   const kept = widths.filter((w) => w <= sourceWidth);
   for (const w of kept) {
     const base = join(OUT, `${name}-${w}`);
-    await pipeline().resize({ width: w }).avif({ quality: 50, effort: 5 }).toFile(`${base}.avif`);
-    await pipeline().resize({ width: w }).webp({ quality: 78, effort: 5 }).toFile(`${base}.webp`);
+    await pipeline().resize({ width: w }).withXmp(XMP).avif({ quality: 50, effort: 5 }).toFile(`${base}.avif`);
+    await pipeline().resize({ width: w }).withXmp(XMP).webp({ quality: 78, effort: 5 }).toFile(`${base}.webp`);
     const ko = (f) => (statSync(f).size / 1024).toFixed(0);
     console.log(`  ${name}-${w}  avif ${ko(`${base}.avif`)} Ko · webp ${ko(`${base}.webp`)} Ko`);
   }
@@ -115,8 +124,8 @@ for (const [name, { file, local, widths, crop }] of Object.entries(IMAGES)) {
 }
 
 // Les pots sur fond blanc.
-for (const [name, { cut, canvas: [W, H], height, centre = false, widths }] of Object.entries(BLANC)) {
-  const path = fetchSource(name.replace("pot-blanc-", "detoure-"), cut);
+for (const [name, { source, cut, canvas: [W, H], height, centre = false, widths }] of Object.entries(BLANC)) {
+  const path = fetchSource(source, cut);
   // Le pot seul : on retire le vide autour, puis on le réduit d'un bloc (largeur et hauteur ensemble).
   const pot = await sharp(path).trim({ threshold: 1 }).toBuffer({ resolveWithObject: true });
   const h = Math.round(H * height);

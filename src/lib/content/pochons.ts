@@ -93,7 +93,7 @@ export const POCHONS = {
     title: "CRI",
     text: `Le pré-workout en poudre, goût fraise piquante. ${HERO.text}`,
     cta: { label: "Voir le pré-workout", href: "/produits/cri" },
-    image: { src: "/bouffon/pot-blanc-face-1200.webp", alt: "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué sur l'étiquette", width: 1200, height: 1500 },
+    image: { src: "/bouffon/pre-workout-scult-cri-face-1200.webp", alt: "Pot SCULT pré-workout vu de face : pot noir, nom SCULT en rose métallisé, le bouffon masqué sur l'étiquette", width: 1200, height: 1500 },
   },
 
   seo: {

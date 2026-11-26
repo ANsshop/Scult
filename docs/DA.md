@@ -30,7 +30,7 @@
 
 **L'intro** (`src/components/site/intro/`, détail dans `script.ts`). Le hero dark est le vrai DOM ; la couche rose est un décor fixe, plein écran, `aria-hidden`, `inert`, `data-nosnippet`, écrit dans la page par un script inline seulement pour qui ne l'a jamais vu. 0 → 1200 ms : site rose, immobile. 1200 → 1900 ms : glitch (douze bandes de hauteurs inégales découpées par `clip-path`, décalées en X par pas francs, quatre passes de moins en moins roses, barres pleines `#FF2E93`, double rose du H1) — uniquement `transform`, `clip-path`, `opacity`. 1900 ms : couche retirée, clé `scult_intro_vue` enregistrée. Le glitch part aussi au premier défilement, clic ou appui clavier. Mouvement réduit : fondu de 200 ms. Une bande éteinte ne se rallume jamais : aucun clignotement.
 
-**Les visuels** (`public/bouffon/`, AVIF + WebP en plusieurs largeurs, produits par `npm run images:bouffon`) : `hero-rose-*` (fond de l'intro), `hero-dark-*` (hero de l'accueil, image LCP), `hero-produit-desktop` (bandeau de la fiche), six `pot-blanc-*` (le pot sur fond blanc, format 4:5, même échelle : galerie de la fiche, catalogue), `pot-blanc-detail` (gros plan), `pot-detoure` (le pot sans fond : panier), `bouffon-face` (section « Le bouffon », 404), `bouffon-applaudit` (confirmation de commande). Les fonds ne portent aucun texte : titres et boutons sont en HTML.
+**Les visuels** (`public/bouffon/`, AVIF + WebP en plusieurs largeurs, produits par `npm run images:bouffon`) : `hero-rose-*` (fond de l'intro), `hero-dark-*` (hero de l'accueil, image LCP), `hero-produit-desktop` (bandeau de la fiche), six `pot-blanc-*` (le pot sur fond blanc, format 4:5, même échelle : galerie de la fiche, catalogue), `pre-workout-scult-cri-etiquette` (gros plan), `pre-workout-scult-cri-detoure` (le pot sans fond : panier), `bouffon-face` (section « Le bouffon », 404), `bouffon-applaudit` (confirmation de commande). Les fonds ne portent aucun texte : titres et boutons sont en HTML.
 
 **Le pot en 3D** (`public/models/pot-scult.glb`, `src/components/site/Pot3D.tsx`) : il tourne au défilement dans la section « formule », sur fond blanc, et se pose sur le visuel du slider de l'accueil, où on le fait tourner à la main. Fabrication et limites : `scripts/3d/build-bouffon.sh` et `ASSUMPTIONS.md` [50].
 
@@ -212,7 +212,7 @@ FAQ courte
 3. la carte produit au centre et les dosages autour, en cartes arrondies —
    rejetée (« j'aime pas du tout ») ;
 4. **retenue : simple.** Deux colonnes. D'un côté la carte produit, seule
-   pièce dessinée : pot détouré (`public/home/pot-detoure.webp`, job
+   pièce dessinée : pot détouré (`public/home/pre-workout-scult-cri-detoure.webp`, job
    `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850`), penché de 5°, ombre dure du flash
    (`.flash-shadow`), prix dans la pastille rouge, bouton en pilule. De
    l'autre, un titre, la liste des sept dosages (nom à gauche, quantité à

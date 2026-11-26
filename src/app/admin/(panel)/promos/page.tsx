@@ -34,7 +34,7 @@ export default async function PromosPage({ searchParams }: { searchParams: Promi
                     <tr key={p.id} className={ROW}>
                       <td className={TD}><Link href={`/admin/promos/${p.id}`} className="font-mono text-[0.85rem] font-semibold hover:underline">{p.code}</Link>{p.label && <span className="block text-[0.76rem] text-discret">{p.label}</span>}</td>
                       <td className={`${TD} whitespace-nowrap`}>{p.discount_type === "percent" ? `−${p.discount_value} %` : `−${eur(p.discount_value)}`}{p.min_subtotal_cents > 0 && <span className="block text-[0.76rem] text-discret">dès {eur(p.min_subtotal_cents)}</span>}</td>
-                      <td className={TD}>{problem ? <Tag>{problem.replace(/^Ce code /, "").replace(/\.$/, "")}</Tag> : <Tag tone="rose">valable</Tag>}{p.ends_at && !problem && <span className="block text-[0.76rem] text-discret">jusqu&apos;au {dateShort(p.ends_at)}</span>}</td>
+                      <td className={TD}>{problem ? <Tag>{problem.replace(/^Ce code promo /, "").replace(/\.$/, "")}</Tag> : <Tag tone="rose">valable</Tag>}{p.ends_at && !problem && <span className="block text-[0.76rem] text-discret">jusqu&apos;au {dateShort(p.ends_at)}</span>}</td>
                       <td className={`${TD} text-right tabular-nums`}>{num(p.orders)}{p.max_uses !== null && <span className="text-discret"> / {num(p.max_uses)}</span>}</td>
                       <td className={`${TD} text-right font-medium tabular-nums`}>{eur(p.revenue_cents, true)}</td>
                       <td className={`${TD} text-right tabular-nums`}>{eur(p.discount_cents, true)}</td>
