@@ -14,11 +14,11 @@ export function FaqList({ items, group, className = "" }: { items: FaqItem[]; gr
     <div className={`divide-y border-y ${className}`}>
       {items.map((i) => (
         <details key={i.question} name={group} className="faq-item group">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left font-medium transition-colors hover:text-klein [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left font-medium transition-colors hover:text-rose [&::-webkit-details-marker]:hidden">
             <span>{i.question}</span>
             <ToggleArrow />
           </summary>
-          <p className="max-w-2xl pb-6 pr-12 leading-relaxed text-stone">{i.answer}</p>
+          <p className="max-w-2xl pb-6 pr-12 leading-relaxed text-doux">{i.answer}</p>
         </details>
       ))}
     </div>

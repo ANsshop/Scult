@@ -5,6 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { ProductPage } from "@/components/site/ProductPage";
 import { JsonLd } from "@/components/site/JsonLd";
 import { getFlavourOffer, getProductBySlug, getProducts } from "@/lib/catalog/queries";
+import { PRODUCT_INFO } from "@/lib/content/product-info";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
@@ -25,7 +26,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: p.seoDescription ?? p.description.slice(0, 155),
     alternates: { canonical: `/produits/${p.slug}` },
     // Un openGraph défini ici remplace celui du layout, image comprise : on redonne le visuel de partage du site.
-    openGraph: { title: `${p.name} — ${price}`, description: p.seoDescription ?? undefined, images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630 }] },
+    // L'image de partage : la photo du produit (assez grande pour un grand aperçu), sinon celle du site.
+    openGraph: {
+      type: "website", url: `/produits/${p.slug}`, title: p.seoTitle ?? `${p.name} — ${price}`, description: p.seoDescription ?? undefined,
+      images: p.images[0] ? [{ url: p.images[0].url, width: p.images[0].width, height: p.images[0].height, alt: p.images[0].alt }] : [{ url: "/opengraph-image.jpg", width: 1200, height: 630 }],
+    },
   };
 }
 
@@ -35,11 +40,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   if (!product) notFound();
   return (
     <>
-      <JsonLd data={productJsonLd(product)} />
+      <JsonLd data={productJsonLd(product, { label: PRODUCT_INFO[product.slug]?.label, netGrams: PRODUCT_INFO[product.slug]?.netGrams })} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: product.name, path: `/produits/${product.slug}` }])} />
       <Header />
       <main><ProductPage product={product} offer={await getFlavourOffer(product.slug)} /></main>
       <Footer />
+      {/* La place de la barre d'achat collée en bas de l'écran (BuyButton) : elle ne cache pas la fin du pied de page */}
+      <div aria-hidden className="sombre h-[4.75rem] bg-fond" />
     </>
   );
 }

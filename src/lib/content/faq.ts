@@ -15,7 +15,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Quels goûts existent pour CRI ?",
     answer:
-      "Trois goûts : fruits rouges, cassis framboise et ice tea pêche. La formule et les dosages sont les mêmes ; seuls l'arôme et le colorant changent. Le pack de 2 se compose librement : deux pots du même goût ou deux goûts différents, au même prix.",
+      "Un seul goût pour l'instant : fraise piquante. Le pack de 2 réunit deux pots de ce goût.",
   },
   {
     question: "Combien de caféine dans CRI, et pour qui est-ce déconseillé ?",
@@ -40,7 +40,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Puis-je retourner un pot ?",
     answer:
-      "Oui, sous 14 jours après réception, tant que le pot est scellé (pastille rouge intacte). Pour des raisons d'hygiène, un pot ouvert ne peut pas être repris. Écrivez-nous avec votre référence de commande.",
+      "Oui, sous 14 jours après réception, tant que le pot est scellé (opercule intact). Pour des raisons d'hygiène, un pot ouvert ne peut pas être repris. Écrivez-nous avec votre référence de commande.",
   },
   {
     question: "Quels moyens de paiement acceptez-vous ?",

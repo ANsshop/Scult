@@ -25,6 +25,11 @@ export type ProductInfo = {
   usage: string;
   caffeineWarning?: string;
   warnings: string;
+  /** Poids net en grammes et nombre de doses : pour le prix au kilo et le prix par dose. */
+  netGrams: number;
+  servings: number;
+  /** Ce qu'est le produit, en quelques mots, écrit sous son nom et dans les données structurées. */
+  label: string;
 };
 
 export const PRODUCT_INFO: Record<string, ProductInfo> = {
@@ -37,5 +42,8 @@ export const PRODUCT_INFO: Record<string, ProductInfo> = {
     usage: `${FORMULE.usage} ${FORMULE.usageFort} ${FORMULE.usageFin}`,
     caffeineWarning: FORMULE.avertissementCafeine,
     warnings: FORMULE.precautions,
+    netGrams: parseInt(FORMULE.poids, 10),
+    servings: FORMULE.doses,
+    label: "pré-workout en poudre",
   },
 };

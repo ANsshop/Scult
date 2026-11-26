@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useCart } from "./CartProvider";
 import { Button } from "@/components/ui/Button";
-import { startCheckoutAction } from "@/lib/orders/actions";
+import { checkPromoAction, startCheckoutAction } from "@/lib/orders/actions";
 import { SHIPPING_ZONES, shippingCentsFor } from "@/lib/shipping";
 import { formatPrice, vatCents } from "@/lib/utils";
 
@@ -16,9 +16,24 @@ export function CheckoutForm({ vatRate }: { vatRate: number }) {
   const [promo, setPromo] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  // Le code vérifié par le serveur et sa remise ; remis à zéro dès que le code, le pays ou le panier change.
+  const [applied, setApplied] = useState<{ key: string; code: string; discountCents: number } | null>(null);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [checking, check] = useTransition();
+  const cartKey = `${country}|${promo.trim()}|${items.map((i) => `${i.sku}x${i.quantity}`).join(",")}`;
+  const discount = applied?.key === cartKey ? applied.discountCents : 0;
+  const lines = () => items.map((i) => ({ sku: i.sku, quantity: i.quantity }));
+  const applyPromo = () => {
+    setPromoError(null);
+    check(async () => {
+      const r = await checkPromoAction({ countryCode: country, items: lines(), promoCode: promo.trim() });
+      if (r.ok) setApplied({ key: cartKey, code: r.code, discountCents: r.discountCents });
+      else { setApplied(null); setPromoError(r.error); }
+    });
+  };
 
-  const ship = shippingCentsFor(country, subtotalCents);
-  const base = subtotalCents + (ship?.cents ?? 0);
+  const ship = shippingCentsFor(country, subtotalCents - discount);
+  const base = subtotalCents - discount + (ship?.cents ?? 0);
   const vat = vatCents(base, vatRate);
 
   if (items.length === 0) return <p className="mt-8 text-stone">Votre panier est vide.</p>;
@@ -30,7 +45,7 @@ export function CheckoutForm({ vatRate }: { vatRate: number }) {
         e.preventDefault();
         setError(null);
         start(async () => {
-          const r = await startCheckoutAction({ countryCode: country, items: items.map((i) => ({ sku: i.sku, quantity: i.quantity })), promoCode: promo || undefined });
+          const r = await startCheckoutAction({ countryCode: country, items: lines(), promoCode: promo.trim() || undefined });
           if (r.ok) window.location.href = r.url;
           else setError(r.error);
         });
@@ -45,12 +60,30 @@ export function CheckoutForm({ vatRate }: { vatRate: number }) {
             {SHIPPING_ZONES.flatMap((z) => z.countries).map((c) => <option key={c} value={c}>{COUNTRY_NAMES[c] ?? c}</option>)}
           </select>
         </label>
-        <label className="block text-sm"><span className="label text-stone">Code promo</span>
-          <input value={promo} onChange={(e) => setPromo(e.target.value.toUpperCase())} className="input mt-2" placeholder="Optionnel" />
-        </label>
+        <div className="block text-sm">
+          <label htmlFor="code-promo" className="label text-stone">Code promo</label>
+          <div className="mt-2 flex gap-2">
+            <input
+              id="code-promo"
+              value={promo}
+              onChange={(e) => { setPromo(e.target.value.toUpperCase()); setPromoError(null); }}
+              onKeyDown={(e) => { if (e.key === "Enter" && promo.trim()) { e.preventDefault(); applyPromo(); } }}
+              className="input"
+              placeholder="Optionnel"
+              autoComplete="off"
+              aria-invalid={promoError ? true : undefined}
+              aria-describedby="code-promo-etat"
+            />
+            <button type="button" onClick={applyPromo} disabled={!promo.trim() || checking} className="label shrink-0 rounded-chip border border-ink/30 px-4 transition-colors hover:border-ink disabled:opacity-40">{checking ? "…" : "Appliquer"}</button>
+          </div>
+          <p id="code-promo-etat" aria-live="polite" className="mt-2 min-h-5 text-sm">
+            {promoError ? <span className="text-ruby">{promoError}</span> : discount > 0 ? <span className="font-medium">Code {applied!.code} appliqué : −{formatPrice(discount)}</span> : null}
+          </p>
+        </div>
       </div>
       <dl className="space-y-2 text-sm">
         <div className="flex justify-between"><dt>Sous-total</dt><dd className="tabular-nums">{formatPrice(subtotalCents)}</dd></div>
+        {discount > 0 && <div className="flex justify-between font-medium text-ruby"><dt>Code {applied!.code}</dt><dd className="tabular-nums">−{formatPrice(discount)}</dd></div>}
         {savingCents > 0 && <div className="flex justify-between font-medium text-ruby"><dt>Vous économisez</dt><dd className="tabular-nums">{formatPrice(savingCents)}</dd></div>}
         <div className={`flex justify-between ${ship?.cents === 0 ? "font-medium text-ruby" : ""}`}><dt>Livraison {ship ? `· ${ship.zone.label}` : ""}</dt><dd className="tabular-nums">{ship ? (ship.cents === 0 ? "Offerte" : formatPrice(ship.cents)) : "—"}</dd></div>
         {vat > 0 && <div className="flex justify-between"><dt>TVA {vatRate} %</dt><dd className="tabular-nums">{formatPrice(vat)}</dd></div>}

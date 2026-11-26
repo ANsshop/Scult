@@ -83,35 +83,15 @@
   "cafeineTotale": "390 mg",
   "ingredients": "L-citrulline, complexe Focus (bitartrate de DMAE, extrait d'Hericium erinaceus, extrait de baies de genévrier, extrait de Mucuna pruriens, N-phénéthyl diméthylamine, hordénine, extrait d'Huperzia serrata), bêta-alanine, créatine monohydrate, acidifiant : acide citrique, sel rose de l'Himalaya, {AROME}, L-théanine, dicaféine malate, édulcorant : glycosides de stéviol, caféine anhydre, anti-agglomérant : dioxyde de silicium, théacrine, colorant : {COLORANT}, extrait de poivre noir, capsaïcine.",
   "gouts": {
-    "fruits-rouges": {
-      "nom": "Fruits rouges",
+    "fraise-piquante": {
+      "nom": "Fraise piquante",
       "lignes": [
-        "Fruits",
-        "rouges"
+        "Fraise",
+        "piquante"
       ],
-      "couleur": "#c8102e",
+      "couleur": "#FF2E93",
       "arome": "arôme naturel",
       "colorant": "rouge de betterave"
-    },
-    "cassis-framboise": {
-      "nom": "Cassis framboise",
-      "lignes": [
-        "Cassis",
-        "framboise"
-      ],
-      "couleur": "#6f1d7a",
-      "arome": "arômes naturels de cassis et de framboise",
-      "colorant": "rouge de betterave"
-    },
-    "ice-tea-peche": {
-      "nom": "Ice tea pêche",
-      "lignes": [
-        "Ice tea",
-        "pêche"
-      ],
-      "couleur": "#8a4a1c",
-      "arome": "arômes naturels de thé et de pêche",
-      "colorant": "caramel ordinaire"
     }
   },
   "usage": "Mélanger 1 dose (23 g, une mesure rase) dans 400 ml d'eau fraîche. Boire 20 à 30 minutes avant l'entraînement.",

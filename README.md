@@ -1,6 +1,6 @@
 # SCULT — scult.eu
 
-Boutique vitrine pure (Next.js 16, App Router, TypeScript strict, Tailwind v4) branchée au socle Peptide Partners : catalogue, panier chiffré et commandes viennent de l'API du dashboard, Stripe Checkout encaisse. Zéro base de données, zéro `/admin`, zéro auth. Direction artistique : `docs/DA.md`. Hypothèses et bloquants : `ASSUMPTIONS.md`.
+Boutique Next.js 16 (App Router, TypeScript strict, Tailwind v4), Stripe Checkout pour encaisser. Depuis le 2026-11-26 elle a **sa propre base et son propre admin** (`/admin` : tableau de bord, commandes, produits et stock, clients, codes promo, réglages). Sans base configurée, elle tourne comme avant sur le catalogue de test ou sur le socle Peptide Partners. Direction artistique : `docs/DA.md`. Hypothèses et limites : `ASSUMPTIONS.md` (points 62 à 69 pour le backend).
 
 ## Démarrer
 
@@ -10,7 +10,29 @@ cp .env.example .env            # PP_MOCK=1 par défaut : aucun appel réseau
 npm run dev                     # http://localhost:3002
 ```
 
-Visuels : télécharger `scult-visuels.zip` et le dézipper dans `public/` (il contient `home/`, `products/`, `lifestyle/` et `hero-iso.png` pour la vidéo hero). Créas pub : `scult-ads-crea.zip` → `ads-crea/statics/<angle>/`.
+Visuels de la DA « bouffon » (`public/bouffon/`, versionnés) : `npm run images:bouffon` les régénère depuis leurs sources. Anciens visuels : télécharger `scult-visuels.zip` et le dézipper dans `public/` (il contient `home/`, `products/`, `lifestyle/` et `hero-iso.png` pour la vidéo hero). Créas pub : `scult-ads-crea.zip` → `ads-crea/statics/<angle>/`.
+
+## Base et admin
+
+```bash
+npm run db:local                 # un Postgres local, à laisser tourner (données dans .db-local/)
+npm run db:migrate               # crée les tables (db/schema.sql) ; se rejoue sans risque
+npm run db:seed -- --demo        # le catalogue + 90 jours de fausses commandes pour voir l'admin vivre
+npm run db:admin -- vous@exemple.fr "Prénom"      # crée un compte admin, affiche son mot de passe une fois
+```
+
+Dans `.env.local` (pas `.env`, que le déploiement Vercel embarque) : `DATABASE_URL` (voir `.env.example`) et `ADMIN_SESSION_SECRET` (`openssl rand -base64 36`). Puis `npm run dev` et http://localhost:3002/admin.
+
+En ligne (Neon) : mettre l'adresse « pooled » dans `DATABASE_URL`, puis `npm run db:migrate`, `npm run db:seed -- --stock=<pots en stock>` (jamais `--demo`), `npm run db:admin`. Le prix de revient se renseigne ensuite dans Produits : sans lui, pas de marge.
+
+## Référencement
+
+Tout est dans `src/lib/seo.ts` (données structurées, droit d'être indexé), `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/feeds/google.xml/` (flux Merchant Center) et `src/lib/content/guides.ts` (guide et fiches d'ingrédients). À la mise en ligne sur le vrai domaine :
+
+1. `SITE_INDEXABLE=1` et `NEXT_PUBLIC_SITE_URL=https://scult.eu` (sans ça, le site reste hors des moteurs).
+2. Search Console et Bing Webmaster Tools : vérifier la propriété (`GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`), soumettre `/sitemap.xml`.
+3. `npm run seo:indexnow -- https://scult.eu` : envoie toutes les adresses à Bing et aux moteurs IndexNow.
+4. Merchant Center : déclarer le flux `/feeds/google.xml` (après vérification de la formule, voir ASSUMPTIONS.md [76]).
 
 ## Vérifier
 
@@ -18,13 +40,25 @@ Visuels : télécharger `scult-visuels.zip` et le dézipper dans `public/` (il c
 bash scripts/gate.sh            # allégations interdites (règlement 1924/2006)
 npx tsc --noEmit
 PP_MOCK=1 npm run build
+npm run mock:services           # faux Resend et faux Sendcloud, à laisser tourner pour les tests
+npm run test:admin              # 61 contrôles de bout en bout : commandes, stock, e-mails, étiquettes, admin (base locale, site sur le port 3010)
+npm run test:seo -- http://localhost:3010   # 30 contrôles de ce qu'un moteur lit (site lancé avec SITE_INDEXABLE=1)
 ```
 
 ## Structure
 
 ```
 src/app/                 pages (accueil, produits/[slug], methode, faq, livraison-retours, légal, checkout)
-src/lib/pp/client.ts     le seul fichier qui connaît le socle (PP_API_URL, PP_API_KEY)
+src/app/admin/           l'admin (connexion, tableau de bord, commandes, produits, clients, promos, réglages) et ses actions
+src/components/admin/    ses briques : habillage, tuiles, tableaux, pastilles, graphique des ventes
+src/lib/db.ts            l'accès à la base (Postgres)
+src/lib/store/           le métier : catalogue, commandes et stock, clients, codes promo, chiffres, mesure d'audience
+src/lib/admin/           session et formats de l'admin
+src/lib/notify/          e-mails aux clients (Resend) et liens de suivi
+src/lib/sendcloud.ts     étiquettes et suivi des colis (compte Peptide Partners, comme PTM)
+src/lib/seo.ts           référencement : données structurées, indexation, IndexNow
+db/schema.sql            les tables ; scripts/db/ : base locale, migration, remplissage, comptes
+src/lib/pp/client.ts     la porte d'entrée des données pour le site : la base si elle est configurée, sinon le catalogue de test ou le socle
 src/lib/catalog/         forme des produits pour les pages
 src/lib/orders/          chiffrage (socle + port + TVA) et dépôt de commande via Stripe
 src/lib/content/         FAQ (une source pour la page et le JSON-LD), allégations citées

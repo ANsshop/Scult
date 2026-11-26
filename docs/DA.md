@@ -1,5 +1,51 @@
 # SCULT — direction artistique (contrat)
 
+> **2026-11-25 — la DA « bouffon » remplace tout ce qui suit.** Les sections plus bas (Klein, marbre, statue, pot blanc, goûts en couleur, pot 3D d'origine) décrivent l'ancienne direction ; elles sont gardées comme archive.
+
+## DA « bouffon » (2026-11-25)
+
+**Le concept.** Le visiteur arrive sur ce qui ressemble à un site de pré-workout « girly » tout rose. Au bout d'une seconde l'écran glitche et révèle le vrai site : noir et blanc sale, un bouffon d'horreur musclé qui tend le pot. Le rose du faux site devient la couleur du glitch et de la marque. Le site rose est la blague du bouffon.
+
+**La règle.** Du noir, du blanc, du grain ; la seule couleur est le rose vif `#FF2E93`.
+
+**Deux ambiances, mêmes tokens** (`src/app/globals.css`). La page est claire par défaut — fond blanc, texte noir, le produit sur blanc. Un bloc marqué `.sombre` passe en noir avec tout ce qu'il contient : l'en-tête, le hero de l'accueil, la barre d'achat de la fiche produit, le pied de page. Le site alterne ainsi noir et blanc au lieu d'être noir partout.
+
+| Token | Clair (défaut) | `.sombre` | Usage |
+|---|---|---|---|
+| `fond` | `#FFFFFF` | `#070707` | fond |
+| `surface` | `#F4F3F0` | `#121212` | cartes, vignettes |
+| `texte` | `#070707` | `#F2F0EA` | texte principal |
+| `doux` | `#3B3A37` | `#D2CFC7` | texte secondaire |
+| `discret` | `#76736D` | `#8D8A83` | étiquettes, mentions |
+| `rose` | `#FF2E93` | `#FF2E93` | l'accent, unique |
+| `noir` | `#070707` | `#070707` | le texte posé sur le rose |
+
+- **Polices** : celles de l'ancien site, gardées telles quelles — Archivo Black pour les titres (capitales, chasse serrée, interligne 0,86 : `.display`), Inter pour le texte, JetBrains Mono pour les étiquettes (`.label`). L'ombre dure rose des titres du brief d'origine est coupée (`.ombre-titre`). Elles se changent en un endroit : `src/app/layout.tsx`.
+- **Boutons** : pilule rose, texte noir en petites capitales mono ; un reflet de lumière les traverse au survol. Le même reflet passe sur le logo et sur les cartes.
+- **Formes** : arrondies — `--radius-btn` (pilule), `--radius-card`, `--radius-chip`.
+- **Grain** : surcouche fixe sur toute la page (`body::after`, `public/noise.svg`), sans effet sur les clics.
+- **Bande d'annonce** : rose, en tête de l'en-tête, texte qui défile (`ANNONCE`, `src/lib/content/site.ts`).
+
+**Le thème rose** n'existe que dans la couche d'intro (`src/components/site/intro/intro.css`) : titre en Pacifico blanc à ombre douce, texte en Quicksand `#B0246A`, bouton en pilule `#FF5FA8`.
+
+**L'intro** (`src/components/site/intro/`, détail dans `script.ts`). Le hero dark est le vrai DOM ; la couche rose est un décor fixe, plein écran, `aria-hidden`, `inert`, `data-nosnippet`, écrit dans la page par un script inline seulement pour qui ne l'a jamais vu. 0 → 1200 ms : site rose, immobile. 1200 → 1900 ms : glitch (douze bandes de hauteurs inégales découpées par `clip-path`, décalées en X par pas francs, quatre passes de moins en moins roses, barres pleines `#FF2E93`, double rose du H1) — uniquement `transform`, `clip-path`, `opacity`. 1900 ms : couche retirée, clé `scult_intro_vue` enregistrée. Le glitch part aussi au premier défilement, clic ou appui clavier. Mouvement réduit : fondu de 200 ms. Une bande éteinte ne se rallume jamais : aucun clignotement.
+
+**Les visuels** (`public/bouffon/`, AVIF + WebP en plusieurs largeurs, produits par `npm run images:bouffon`) : `hero-rose-*` (fond de l'intro), `hero-dark-*` (hero de l'accueil, image LCP), six `pot-blanc-*` (le pot sur fond blanc, format 4:5, même échelle : galerie de la fiche, catalogue), `pre-workout-scult-cri-etiquette` (gros plan), `pre-workout-scult-cri-detoure` (le pot sans fond : panier), `bouffon-face` (section « Le bouffon », 404), `bouffon-applaudit` (confirmation de commande). Les fonds ne portent aucun texte : titres et boutons sont en HTML.
+
+**Le pot en 3D** (`public/models/pot-scult.glb`, `src/components/site/Pot3D.tsx`) : il ouvre la galerie de la fiche produit et se pose sur le visuel du slider de l'accueil ; on le fait tourner à la main, et une pastille « 360° » le dit. (La section « formule » de l'accueil, où il tournait au défilement, a été retirée le 2026-11-26.) Fabrication et limites : `scripts/3d/build-bouffon.sh` et `ASSUMPTIONS.md` [50].
+
+**Le sourire** (`public/brand/sourire.svg`) : la bouche gravée sur le couvercle du pot, emblème de la marque à côté du wordmark. Il est chromé, comme sur le pot : `sourire-chrome.webp` est la photo du couvercle (vue de dessus) dont on n'a gardé que le rose métallisé, sur fond transparent ; un éclat de lumière le traverse toutes les cinq secondes (`.sourire`, `globals.css`). Il ouvre le pied de page, au-dessus du logo, et sert d'icône du site (`src/app/icon.png`, sur carré noir). `sourire.svg` en est le tracé vectoriel en aplat rose, pour les usages où la photo ne passe pas (très petit, une seule couleur).
+
+**Le hero de l'accueil** (`Hero.tsx`, `HeroSlider.tsx`) : une seule affiche, le bouffon sur fond noir pour le pré-workout (`hero-dark-*`). Titre en deux couleurs, texte et bouton à gauche sur ordinateur ; sur mobile et tablette debout, un écran : titre en haut, bouton en bas. `HeroSlider` sait montrer plusieurs slides (flèches, traits, glissement) : il n'y en a qu'une pour l'instant.
+
+**Le complexe Focus** (`FocusComplex.tsx`, tout en bas de la fiche produit) : un bloc noir, le titre en deux couleurs, une carte arrondie par ingrédient (numéro rose, nom en Archivo Black, ce qu'il est en une ligne) et une dernière case rose pour le poids du complexe.
+
+**La boîte de pochons en 3D** (`public/models/boite-pochons.glb`, même visionneuse que le pot, `modeles-3d.ts`) : blanche, donc montrée sur un panneau noir — la règle de la fiche des pochons (`/produits/pochons`) : produit noir sur blanc, produit blanc sur noir. Fabrication : `scripts/3d/build-pochons.sh` ; vues fixes de la galerie : `scripts/3d/rendus-pochons.sh` et `scripts/pochons-planche.mjs`.
+
+**Le slider de l'accueil** (`Slider.tsx`, slides dans `site.ts`) : visuels plein cadre sur fond papier, titre peint dans l'image, bouton en bas à gauche.
+
+**Les textes** : tous dans `src/lib/content/site.ts`, provisoires (voir `ASSUMPTIONS.md`).
+
 Source : `docs/assets/da-ref-1.jpg` (buste de marbre sur bleu Klein, grain,
 rubis rouge) et `docs/assets/da-ref-2.jpg` (affiche éditoriale : wordmark
 géant, labels mono aux coins, filets fins, photo sombre granuleuse).
@@ -166,7 +212,7 @@ FAQ courte
 3. la carte produit au centre et les dosages autour, en cartes arrondies —
    rejetée (« j'aime pas du tout ») ;
 4. **retenue : simple.** Deux colonnes. D'un côté la carte produit, seule
-   pièce dessinée : pot détouré (`public/home/pot-detoure.webp`, job
+   pièce dessinée : pot détouré (`public/home/pre-workout-scult-cri-detoure.webp`, job
    `fb3b7a1e-dc0a-4f07-8a4d-b64a30494850`), penché de 5°, ombre dure du flash
    (`.flash-shadow`), prix dans la pastille rouge, bouton en pilule. De
    l'autre, un titre, la liste des sept dosages (nom à gauche, quantité à

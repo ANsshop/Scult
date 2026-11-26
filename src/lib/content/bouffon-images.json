@@ -1,0 +1,135 @@
+{
+  "hero-rose-desktop": {
+    "width": 2688,
+    "height": 1520,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2688
+    ]
+  },
+  "hero-rose-mobile": {
+    "width": 1520,
+    "height": 2688,
+    "widths": [
+      480,
+      780,
+      1170
+    ]
+  },
+  "hero-dark-desktop": {
+    "width": 2688,
+    "height": 1520,
+    "widths": [
+      960,
+      1440,
+      1920,
+      2688
+    ]
+  },
+  "hero-dark-mobile": {
+    "width": 1520,
+    "height": 2688,
+    "widths": [
+      480,
+      780,
+      1170
+    ]
+  },
+  "pre-workout-scult-cri-etiquette": {
+    "width": 588,
+    "height": 735,
+    "widths": [
+      400,
+      588
+    ]
+  },
+  "bouffon-face": {
+    "width": 1792,
+    "height": 2240,
+    "widths": [
+      480,
+      800,
+      1200,
+      1792
+    ]
+  },
+  "bouffon-applaudit": {
+    "width": 1792,
+    "height": 2240,
+    "widths": [
+      480,
+      800,
+      1200,
+      1792
+    ]
+  },
+  "slide-pots": {
+    "width": 1920,
+    "height": 1086,
+    "widths": [
+      960,
+      1440,
+      1920
+    ]
+  },
+  "pre-workout-scult-cri-face": {
+    "width": 1600,
+    "height": 2000,
+    "widths": [
+      400,
+      800,
+      1200,
+      1600
+    ]
+  },
+  "pre-workout-scult-cri-detoure": {
+    "width": 1120,
+    "height": 2030,
+    "widths": [
+      200,
+      400
+    ]
+  },
+  "pre-workout-scult-cri-trois-quarts": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  },
+  "pre-workout-scult-cri-profil": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  },
+  "pre-workout-scult-cri-dos": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  },
+  "pre-workout-scult-cri-couvercle": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  },
+  "pre-workout-scult-cri-ouvert": {
+    "width": 880,
+    "height": 1100,
+    "widths": [
+      440,
+      880
+    ]
+  }
+}

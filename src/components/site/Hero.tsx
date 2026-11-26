@@ -1,145 +1,149 @@
-"use client";
-
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import Link from "next/link";
 import { ButtonLink } from "@/components/ui/Button";
-import { HERO_SLIDES } from "@/lib/content/hero-slides";
-import { Corners } from "./Corners";
+import { imageSize, imageSrcSet, imageUrl, type ImageName } from "@/lib/content/images";
+import { HERO } from "@/lib/content/site";
+import { HeroSlider } from "./HeroSlider";
 
-/** Durée d'une slide avant le passage automatique à la suivante. */
-const SLIDE_MS = 7000;
-const pad = (n: number) => String(n).padStart(2, "0");
+/** Les mêmes `sizes` pour le préchargement et pour l'image, sinon le navigateur télécharge deux fichiers. */
+const SIZES_MOBILE = "100vw";
+// Plein cadre en `object-cover` : sur un écran plus haut que le 16:9, l'image déborde en largeur.
+const SIZES_DESKTOP = "(min-aspect-ratio: 16/9) 100vw, 178vh";
+const MOBILE = "(max-width: 1023px)";
+const DESKTOP = "(min-width: 1024px)";
 
 /**
- * Hero en slider, DA « Cri ». Les slides sont empilées dans une même case de
- * grille et se fondent l'une dans l'autre. Sur ordinateur le visuel est calé
- * à droite et le texte tient dans le mur bleu laissé vide à gauche ; sur
- * mobile le visuel passe en haut, le titre et l'appel dessous.
+ * La colonne de texte, calée sur la grille du site (1360 px). `box-content` :
+ * la largeur donnée ailleurs est celle du texte, la marge de gauche s'y ajoute
+ * (sinon, sur un très grand écran, la marge mange la colonne et le titre se coupe).
+ */
+const COLONNE = "lg:box-content lg:pl-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))]";
+
+const LIEN = "label underline decoration-rose decoration-2 underline-offset-[6px] hover:text-rose";
+
+type Affiche = {
+  /** Les deux formats du visuel : paysage (ordinateur) et portrait (mobile, tablette debout). */
+  images: { desktop: ImageName; mobile: ImageName };
+  alt: string;
+  /** Sur-titre discret (ordinateur seulement) ou pastille rose (ordinateur : au-dessus du titre ; mobile : au-dessus du bouton). */
+  eyebrow?: string;
+  badge?: string;
+  /** `accent` est la partie en rose. */
+  title: { main: string; accent: string };
+  text: string;
+  cta: { label: string; href: string };
+  secondary?: { label: string; href: string };
+};
+
+/**
+ * Le hero de l'accueil : une seule affiche pour l'instant, le bouffon et le
+ * pré-workout — le vrai contenu de la page (le h1, les dosages, le bouton),
+ * que l'intro rose recouvre puis révèle. Les textes sont dans
+ * lib/content/site.ts.
  *
- * Le défilement automatique est porté par l'animation de la barre de
- * progression (`hero-progress`, globals.css) : sa fin déclenche la slide
- * suivante. Il se met en pause au survol et au focus clavier, et n'existe pas
- * avec `prefers-reduced-motion` (les animations y sont coupées).
+ * Il passe par HeroSlider, qui sait en montrer plusieurs : ajouter une slide
+ * ici suffit à faire réapparaître les flèches, les traits et le défilement
+ * automatique. Une deuxième slide (une offre, puis l'annonce des pochons de
+ * caféine) a été essayée sous plusieurs formes le 2026-11-25 et retirée.
  */
 export function Hero() {
-  // Sur téléphone, les slides marquées `desktopOnly` sont retirées (après l'affichage initial).
-  const [phone, setPhone] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const sync = () => setPhone(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-  const slides = useMemo(() => (phone ? HERO_SLIDES.filter((s) => !s.desktopOnly) : HERO_SLIDES), [phone]);
-  const count = slides.length;
-  const [current, setIndex] = useState(0);
-  const index = Math.min(current, count - 1); // si la liste raccourcit, on reste sur une slide qui existe
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const touchX = useRef<number | null>(null);
-  const paused = hovered || focused;
-
-  const go = useCallback((i: number) => setIndex(((i % count) + count) % count), [count]);
-
+  const pre: Affiche = { ...HERO, images: { desktop: "hero-dark-desktop", mobile: "hero-dark-mobile" } };
   return (
-    <section
-      aria-roledescription="carrousel"
-      aria-label="À la une"
-      className="grain relative bg-klein text-marble"
-      onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
-      onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
-      onFocus={(e) => setFocused(e.target.matches(":focus-visible"))}
-      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setFocused(false)}
-      onKeyDown={(e) => {
-        if (e.key === "ArrowRight") go(index + 1);
-        if (e.key === "ArrowLeft") go(index - 1);
-      }}
-      onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
-      onTouchEnd={(e) => {
-        if (touchX.current === null) return;
-        const dx = e.changedTouches[0].clientX - touchX.current;
-        touchX.current = null;
-        if (Math.abs(dx) > 48) go(index + (dx < 0 ? 1 : -1));
-      }}
-    >
-      {/* Deux coins seulement, côté mur bleu : à droite ils tombaient sur le pot ou la statue selon la slide */}
-      <Corners className="top-14" tl="SCULT · 2026" bl="Fabriqué dans l'UE" />
-      <div className="relative grid">
-        {slides.map((s, i) => {
-          const active = i === index;
-          const Title = i === 0 ? "h1" : "h2";
-          const position = {
-            "--pos-m": s.position?.mobile ?? "50% 100%",
-            "--pos-d": s.position?.desktop ?? "100% 50%",
-          } as CSSProperties;
-          return (
-            <div
-              key={s.id}
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${i + 1} sur ${count}`}
-              aria-hidden={!active}
-              inert={!active}
-              className={`relative col-start-1 row-start-1 transition-opacity duration-700 ease-(--ease-scult) ${active ? "opacity-100" : "pointer-events-none opacity-0"}`}
-            >
-              <picture>
-                <source media="(max-width: 767px)" srcSet={s.image.mobile} />
-                <img
-                  src={s.image.desktop}
-                  alt={s.image.alt}
-                  fetchPriority={i === 0 ? "high" : "low"}
-                  loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  style={position}
-                  className="h-[76svh] w-full object-cover object-(--pos-m) md:h-[92svh] md:object-(--pos-d)"
-                />
-              </picture>
-              <div aria-hidden className={`pointer-events-none absolute inset-0 hidden bg-gradient-to-r via-klein/25 to-transparent md:block md:w-[55%] ${s.dark ? "from-ink/70 via-ink/25" : "from-klein/70"}`} />
-              <div className="flex flex-col justify-center px-5 pb-14 pt-20 md:absolute md:inset-0 md:px-10 md:pb-16 md:pt-0 md:pr-[62%]">
-                <p className="label text-marble/85">{s.label}</p>
-                <Title className="display mt-4 text-[clamp(2.6rem,4.4vw,4.75rem)]">{s.title}</Title>
-                <p className="mt-6 max-w-md text-[1.05rem] leading-relaxed text-marble/90">{s.text}</p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <ButtonLink href={s.cta.href} variant="marble">{s.cta.label}</ButtonLink>
-                  {s.secondary && (
-                    <ButtonLink href={s.secondary.href} variant="outline" className="text-marble hover:border-marble hover:bg-marble hover:text-ink">{s.secondary.label}</ButtonLink>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+    <HeroSlider
+      legal={HERO.legal}
+      slides={[
+        { id: "pre-workout", label: "le pré-workout", node: <SlideAffiche first {...pre} /> },
+      ]}
+    />
+  );
+}
 
-        {/* Commandes : sous le visuel sur mobile, en bas de la colonne texte sur ordinateur */}
-        <div className="absolute left-5 right-5 top-[calc(76svh+1.25rem)] z-10 flex items-center gap-4 md:left-10 md:right-auto md:top-auto md:bottom-16">
-          <button type="button" onClick={() => go(index - 1)} aria-label="Slide précédente" className="label flex h-9 w-9 items-center justify-center rounded-full border border-marble/40 hover:bg-marble hover:text-ink">←</button>
-          <div className="flex items-center gap-1.5">
-            {slides.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => go(i)}
-                aria-label={`Slide ${i + 1} : ${s.label}`}
-                aria-current={i === index}
-                className="relative h-8 w-9"
-              >
-                <span className="absolute inset-x-0 top-1/2 h-px bg-marble/35" />
-                {i === index && (
-                  <span
-                    key={index}
-                    onAnimationEnd={() => go(index + 1)}
-                    style={{ animationDuration: `${SLIDE_MS}ms`, animationPlayState: paused ? "paused" : "running" }}
-                    className="hero-progress absolute inset-x-0 top-1/2 h-0.5 -translate-y-px origin-left bg-marble"
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-          <button type="button" onClick={() => go(index + 1)} aria-label="Slide suivante" className="label flex h-9 w-9 items-center justify-center rounded-full border border-marble/40 hover:bg-marble hover:text-ink">→</button>
-          <span className="label tabular-nums text-marble/85" aria-live="polite">{pad(index + 1)} / {pad(count)}</span>
+/**
+ * Une affiche du bouffon, plein cadre, et son texte.
+ *
+ * Ordinateur (à partir de 1024 px ; une tablette tenue debout prend la mise en
+ * page mobile, sinon le texte tombe sur le produit) : le bouffon à droite ; un
+ * voile noir de gauche à droite garde le texte lisible ; le bloc de texte est
+ * calé à gauche, un peu au-dessus du milieu.
+ * Mobile : tout tient dans un écran. L'affiche 9:16 remplit l'écran bord à
+ * bord, remontée pour que le bonnet arrive juste sous l'en-tête
+ * (`.hero-affiche`, globals.css) ; le titre est posé en bas, sur les jambes du
+ * bouffon, au-dessus du bouton. Rien d'autre : la phrase des dosages et le lien
+ * « Voir la formule », qui suivaient sous le bouton, ont été retirés le 2026-11-26
+ * (ils restent sur ordinateur, à côté du bouton).
+ *
+ * Le titre est en Barlow Condensed italique (`.affiche`) ; les autres titres
+ * du site restent en Archivo Black (`.display`).
+ *
+ * `first` : la slide d'arrivée. Son titre est le h1 de la page, son image —
+ * le plus grand élément de la page (LCP) — est préchargée en priorité haute.
+ * Les autres slides ne sont pas visibles à l'arrivée : image en basse priorité.
+ */
+function SlideAffiche({ first = false, images, alt, eyebrow, badge, title, text, cta, secondary }: Affiche & { first?: boolean }) {
+  const desktop = imageSize(images.desktop);
+  const mobile = imageSize(images.mobile);
+  const Title = first ? "h1" : "h2";
+  // Un titre plus long (« La caféine ») est composé plus petit, pour tenir sur deux lignes dans la colonne.
+  const size = Math.max(title.main.length, title.accent.length) > 8
+    ? "text-[min(14vw,6.6svh,5.25rem)] lg:text-[clamp(3.75rem,8vw,7.75rem)]"
+    : "text-[min(18.5vw,8.4svh,6.75rem)] lg:text-[clamp(4.5rem,10.5vw,10.25rem)]";
+  return (
+    <div className={`sombre relative isolate h-full overflow-hidden bg-fond lg:flex lg:flex-col lg:justify-center lg:pb-[6svh] ${first ? "lg:min-h-[max(100svh,40rem)]" : ""}`}>
+      {first && (
+        <>
+          <link rel="preload" as="image" type="image/avif" media={MOBILE} imageSrcSet={imageSrcSet(images.mobile, "avif")} imageSizes={SIZES_MOBILE} fetchPriority="high" />
+          <link rel="preload" as="image" type="image/avif" media={DESKTOP} imageSrcSet={imageSrcSet(images.desktop, "avif")} imageSizes={SIZES_DESKTOP} fetchPriority="high" />
+        </>
+      )}
+
+      {/* La barre rose, du bord gauche, sous la navigation */}
+      <span aria-hidden className="absolute left-0 top-(--entete) z-10 h-1.5 w-[min(44vw,36rem)] bg-rose" />
+
+      {/* Sur-titre et titre. Mobile : en bas, sur les jambes du bouffon, juste au-dessus du bouton. */}
+      <div className={`absolute inset-x-0 bottom-[6.75rem] z-10 px-5 text-center lg:static lg:w-[min(46rem,45vw)] lg:pr-0 lg:text-left ${COLONNE}`}>
+        {eyebrow && <p className="label hidden text-doux lg:block">{eyebrow}</p>}
+        {badge && <p className="label hidden rounded-full bg-rose px-3 py-1 font-bold text-noir lg:inline-block">{badge}</p>}
+        {/* `data-texte` : le double rose du titre, qui saute pendant le glitch (intro.css) */}
+        <Title {...(first ? { "data-texte": `${title.main}\n${title.accent}` } : {})} className={`${first ? "hero-titre " : ""}affiche lg:mt-5 ${size}`}>
+          {title.main}<br /><span className="text-rose [text-shadow:none]">{title.accent}</span>
+        </Title>
+      </div>
+
+      {/* L'image, plein cadre, derrière le texte */}
+      <div className="absolute inset-0 -z-10">
+        <picture>
+          <source media={MOBILE} type="image/avif" srcSet={imageSrcSet(images.mobile, "avif")} sizes={SIZES_MOBILE} width={mobile.width} height={mobile.height} />
+          <source media={MOBILE} type="image/webp" srcSet={imageSrcSet(images.mobile, "webp")} sizes={SIZES_MOBILE} width={mobile.width} height={mobile.height} />
+          <source type="image/avif" srcSet={imageSrcSet(images.desktop, "avif")} sizes={SIZES_DESKTOP} width={desktop.width} height={desktop.height} />
+          <source type="image/webp" srcSet={imageSrcSet(images.desktop, "webp")} sizes={SIZES_DESKTOP} width={desktop.width} height={desktop.height} />
+          <img
+            src={imageUrl(images.desktop, 1440)}
+            alt={alt}
+            width={desktop.width}
+            height={desktop.height}
+            fetchPriority={first ? "high" : "low"}
+            loading={first ? "eager" : "lazy"}
+            decoding={first ? undefined : "async"}
+            className="hero-affiche"
+          />
+        </picture>
+        {/* Voile de lisibilité : noir à gauche, transparent vers 62 % (ordinateur) */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,rgb(0_0_0/0.72)_0%,rgb(0_0_0/0.5)_30%,transparent_62%)] lg:block" />
+        {/* Voile du haut, sous la navigation */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/75 to-transparent lg:h-44" />
+        {/* Mobile : le bas de l'affiche se fond dans le noir, derrière le titre et le bouton */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-fond via-fond/80 via-45% to-transparent lg:hidden" />
+      </div>
+
+      {/* Texte et boutons. Mobile : le bouton seul, en bas de l'écran. */}
+      <div className={`absolute inset-x-0 bottom-10 px-5 lg:static lg:w-[min(46rem,45vw)] lg:pr-0 lg:pt-8 ${COLONNE}`}>
+        <p className="hidden text-balance text-[1.05rem] leading-relaxed text-doux lg:block">{text}</p>
+        <div className="flex flex-col items-center gap-2.5 lg:mt-9 lg:flex-row lg:gap-8">
+          {/* Mobile : la pastille au-dessus du bouton (en haut, elle tomberait sur le bonnet) */}
+          {badge && <p className="label rounded-full bg-rose px-3 py-1 font-bold text-noir lg:hidden">{badge}</p>}
+          <ButtonLink href={cta.href} className="h-[3.25rem] w-full !text-[0.85rem] lg:h-14 lg:w-auto lg:px-10">{cta.label}</ButtonLink>
+          {secondary && <Link href={secondary.href} className={`${LIEN} hidden lg:inline`}>{secondary.label}</Link>}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

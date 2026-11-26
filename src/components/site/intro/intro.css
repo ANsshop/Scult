@@ -1,0 +1,157 @@
+/* L'intro de l'accueil : le faux site rose, puis le glitch. Voir script.ts.
+   Le thème rose n'existe qu'ici ; rien de ce fichier ne sert au vrai site. */
+
+@font-face {
+  font-family: "Pacifico";
+  src: url("/fonts/pacifico-latin-400-normal.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: block;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("/fonts/quicksand-latin-wght-normal.woff2") format("woff2");
+  font-weight: 300 700; font-style: normal; font-display: swap;
+}
+
+/* — La coquille : masquée tant que <html> ne dit pas de jouer — */
+#intro-rose { display: none; }
+html:is([data-intro="play"], [data-intro="glitch"], [data-intro="fade"]) #intro-rose {
+  display: block;
+  position: fixed; inset: 0; z-index: 100;
+  overflow: hidden;
+  contain: strict;
+}
+/* Le rose est là dès le premier affichage : un dégradé, sans attendre l'image ni le script */
+html:is([data-intro="play"], [data-intro="fade"]) #intro-rose {
+  background: linear-gradient(165deg, #f9add4 0%, #fecce9 48%, #f8b5dc 100%);
+}
+/* Mouvement réduit : un fondu de 200 ms, pas de glitch. Il passe au-dessus de la règle
+   globale qui coupe toutes les transitions. */
+html[data-intro="fade"] #intro-rose { opacity: 0; transition: opacity 200ms linear !important; }
+
+/* — Le faux site — */
+.intro-scene {
+  position: absolute; inset: 0;
+  font-family: "Quicksand", "Trebuchet MS", sans-serif;
+  color: #b0246a;
+  background: linear-gradient(165deg, #f9add4 0%, #fecce9 48%, #f8b5dc 100%);
+}
+.intro-photo {
+  position: absolute; inset: 0;
+  background-image: var(--rose-m-webp);
+  background-image: var(--rose-m);
+  background-size: cover;
+  background-position: 50% 100%;
+}
+.intro-nav {
+  position: absolute; inset: 0 0 auto 0;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 4rem; padding-inline: 1.25rem;
+  font-size: 0.9rem; font-weight: 600;
+}
+.intro-logo { font-family: "Pacifico", cursive; font-size: 1.6rem; font-weight: 400; color: #fff; text-shadow: 0 2px 10px rgb(214 51 132 / 0.45); }
+.intro-liens { display: none; gap: 2rem; }
+.intro-panier { padding: 0.45rem 1rem; border-radius: 999px; background: rgb(255 255 255 / 0.55); }
+.intro-bloc {
+  position: absolute; inset: 4rem 0 0 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0.5rem 1.5rem 1.75rem;
+  text-align: center;
+}
+.intro-pastille {
+  padding: 0.4rem 0.95rem; border-radius: 999px;
+  background: rgb(255 255 255 / 0.7);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em;
+}
+.intro-titre {
+  margin-top: 0.9rem;
+  font-family: "Pacifico", cursive;
+  font-size: clamp(2.3rem, 11vw, 2.9rem); line-height: 1.12;
+  color: #fff;
+  text-shadow: 0 3px 0 rgb(255 95 168 / 0.55), 0 6px 22px rgb(214 51 132 / 0.5);
+}
+.intro-texte { margin-top: 0.8rem; max-width: 19rem; font-size: 0.98rem; font-weight: 600; line-height: 1.45; }
+.intro-bouton {
+  margin-top: auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 3.4rem; width: 100%; max-width: 21rem; border-radius: 999px;
+  background: #ff5fa8; color: #fff;
+  font-size: 1.05rem; font-weight: 700;
+  box-shadow: 0 12px 26px -8px rgb(255 95 168 / 0.85);
+}
+.intro-ligne { margin-top: 0.8rem; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; }
+
+@media (min-width: 768px) {
+  .intro-photo { background-image: var(--rose-d-webp); background-image: var(--rose-d); background-position: 100% 50%; }
+  .intro-nav { height: 5rem; padding-inline: 3.5rem; font-size: 0.98rem; }
+  .intro-logo { font-size: 2rem; }
+  .intro-liens { display: flex; }
+  .intro-bloc {
+    inset: 5rem auto 0 0; width: min(46rem, 56vw);
+    align-items: flex-start; justify-content: center;
+    padding: 0 0 4rem 3.5rem;
+    text-align: left;
+  }
+  .intro-pastille { font-size: 0.82rem; }
+  .intro-titre { margin-top: 1.3rem; font-size: clamp(3.4rem, 6.2vw, 6.2rem); line-height: 1.1; }
+  .intro-texte { margin-top: 1.3rem; max-width: 27rem; font-size: 1.2rem; }
+  .intro-bouton { margin-top: 2rem; width: auto; padding-inline: 2.9rem; height: 3.7rem; font-size: 1.15rem; }
+  .intro-ligne { margin-top: 1.4rem; font-size: 0.88rem; }
+}
+
+/* — Le glitch —
+   La scène est dupliquée en bandes horizontales (script.ts). Chaque bande est
+   découpée par `clip-path` et saute en X à chaque pas ; elle s'éteint à la
+   passe prévue et ne se rallume pas. Seuls `transform` et `opacity` sont
+   animés, par pas francs (`steps`) : rien ne recalcule la mise en page. */
+.intro-tranches { position: absolute; inset: 0; }
+.intro-tranche {
+  position: absolute; left: 0; width: 100%;
+  clip-path: inset(0);
+  will-change: transform, opacity;
+  animation: intro-tranche 700ms steps(1, end) both;
+}
+.intro-tranche > .intro-scene { inset: auto; left: 0; width: 100%; }
+@keyframes intro-tranche {
+  0%    { transform: translate3d(var(--x1), 0, 0); opacity: var(--o1, 1); }
+  12.5% { transform: translate3d(var(--x2), 0, 0); opacity: var(--o1, 1); }
+  25%   { transform: translate3d(var(--x3), 0, 0); opacity: var(--o2); }
+  37.5% { transform: translate3d(var(--x4), 0, 0); opacity: var(--o2); }
+  50%   { transform: translate3d(var(--x5), 0, 0); opacity: var(--o3); }
+  62.5% { transform: translate3d(var(--x6), 0, 0); opacity: var(--o3); }
+  75%   { transform: translate3d(var(--x7), 0, 0); opacity: var(--o4); }
+  87.5% { transform: translate3d(var(--x8), 0, 0); opacity: var(--o4); }
+  100%  { transform: translate3d(var(--x8), 0, 0); opacity: 0; }
+}
+
+/* Les barres pleines, du rose de la marque, qui traversent l'écran */
+.intro-barre {
+  position: absolute; left: 0; width: 100%;
+  background: #ff2e93;
+  transform: translate3d(-101%, 0, 0);
+  animation: intro-barre 240ms steps(5, end) both;
+}
+@keyframes intro-barre {
+  from { transform: translate3d(-101%, 0, 0); }
+  to   { transform: translate3d(101%, 0, 0); }
+}
+
+/* Décalage chromatique du H1 dark pendant les deux dernières passes : son double
+   rose (le pseudo-élément, voir Hero.tsx) saute de quelques pixels. */
+.hero-titre { position: relative; isolation: isolate; }
+.hero-titre::before {
+  content: attr(data-texte);
+  position: absolute; inset: 0; z-index: -1;
+  color: #ff2e93;
+  text-shadow: none;
+  white-space: pre-line; /* deux lignes, comme le titre */
+  opacity: 0;
+  pointer-events: none;
+}
+html[data-intro="glitch"] .hero-titre::before { animation: titre-saute 350ms steps(1, end) 350ms forwards; }
+@keyframes titre-saute {
+  0%   { transform: translate3d(-9px, 3px, 0); opacity: 0.9; }
+  25%  { transform: translate3d(8px, -3px, 0); opacity: 0.9; }
+  50%  { transform: translate3d(-5px, -2px, 0); opacity: 0.9; }
+  75%  { transform: translate3d(4px, 2px, 0); opacity: 0.9; }
+  100% { transform: translate3d(0, 0, 0); opacity: 0; }
+}

@@ -9,6 +9,11 @@ import path from "node:path";
  *
  * Forme des données : docs/PP-API-CONTRACT.md (copie du contrat Limitless).
  * Mock local : PP_MOCK=1 → docs/mock/catalogue.json, même forme.
+ *
+ * Depuis le 2026-11-26, SCULT a sa propre base (lib/db.ts, lib/store/) : dès
+ * que DATABASE_URL est renseignée, les trois fonctions ci-dessous lisent et
+ * écrivent dans cette base, et ni le socle ni le catalogue de test ne servent.
+ * Le reste du site ne voit pas la différence : mêmes fonctions, mêmes formes.
  */
 
 export class PpError extends Error {
@@ -69,6 +74,8 @@ export type PpQuote = {
   subtotalCents: number;
   discountCents: number;
   promoCode: string | null;
+  /** Un code a été saisi mais ne s'applique pas : la raison, à montrer au client. */
+  promoError?: string | null;
 };
 
 export type PpOrderInput = {
@@ -90,6 +97,8 @@ export type PpOrderInput = {
 export type PpOrder = { id: string; reference: string; totalCents: number };
 
 const mock = () => process.env.PP_MOCK === "1";
+/** La boutique a sa base : c'est elle qui fait foi. Lu ici sans importer lib/db.ts, pour ne charger Postgres que si on s'en sert. */
+const own = () => Boolean(process.env.DATABASE_URL);
 
 function base() {
   const url = process.env.PP_API_URL;
@@ -114,6 +123,7 @@ async function fail(res: Response): Promise<never> {
 }
 
 export async function getCatalogue(): Promise<PpCatalogue> {
+  if (own()) return (await import("@/lib/store/catalogue")).catalogueFromDb();
   if (mock()) {
     const file = path.join(process.cwd(), "docs/mock/catalogue.json");
     return JSON.parse(await readFile(file, "utf8")) as PpCatalogue;
@@ -129,6 +139,9 @@ export async function getCatalogue(): Promise<PpCatalogue> {
 }
 
 export async function quoteCart(lines: PpCartLine[], promoCode?: string): Promise<PpQuote> {
+  if (own()) {
+    return (await import("@/lib/store/orders")).quoteFromDb(lines, promoCode);
+  }
   if (mock()) {
     const cat = await getCatalogue();
     const bySku = new Map(cat.products.flatMap((p) => p.variants.map((v) => [v.sku, { p, v }] as const)));
@@ -151,6 +164,17 @@ export async function quoteCart(lines: PpCartLine[], promoCode?: string): Promis
 }
 
 export async function createOrder(input: PpOrderInput): Promise<PpOrder> {
+  if (own()) {
+    const { created, ...order } = await (await import("@/lib/store/orders")).createOrderInDb(input);
+    if (created) {
+      // Le stock vient de baisser : le catalogue en cache est périmé.
+      const { revalidateTag } = await import("next/cache");
+      revalidateTag((await import("@/lib/store/catalogue")).CATALOGUE_TAG, "max");
+      // La confirmation au client (et l'alerte à la boutique). Une seule fois : pas sur un signal Stripe rejoué.
+      await (await import("@/lib/notify/orders")).onOrderCreated(order.id);
+    }
+    return order;
+  }
   if (mock()) {
     return { id: crypto.randomUUID(), reference: `SCT-${Math.random().toString(36).slice(2, 8).toUpperCase()}`, totalCents: 0 };
   }

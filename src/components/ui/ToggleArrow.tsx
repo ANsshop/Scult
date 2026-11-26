@@ -8,7 +8,7 @@ export function ToggleArrow({ className = "" }: { className?: string }) {
     <svg
       aria-hidden
       viewBox="0 0 20 20"
-      className={`h-5 w-5 shrink-0 transition-transform duration-300 ease-(--ease-scult) group-open:rotate-180 group-open:text-klein ${className}`}
+      className={`h-5 w-5 shrink-0 transition-transform duration-300 ease-(--ease-scult) group-open:rotate-180 group-open:text-rose ${className}`}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.8"

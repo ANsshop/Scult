@@ -8,7 +8,6 @@ avec le site : une créa qui marche se retrouve, une créa qui a échoué aussi.
 
 | Angle | Cible | Hook principal | Preuve utilisée |
 |---|---|---|---|
-| `statue` | 25-40 ans, sport régulier, sensibles au design | « Un corps se sculpte dans le temps. » | DA (marbre), fabrication UE |
 | `3g` | pratiquants qui connaissent déjà la créatine | « 3 g. Tous les jours. C'est tout. » | allégation EFSA créatine, 100 portions |
 | `lisible` | acheteurs méfiants des marques de compléments | « Lisez le dos avant d'acheter. » | tableau nutritionnel au dos, lot numéroté |
 
@@ -49,7 +48,6 @@ ads-crea/
 
 | Fichier | Angle | Format | Statut | Date | CPA / CTR | Note |
 |---|---|---|---|---|---|---|
-| statics/statue/scult-statue-{9x16,4x5,1x1}.png | statue | 3 | validé | 2026-10-20 | — | composés via ad.html (Playwright) |
 | statics/3g/scult-3g-{9x16,4x5,1x1}.png | 3g | 3 | validé | 2026-10-20 | — | |
 | statics/lisible/scult-lisible-{9x16,4x5,1x1}.png | lisible | 3 | validé | 2026-10-20 | — | |
 | video/ugc-3g-script.md | 3g | script | brouillon | 2026-10-20 | — | à générer (Seedance) sur accord |
