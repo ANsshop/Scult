@@ -137,14 +137,16 @@ export function HeroSlider({ slides, legal }: { slides: HeroSlide[]; legal: stri
       </div>
 
       {/* Mobile : le texte du hero, sous la scène. Ordinateur : il ne reste que la mention, posée en bas à gauche de la scène. */}
-      <div className="sombre bg-fond px-5 pb-9 pt-6 lg:absolute lg:bottom-7 lg:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] lg:z-20 lg:bg-transparent lg:p-0">
+      <div className="sombre bg-fond px-5 pb-7 pt-5 lg:absolute lg:bottom-7 lg:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] lg:z-20 lg:bg-transparent lg:p-0">
         {/* Les textes des slides, empilés : la hauteur du bloc ne change pas d'une slide à l'autre */}
-        <div className="grid lg:hidden">
-          {slides.map((s, i) => (
-            <div key={s.id} aria-hidden={i !== index} className={`col-start-1 row-start-1 transition-opacity duration-500 ${i === index ? "opacity-100" : "invisible opacity-0"}`}>{s.pied}</div>
-          ))}
-        </div>
-        <p className={`label mt-7 !text-[0.5625rem] leading-relaxed text-discret lg:mt-0 ${clair ? "lg:text-noir/70" : ""}`}>{legal}</p>
+        {slides.some((s) => s.pied) && (
+          <div className="mb-7 grid lg:hidden">
+            {slides.map((s, i) => (
+              <div key={s.id} aria-hidden={i !== index} className={`col-start-1 row-start-1 transition-opacity duration-500 ${i === index ? "opacity-100" : "invisible opacity-0"}`}>{s.pied}</div>
+            ))}
+          </div>
+        )}
+        <p className={`label !text-[0.5625rem] leading-relaxed text-discret ${clair ? "lg:text-noir/70" : ""}`}>{legal}</p>
       </div>
     </section>
   );

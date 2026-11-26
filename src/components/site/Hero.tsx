@@ -46,18 +46,12 @@ type Affiche = {
  * caféine) a été essayée sous plusieurs formes le 2026-11-25 et retirée.
  */
 export function Hero() {
-  const pied = (a: Affiche) => (
-    <>
-      <p className="text-balance text-[0.95rem] leading-relaxed text-doux">{a.text}</p>
-      {a.secondary && <Link href={a.secondary.href} className={`${LIEN} mt-5 inline-block`}>{a.secondary.label}</Link>}
-    </>
-  );
   const pre: Affiche = { ...HERO, images: { desktop: "hero-dark-desktop", mobile: "hero-dark-mobile" } };
   return (
     <HeroSlider
       legal={HERO.legal}
       slides={[
-        { id: "pre-workout", label: "le pré-workout", node: <SlideAffiche first {...pre} />, pied: pied(pre) },
+        { id: "pre-workout", label: "le pré-workout", node: <SlideAffiche first {...pre} /> },
       ]}
     />
   );
@@ -73,7 +67,9 @@ export function Hero() {
  * Mobile : tout tient dans un écran. L'affiche 9:16 remplit l'écran bord à
  * bord, remontée pour que le bonnet arrive juste sous l'en-tête
  * (`.hero-affiche`, globals.css) ; le titre est posé en bas, sur les jambes du
- * bouffon, au-dessus du bouton. Le texte est sous le slider (HeroSlider, `pied`).
+ * bouffon, au-dessus du bouton. Rien d'autre : la phrase des dosages et le lien
+ * « Voir la formule », qui suivaient sous le bouton, ont été retirés le 2026-11-26
+ * (ils restent sur ordinateur, à côté du bouton).
  *
  * Le titre est en Barlow Condensed italique (`.affiche`) ; les autres titres
  * du site restent en Archivo Black (`.display`).
