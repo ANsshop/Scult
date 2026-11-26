@@ -60,3 +60,6 @@ docs/3d/*.blend1
 
 # sources des visuels bouffon (re-téléchargées par scripts/bouffon-images.mjs)
 /.bouffon-src/
+
+# base locale de développement (npm run db:local)
+/.db-local/

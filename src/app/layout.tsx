@@ -4,6 +4,7 @@ import { CartProvider, type BundleRule } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { getFlavourOffer, type FlavourOffer } from "@/lib/catalog/queries";
 import { JsonLd } from "@/components/site/JsonLd";
+import { Suivi } from "@/components/site/Suivi";
 import { organizationJsonLd, siteOrigin } from "@/lib/seo";
 import { INTRO_HEAD_SCRIPT } from "@/components/site/intro/script";
 import "./globals.css";
@@ -65,6 +66,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           {children}
           <CartDrawer offer={offer} />
         </CartProvider>
+        {/* Mesure d'audience sans cookie, pour le taux de conversion de l'admin */}
+        <Suivi />
       </body>
     </html>
   );

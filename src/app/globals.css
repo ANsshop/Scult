@@ -280,3 +280,12 @@ label:has(> input[name="quantite"]):hover::after { animation: carte-reflet 1.1s 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* — L'admin (/admin) —
+   Un outil de travail : pas de grain par-dessus les tableaux, et le tiroir du
+   panier, monté par le gabarit commun du site, n'a rien à y faire. */
+body:has(.admin)::after { display: none; }
+body:has(.admin) { background: #f4f3f0; }
+.admin { font-feature-settings: "cv11", "ss01"; }
+.admin details > summary { list-style: none; }
+.admin details > summary::-webkit-details-marker { display: none; }

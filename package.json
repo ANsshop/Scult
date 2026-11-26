@@ -9,13 +9,21 @@
     "lint": "eslint",
     "images:optimize": "node scripts/optimize-images.mjs",
     "images:bouffon": "node scripts/bouffon-images.mjs",
-    "gate": "bash scripts/gate.sh"
+    "gate": "bash scripts/gate.sh",
+    "db:local": "node scripts/db/local.mjs",
+    "db:migrate": "node scripts/db/migrate.mjs",
+    "db:seed": "node scripts/db/seed.mjs",
+    "db:admin": "node scripts/db/admin.mjs",
+    "test:admin": "node scripts/admin-e2e.mjs"
   },
   "dependencies": {
     "@google/model-viewer": "^4.4.0",
+    "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
+    "jose": "^6.2.18",
     "motion": "^12.40.0",
     "next": "16.2.9",
+    "pg": "^8.23.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "server-only": "^0.0.1",
@@ -26,8 +34,11 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "embedded-postgres": "^17.12.0-beta.19",
+    "playwright-core": "^1.65.1",
     "sharp": "^0.34.3",
     "tailwindcss": "^4",
     "typescript": "^5"
