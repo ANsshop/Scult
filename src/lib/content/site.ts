@@ -87,7 +87,7 @@ export const FOCUS = {
 /**
  * Le slider de l'accueil (ancre #bouffon), sous le hero. Une
  * slide = un visuel plein cadre, dont le titre est peint dans l'image (d'où
- * l'`alt`), et un bouton. `pot` place le pot 3D par-dessus le pot central du
+ * l'`alt`), et un bouton vers la fiche (le bouton d'ajout au panier est posé à côté par Slider). `pot` place le pot 3D par-dessus le pot central du
  * visuel : centre et largeur en % de l'image, inclinaison, angle de vue.
  * Pour ajouter une slide : un visuel dans scripts/bouffon-images.mjs, une entrée ici.
  */
@@ -96,7 +96,7 @@ export const SLIDES = [
     id: "pots",
     image: "slide-pots" as const,
     alt: "« T'as cru quoi ? » peint au pinceau, en noir et rose, à côté de pots SCULT qui volent devant des éclaboussures d'encre",
-    cta: { label: "Prends ta dose", href: "/produits/cri" },
+    cta: { label: "Voir le produit", href: "/produits/cri" },
     pot: { x: 66, y: 51.9, width: 45.5, tilt: -8, orbit: "8deg 72deg 135%" },
   },
 ];

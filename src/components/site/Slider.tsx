@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { ButtonLink } from "@/components/ui/Button";
+import { AddToCart } from "@/components/cart/AddToCart";
+import type { CartLine } from "@/lib/types";
 import { imageSize } from "@/lib/content/images";
 import { SLIDES } from "@/lib/content/site";
 import { Picture } from "./Picture";
@@ -21,6 +23,9 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * Mobile : le cadre est en 4:5 et la scène, plus large que lui, est centrée
  * sur son pot.
  *
+ * `buy` : le pot à mettre au panier depuis la slide, à côté du bouton vers la
+ * fiche ; sans lui (catalogue injoignable), il ne reste que le lien.
+ *
  * Le pot 3D (`pot`) recouvre le pot central peint dans le visuel ; on le fait
  * tourner à la souris ou au doigt, et il le montre (SlidePot) : il tourne seul,
  * suit le défilement et porte une invitation. Sans 3D, il n'y a rien à
@@ -28,7 +33,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * glissement du doigt, réservé au pot), et les commandes n'apparaissent qu'à
  * partir de deux slides.
  */
-export function Slider() {
+export function Slider({ buy = null }: { buy?: { item: CartLine; inStock: boolean; preorderEta: string | null } | null }) {
   const count = SLIDES.length;
   const [index, setIndex] = useState(0);
   const go = (i: number) => setIndex(((i % count) + count) % count);
@@ -55,9 +60,11 @@ export function Slider() {
                 <Picture name={s.image} alt={s.alt} sizes="(min-width: 768px) 100vw, 222vw" className="absolute inset-0 h-full w-full object-cover" />
                 {s.pot && <SlidePot pot={s.pot} />}
               </div>
-              {/* Le bouton est dans un bloc en absolu : la classe du reflet lui impose `position: relative` */}
-              <div className="absolute bottom-5 left-5 md:bottom-10 md:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))]">
-                <ButtonLink href={s.cta.href} className="md:h-14 md:px-10">{s.cta.label}</ButtonLink>
+              {/* Les boutons sont dans un bloc en absolu : la classe du reflet leur impose `position: relative`.
+                  D'abord l'achat (rose), puis la fiche (blanc cerné de noir : lisible sur le pot noir comme sur le fond clair). */}
+              <div className="absolute inset-x-5 bottom-5 flex gap-2.5 md:inset-x-auto md:bottom-10 md:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] md:gap-3">
+                {buy && <AddToCart key={buy.item.sku} item={buy.item} inStock={buy.inStock} preorderEta={buy.preorderEta} className="flex-1 !px-4 md:h-14 md:flex-none md:!px-10" />}
+                <ButtonLink href={s.cta.href} className="flex-1 !bg-white !px-4 shadow-[0_0_0_1.5px_var(--color-noir)] md:h-14 md:flex-none md:!px-10">{s.cta.label}</ButtonLink>
               </div>
             </div>
           );
