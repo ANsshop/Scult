@@ -55,6 +55,7 @@
   --color-stone: #76736d;
 
   --font-display: var(--police-titre), Impact, "Arial Black", sans-serif;
+  --font-affiche: var(--police-affiche), Impact, "Arial Narrow", sans-serif;
   --font-sans: var(--police), "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--police-mono), ui-monospace, "SF Mono", monospace;
 
@@ -113,6 +114,35 @@ body::after {
 /* L'ombre portée des grands titres (brief d'origine : 5px 2px 0 rose à 85 %). Coupée :
    l'ancien site n'en avait pas ; pour la rétablir, `text-shadow: var(--ombre-titre)`. */
 .ombre-titre { text-shadow: none; }
+
+/* Le titre du hero de l'accueil : Barlow Condensed extra-gras italique, en capitales —
+   étroit et penché, comme le « SCULT » de l'étiquette du pot. */
+.affiche {
+  font-family: var(--font-affiche);
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+  text-wrap: balance;
+}
+
+/* L'affiche du hero sur téléphone : remontée et agrandie d'autant, pour que le
+   bonnet du bouffon arrive juste sous l'en-tête (14 px de marge) au lieu de
+   laisser un vide au-dessus de lui. Le bonnet commence à 21,9 % de la hauteur
+   de l'image (hero-dark-mobile, 780 × 1379). Deux cas, selon que l'image est
+   calée sur la hauteur du cadre (téléphone) ou sur sa largeur (tablette debout). */
+.hero-affiche {
+  --marge: calc(var(--entete) + 14px);
+  --remonte: max(0px, 28.04% - 1.2804 * var(--marge), 38.72vw - var(--marge));
+  position: absolute; inset-inline: 0;
+  top: calc(-1 * var(--remonte));
+  width: 100%; height: calc(100% + var(--remonte));
+  object-fit: cover; object-position: top;
+}
+@media (min-width: 1024px) {
+  .hero-affiche { top: 0; height: 100%; object-position: 100% 50%; }
+}
 
 /* Étiquettes mono : les métadonnées de l'affiche */
 .label {

@@ -4,7 +4,7 @@ import { FOOTER } from "@/lib/content/site";
 import { Wordmark } from "./Wordmark";
 
 const COLS = [
-  { title: "Boutique", links: [["CRI · pré-workout", "/produits/cri"], ["Pochons de caféine", "/produits/pochons"], ["La formule", "/#formule"], ["Le bouffon", "/#bouffon"], ["Panier", "/panier"]] },
+  { title: "Boutique", links: [["CRI · pré-workout", "/produits/cri"], ["Pochons de caféine", "/produits/pochons"], ["La formule", "/produits/cri#formule"], ["Le bouffon", "/#bouffon"], ["Panier", "/panier"]] },
   { title: "Comprendre", links: [["Guide du pré-workout", "/guide/pre-workout"], ["Citrulline", "/ingredients/citrulline"], ["Bêta-alanine", "/ingredients/beta-alanine"], ["Créatine", "/ingredients/creatine"], ["Caféine", "/ingredients/cafeine"], ["L-théanine", "/ingredients/l-theanine"]] },
   { title: "Aide", links: [["Performance & sources", "/methode"], ["Questions fréquentes", "/faq"], ["Livraison & retours", "/livraison-retours"], ["Nous écrire", "mailto:hello@scult.eu"]] },
   { title: "Légal", links: [["CGV", "/cgv"], ["Mentions légales", "/mentions-legales"], ["Confidentialité", "/confidentialite"]] },

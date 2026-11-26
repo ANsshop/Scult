@@ -97,7 +97,7 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
               </details>
             )}
             {info && (
-              <details className="group py-5" open>
+              <details id="formule" className="group scroll-mt-28 py-5" open>
                 <summary className="flex cursor-pointer list-none items-center justify-between font-bold [&::-webkit-details-marker]:hidden">Composition par dose<ToggleArrow /></summary>
                 <div className="mt-4 text-[0.95rem] leading-relaxed text-doux">
                   <p className="text-texte">{info.denomination}</p>

@@ -12,7 +12,7 @@ import { TurnHint } from "./TurnHint";
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * Le slider de l'accueil (ancre #bouffon), sous la section « formule » : des
+ * Le slider de l'accueil (ancre #bouffon), sous le hero : des
  * visuels plein cadre, bord à bord. Les slides sont dans lib/content/site.ts.
  *
  * Chaque slide a une « scène » aux proportions exactes de son visuel : tout ce
@@ -87,7 +87,7 @@ const KICK_MS = 1500;
  * les visiteurs ne le touchaient pas :
  *  - il tourne seul, lentement, dès qu'il est chargé ;
  *  - il fait un tour complet quand la slide arrive à l'écran ;
- *  - il tourne avec le défilement de la page, comme le pot de la section du dessus ;
+ *  - il tourne avec le défilement de la page ;
  *  - une pastille « 360° · Faites tourner le pot » reste posée au-dessus de lui tant
  *    qu'on ne l'a pas tourné soi-même.
  * En mouvement réduit : le pot est immobile, la pastille reste.

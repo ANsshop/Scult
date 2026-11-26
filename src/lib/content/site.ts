@@ -44,7 +44,7 @@ export const ANNONCE = { text: "−30 % sur le deuxième pot", href: "/produits/
 export const NAV = [
   { label: "Pre-workout", href: "/produits/cri" },
   { label: "Pochons", href: "/produits/pochons" },
-  { label: "La formule", href: "/#formule" },
+  { label: "La formule", href: "/produits/cri#formule" },
   { label: "Le bouffon", href: "/#bouffon" },
 ];
 
@@ -55,7 +55,7 @@ export const HERO = {
   title: { main: "T'as cru", accent: "quoi ?" },
   text: `${DOSAGES} Zéro paillettes.`,
   cta: { label: "Prends ta dose", href: "/produits/cri" },
-  secondary: { label: "Voir la formule", href: "/#formule" },
+  secondary: { label: "Voir la formule", href: "/produits/cri#formule" },
   legal: "Complément alimentaire · Réservé aux adultes · Contient de la caféine",
   alt: "Un bouffon musclé au masque blanc fendu d'un sourire tend un pot SCULT noir et rose vers l'objectif, dans une salle de sport en sous-sol",
 };
@@ -85,7 +85,7 @@ export const FOCUS = {
 };
 
 /**
- * Le slider de l'accueil (ancre #bouffon), sous la section « formule ». Une
+ * Le slider de l'accueil (ancre #bouffon), sous le hero. Une
  * slide = un visuel plein cadre, dont le titre est peint dans l'image (d'où
  * l'`alt`), et un bouton. `pot` place le pot 3D par-dessus le pot central du
  * visuel : centre et largeur en % de l'image, inclinaison, angle de vue.

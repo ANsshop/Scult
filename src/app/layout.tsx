@@ -14,6 +14,8 @@ import "./globals.css";
 // JetBrains Mono (étiquettes). Les deux polices du faux site rose (Pacifico,
 // Quicksand) sont dans public/fonts/ et ne se chargent que si l'intro joue.
 const display = localFont({ src: "../fonts/archivo-black-latin-400-normal.woff2", variable: "--police-titre", weight: "400", display: "swap" });
+// Le titre du hero de l'accueil : Barlow Condensed extra-gras italique (Fontsource, licence OFL), choisi sur planche le 2026-11-26.
+const affiche = localFont({ src: "../fonts/barlow-condensed-latin-800-italic.woff2", variable: "--police-affiche", weight: "800", style: "italic", display: "swap" });
 const inter = localFont({ src: "../fonts/inter-latin-wght-normal.woff2", variable: "--police", weight: "100 900", display: "swap" });
 const mono = localFont({ src: "../fonts/jetbrains-mono-latin-wght-normal.woff2", variable: "--police-mono", weight: "100 800", display: "swap" });
 
@@ -62,7 +64,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const offer = await cartOffer();
   return (
     // `data-intro` est posé sur <html> par le script du <head>, avant l'hydratation : d'où suppressHydrationWarning.
-    <html lang="fr" className={`${display.variable} ${inter.variable} ${mono.variable} h-full`} suppressHydrationWarning>
+    <html lang="fr" className={`${display.variable} ${affiche.variable} ${inter.variable} ${mono.variable} h-full`} suppressHydrationWarning>
       <head>
         {/* Avant le premier affichage : l'intro rose joue-t-elle ? (voir components/site/intro/script.ts) */}
         <script dangerouslySetInnerHTML={{ __html: INTRO_HEAD_SCRIPT }} />
