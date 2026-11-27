@@ -29,7 +29,9 @@ const p = ld(prod.text).find((d) => d["@type"] === "Product");
 check("fiche : titre et description écrits pour la recherche", title(prod.text)?.startsWith("Pré-workout CRI") && (meta(prod.text, "description") ?? "").includes("pré-workout"), title(prod.text));
 check("fiche : le h1 porte le nom et ce que c'est", h1(prod.text).length === 1 && /CRI.*pré-workout/i.test(h1(prod.text)[0]), h1(prod.text)[0]);
 check("fiche : lien canonique", prod.text.includes(`<link rel="canonical" href="${base}/produits/cri"`));
-check("fiche : Product avec prix, devise, stock, état, référence, marque", p?.offers?.price === 49 && p.offers.priceCurrency === "EUR" && p.offers.availability.endsWith("InStock") && p.sku === "SCULT-CRI-690-FP" && p.mpn === p.sku && p.brand.name === "SCULT");
+// Avant la sortie (la fiche montre « Sortie · … » à la place du bouton d'achat), le produit ne doit pas être annoncé en stock.
+const closed = prod.text.includes("Sortie · ");
+check(`fiche : Product avec prix, devise, stock (${closed ? "boutique fermée : pas en stock" : "en stock"}), état, référence, marque`, p?.offers?.price === 49 && p.offers.priceCurrency === "EUR" && p.offers.availability.endsWith(closed ? "OutOfStock" : "InStock") && p.sku === "SCULT-CRI-690-FP" && p.mpn === p.sku && p.brand.name === "SCULT");
 check("fiche : prix au kilo (0,69 kg rapporté à 1 kg)", p.offers.priceSpecification?.referenceQuantity?.value === "0.69" && p.offers.priceSpecification.referenceQuantity.valueReference.unitCode === "KGM");
 check("fiche : le prix au kilo et à la dose est écrit sur la page", prod.text.includes("71,01") && prod.text.includes("le kilo") && prod.text.includes("1,63"));
 check("fiche : ni note ni avis inventés", !("aggregateRating" in p) && !("review" in p));

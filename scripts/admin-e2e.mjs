@@ -212,6 +212,56 @@ check("signal « livré » : commande livrée", (await signal(11, "Livré")) ===
 check("un signal en retard ne fait pas reculer la commande", (await signal(3, "En route")) === 200 && (await row2()).status === "delivered");
 check("rattrapage du suivi : fermé sans clé, ouvert avec", (await fetch(base + "/api/cron/suivi-colis")).status === 401 && (await fetch(base + "/api/cron/suivi-colis", { headers: { authorization: `Bearer ${env.CRON_SECRET}` } })).status === 200);
 
+// Avant la sortie : la boutique fermée n'encaisse rien et inscrit sur la liste d'attente
+await db.query("delete from waitlist where email like '%@liste.test'");
+const sentBefore = (await sent()).length;
+const launch = async (open) => {
+  await page.goto(base + "/admin/reglages");
+  await page.fill('input[name="when"]', "janvier 2027");
+  await page.setChecked('input[name="open"]', open);
+  await Promise.all([page.waitForURL(/ok=/), page.click('form:has(input[name="when"]) button[type="submit"]')]);
+};
+await launch(false);
+const visitorCtx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+await visitorCtx.addInitScript(() => { try { sessionStorage.setItem("scult_source", "tiktok"); } catch {} });
+const visitor = await visitorCtx.newPage();
+await visitor.goto(base + "/produits/cri?intro=0");
+const closed = await visitor.textContent("main");
+check("boutique fermée : la fiche annonce la sortie et ne vend pas", closed.includes("Sortie · janvier 2027") && (await visitor.locator('main button:has-text("Ajouter")').count()) === 0);
+check("boutique fermée : le produit n'est pas annoncé en stock aux moteurs", (await visitor.content()).includes("schema.org/OutOfStock"));
+const join = async (email, trap = "") => {
+  await visitor.goto(base + "/produits/cri?intro=0");
+  await visitor.fill("#liste-email", email);
+  if (trap) await visitor.evaluate((v) => { document.querySelector('input[name="site"]').value = v; }, trap);
+  await visitor.click('#liste button[type="submit"]');
+  await visitor.waitForFunction(() => document.querySelector("#liste [role=status]") || document.querySelector("#liste-etat")?.textContent?.trim().length > 0);
+  return (await visitor.textContent("#liste")).replace(/\s+/g, " ");
+};
+check("adresse invalide : refusée avec un message", (await join("pas-un-mail")).includes("n'est pas valide"));
+check("inscription : confirmée à l'écran", (await join("Premier@Liste.test")).includes("Tu es sur la liste"));
+const first = await one("select email, source, device from waitlist where email = 'premier@liste.test'");
+check("inscription : adresse en minuscules, provenance et appareil notés", first?.source === "tiktok" && first?.device === "desktop", JSON.stringify(first));
+check("même adresse une seconde fois : pas d'erreur, pas de doublon", (await join("premier@liste.test")).includes("Tu es sur la liste") && Number((await one("select count(*) as n from waitlist where email like '%@liste.test'")).n) === 1);
+check("robot (champ piège rempli) : rien n'est enregistré", (await join("robot@liste.test", "http://spam")).includes("Tu es sur la liste") && !(await one("select 1 as x from waitlist where email = 'robot@liste.test'")));
+const listMails = (await sent()).slice(sentBefore).filter((m) => [].concat(m.to).includes("premier@liste.test"));
+check("un seul e-mail de confirmation, à l'inscrit", listMails.length === 1 && /liste/i.test(listMails[0].subject), `${listMails.length} e-mail(s)`);
+await visitor.evaluate(() => localStorage.setItem("scult.cart.v1", JSON.stringify([{ sku: "SCULT-CRI-690-FP", slug: "cri", name: "CRI", priceCents: 4900, image: null, quantity: 1 }])));
+await visitor.goto(base + "/checkout");
+await visitor.click('button:has-text("Payer avec Stripe")');
+await visitor.waitForSelector('[role="alert"]:not(:empty)');
+check("boutique fermée : le paiement est refusé, même avec un panier", (await visitor.textContent("main")).includes("pas encore ouverte"));
+await visitor.evaluate(() => localStorage.removeItem("scult.cart.v1"));
+await page.goto(base + "/admin/liste-attente");
+const liste = (await page.textContent("main")).replace(/\s+/g, " ");
+check("admin : la liste montre l'inscrit et sa provenance", liste.includes("premier@liste.test") && liste.includes("tiktok"));
+const csv = await page.request.get(base + "/admin/liste-attente-csv");
+check("admin : export CSV de la liste, fermé sans session", csv.status() === 200 && (await csv.text()).includes("premier@liste.test") && (await fetch(base + "/admin/liste-attente-csv")).status === 401);
+await launch(true);
+await visitor.goto(base + "/produits/cri?intro=0");
+check("boutique ouverte : le bouton d'achat revient", (await visitor.locator('main button:has-text("Ajouter"):visible').count()) > 0 && (await visitor.locator("#liste").count()) === 0);
+await visitorCtx.close();
+await db.query("delete from waitlist where email like '%@liste.test'");
+
 // Code promo sur la page de commande : la raison du refus, puis la remise
 const shop = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
 await shop.goto(base + "/produits/cri?intro=0");

@@ -9,13 +9,17 @@ export type Settings = {
   lateAfterHours: number;
   /** Nombre de jours de stock visé à chaque réassort : sert à proposer une quantité à commander. */
   restockTargetDays: number;
+  /** La boutique vend-elle ? Non : le site n'encaisse rien et inscrit sur la liste d'attente. */
+  shopOpen: boolean;
+  /** Quand sort le produit, tel qu'on l'écrit sur le site (« janvier 2027 »). */
+  launchLabel: string;
 };
-const DEFAULTS: Settings = { monthlyGoalCents: 0, lateAfterHours: 48, restockTargetDays: 60 };
+const DEFAULTS: Settings = { monthlyGoalCents: 0, lateAfterHours: 48, restockTargetDays: 60, shopOpen: false, launchLabel: "janvier 2027" };
 
 export async function getSettings(): Promise<Settings> {
   const rows = await db.query<{ key: string; value: unknown }>("select key, value from settings");
   const out = { ...DEFAULTS } as Record<string, unknown>;
-  for (const r of rows) if (r.key in DEFAULTS && typeof r.value === "number") out[r.key] = r.value;
+  for (const r of rows) if (r.key in DEFAULTS && typeof r.value === typeof (DEFAULTS as Record<string, unknown>)[r.key]) out[r.key] = r.value;
   return out as Settings;
 }
 

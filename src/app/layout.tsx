@@ -6,6 +6,8 @@ import { getFlavourOffer, type FlavourOffer } from "@/lib/catalog/queries";
 import { Suivi } from "@/components/site/Suivi";
 import { INDEXNOW_KEY, indexable, siteOrigin } from "@/lib/seo";
 import { INTRO_HEAD_SCRIPT } from "@/components/site/intro/script";
+import { LaunchProvider } from "@/components/site/LaunchContext";
+import { getLaunch } from "@/lib/launch";
 import "./globals.css";
 
 // Polices auto-hébergées (fichiers Fontsource, licence OFL) : aucun appel à
@@ -61,7 +63,7 @@ function bundleRule(offer: FlavourOffer | null): BundleRule | null {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const offer = await cartOffer();
+  const [offer, launch] = await Promise.all([cartOffer(), getLaunch()]);
   return (
     // `data-intro` est posé sur <html> par le script du <head>, avant l'hydratation : d'où suppressHydrationWarning.
     <html lang="fr" className={`${display.variable} ${affiche.variable} ${inter.variable} ${mono.variable} h-full`} suppressHydrationWarning>
@@ -70,10 +72,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <script dangerouslySetInnerHTML={{ __html: INTRO_HEAD_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">
-        <CartProvider bundle={bundleRule(offer)}>
-          {children}
-          <CartDrawer offer={offer} />
-        </CartProvider>
+        {/* Avant la sortie, le site ne vend pas : l'en-tête, le slider et la fiche le lisent ici (lib/launch.ts) */}
+        <LaunchProvider value={launch}>
+          <CartProvider bundle={bundleRule(offer)}>
+            {children}
+            <CartDrawer offer={offer} />
+          </CartProvider>
+        </LaunchProvider>
         {/* Mesure d'audience sans cookie, pour le taux de conversion de l'admin */}
         <Suivi />
       </body>

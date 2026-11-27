@@ -27,6 +27,7 @@ const eur = (cents: number) => `${(cents / 100).toFixed(2)} EUR`;
 export async function GET() {
   const origin = siteOrigin();
   const catalogue = await getCatalogue();
+  const { open } = await (await import("@/lib/launch")).getLaunch();   // avant la sortie, rien n'est achetable
   const abs = (url: string) => (url.startsWith("http") ? url : `${origin}${url}`);
   const items = catalogue.products.filter((p) => SOLD[p.slug]).flatMap((p) => {
     const { parent, units } = SOLD[p.slug];
@@ -41,7 +42,7 @@ export async function GET() {
 <link>${origin}/produits/${parent}</link>
 <g:image_link>${esc(abs(p.images[0]?.url ?? ""))}</g:image_link>
 ${p.images.slice(1, 10).map((i) => `<g:additional_image_link>${esc(abs(i.url))}</g:additional_image_link>`).join("\n")}
-<g:availability>${v.available ? "in_stock" : v.preorder.allowed ? "preorder" : "out_of_stock"}</g:availability>
+<g:availability>${!open ? "out_of_stock" : v.available ? "in_stock" : v.preorder.allowed ? "preorder" : "out_of_stock"}</g:availability>
 <g:price>${eur(sale ? v.compareAtCents! : v.priceCents)}</g:price>
 ${sale ? `<g:sale_price>${eur(v.priceCents)}</g:sale_price>` : ""}
 <g:brand>${SITE_NAME}</g:brand>

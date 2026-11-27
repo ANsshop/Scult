@@ -16,6 +16,7 @@ import { applyTracking } from "@/lib/store/shipping";
 import { adjustStock, saveProduct, saveVariant } from "@/lib/store/products";
 import { removePromo, savePromo } from "@/lib/store/promos";
 import { saveSettings } from "@/lib/store/settings";
+import { LAUNCH_TAG } from "@/lib/launch";
 
 /**
  * Tout ce que l'admin peut modifier passe par ici. Chaque action :
@@ -282,6 +283,18 @@ export async function settingsAction(form: FormData) {
   await saveSettings({ monthlyGoalCents: goal, lateAfterHours: late.data, restockTargetDays: target.data });
   refresh();
   back("/admin/reglages", { ok: "Réglages enregistrés." });
+}
+
+/** Ouvre ou ferme la boutique (avant la sortie : liste d'attente), et dit quand sort le produit. */
+export async function launchAction(form: FormData) {
+  await requireAdmin();
+  const label = str(form, "when").slice(0, 40);
+  if (!label) back("/admin/reglages", { erreur: "Indiquez quand sort le produit (« janvier 2027 »)." });
+  const open = form.get("open") === "1";
+  await saveSettings({ shopOpen: open, launchLabel: label });
+  updateTag(LAUNCH_TAG);
+  refresh();
+  back("/admin/reglages", { ok: open ? "La boutique est ouverte : le site vend." : "La boutique est fermée : le site inscrit sur la liste d'attente." });
 }
 
 export async function passwordAction(form: FormData) {

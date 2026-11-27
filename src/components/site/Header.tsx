@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CartCount } from "@/components/cart/CartCount";
 import { ANNONCE, NAV } from "@/lib/content/site";
+import { useLaunch } from "./LaunchContext";
 import { Wordmark } from "./Wordmark";
 
 /**
@@ -20,6 +21,9 @@ import { Wordmark } from "./Wordmark";
 export function Header({ overlay = false }: { overlay?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const launch = useLaunch();
+  // Avant la sortie, la bande annonce la date et mène à la liste d'attente ; ensuite, l'offre.
+  const annonce = launch.open ? ANNONCE : { text: `Sortie en ${launch.when} · Inscris-toi`, href: "/produits/cri#liste" };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -39,11 +43,11 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
   return (
     <header className={`${overlay ? "fixed inset-x-0 top-0" : "sticky top-0"} entete sombre z-40 text-texte transition-colors duration-300 ${solid ? "bg-fond/90 shadow-[0_1px_0_rgb(242_240_234/0.16)] backdrop-blur" : "bg-transparent"}`}>
       {/* La bande d'annonce : le même texte répété, qui glisse en continu (à l'arrêt en mouvement réduit) */}
-      <Link href={ANNONCE.href} aria-label={ANNONCE.text} className="block h-8 overflow-hidden bg-rose text-noir">
+      <Link href={annonce.href} aria-label={annonce.text} className="block h-8 overflow-hidden bg-rose text-noir">
         <span aria-hidden className="annonce-piste flex h-full w-max items-center whitespace-nowrap">
           {Array.from({ length: 16 }, (_, i) => (
             <span key={i} className="label flex items-center font-bold">
-              {ANNONCE.text}<span className="mx-5 inline-block h-1.5 w-1.5 rounded-full bg-noir" />
+              {annonce.text}<span className="mx-5 inline-block h-1.5 w-1.5 rounded-full bg-noir" />
             </span>
           ))}
         </span>

@@ -104,7 +104,7 @@ export const pricePerKg = (priceCents: number, netGrams: number) => (priceCents 
  * `netGrams` : le poids net, pour le prix au kilo — affiché aussi sur la page.
  * Pas de GTIN (le produit n'en a pas : on n'en invente pas) ; la référence sert de `sku` et de `mpn`.
  */
-export function productJsonLd(p: Product, extra: { label?: string; netGrams?: number } = {}) {
+export function productJsonLd(p: Product, extra: { label?: string; netGrams?: number; sold?: boolean } = {}) {
   const origin = siteOrigin();
   const url = `${origin}/produits/${p.slug}`;
   const price = money(p.priceCents);
@@ -135,7 +135,8 @@ export function productJsonLd(p: Product, extra: { label?: string; netGrams?: nu
       price,
       priceCurrency: "EUR",
       ...(specs.length ? { priceSpecification: specs.length === 1 ? specs[0] : specs } : {}),
-      availability: p.inStock ? (p.preorderEta ? "https://schema.org/PreOrder" : "https://schema.org/InStock") : "https://schema.org/OutOfStock",
+      // Avant la sortie (`sold: false`), on ne peut pas l'acheter : l'annoncer en stock tromperait le moteur comme le client.
+      availability: extra.sold === false ? "https://schema.org/OutOfStock" : p.inStock ? (p.preorderEta ? "https://schema.org/PreOrder" : "https://schema.org/InStock") : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: { "@type": "Organization", name: SITE_NAME, url: origin },
     },

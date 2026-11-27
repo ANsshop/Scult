@@ -10,6 +10,7 @@ const NAV = [
   { href: "/admin/commandes", label: "Commandes", icon: "M2 5l6-3 6 3v6l-6 3-6-3V5zM2 5l6 3 6-3M8 8v6", badge: true },
   { href: "/admin/produits", label: "Produits et stock", icon: "M3 3h10v10H3zM3 6.5h10M6.5 3v10" },
   { href: "/admin/clients", label: "Clients", icon: "M8 8a2.7 2.7 0 100-5.4A2.7 2.7 0 008 8zM2.8 13.5c.6-2.4 2.6-3.7 5.2-3.7s4.6 1.3 5.2 3.7" },
+  { href: "/admin/liste-attente", label: "Liste d'attente", icon: "M2.5 4.5h11v7h-11zM2.5 4.5l5.5 4 5.5-4" },
   { href: "/admin/promos", label: "Codes promo", icon: "M2.5 8.2V2.5h5.7l5.3 5.3-5.7 5.7zM5.3 5.3h.01" },
   { href: "/admin/reglages", label: "Réglages", icon: "M2.5 4.5h7M12.5 4.5h1M2.5 11.5h1M6.5 11.5h7M11 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM5 13a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" },
 ];

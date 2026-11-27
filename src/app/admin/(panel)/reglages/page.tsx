@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { passwordAction, settingsAction } from "../../actions";
+import { launchAction, passwordAction, settingsAction } from "../../actions";
 import { BTN_DARK, BTN_GHOST, Card, Field, Flash, INPUT, PageHeader, TABLE, TD, TH, TableWrap } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/admin/auth";
 import { centsInput, eur } from "@/lib/admin/format";
@@ -29,6 +29,17 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         </Card>
 
         <div className="grid gap-3">
+          <Card title="Lancement" hint={settings.shopOpen ? "La boutique est ouverte : le site vend." : "La boutique est fermée : à la place du bouton d'achat, le site inscrit sur la liste d'attente, et aucun paiement n'est accepté."}>
+            <form action={launchAction} className="space-y-4">
+              <Field label="Sortie du produit" hint="Écrit tel quel sur le site : « Sortie · janvier 2027 »."><input name="when" required maxLength={40} defaultValue={settings.launchLabel} className={INPUT} /></Field>
+              <label className="flex items-start gap-3 text-[0.9rem]">
+                <input type="checkbox" name="open" value="1" defaultChecked={settings.shopOpen} className="mt-1 h-4 w-4 accent-[#ff2e93]" />
+                <span><strong className="font-semibold">Ouvrir la boutique</strong><span className="block text-doux">Les boutons d&apos;achat reviennent et le paiement est accepté. À ne cocher que le jour où le pot peut partir.</span></span>
+              </label>
+              <button type="submit" className={BTN_DARK}>Enregistrer</button>
+            </form>
+          </Card>
+
           <Card title="Mon compte" hint={`${admin.name} · ${admin.email}`}>
             <form action={passwordAction} className="space-y-4">
               <Field label="Mot de passe actuel"><input name="current" type="password" required autoComplete="current-password" className={INPUT} /></Field>

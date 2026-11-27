@@ -8,6 +8,7 @@ import type { CartLine } from "@/lib/types";
 import { imageSize } from "@/lib/content/images";
 import { SLIDES } from "@/lib/content/site";
 import { Picture } from "./Picture";
+import { useLaunch } from "./LaunchContext";
 import { Pot3D } from "./Pot3D";
 import { TurnHint } from "./TurnHint";
 
@@ -37,6 +38,7 @@ export function Slider({ buy = null }: { buy?: { item: CartLine; inStock: boolea
   const count = SLIDES.length;
   const [index, setIndex] = useState(0);
   const go = (i: number) => setIndex(((i % count) + count) % count);
+  const launch = useLaunch();
 
   return (
     <section id="bouffon" aria-roledescription="carrousel" aria-label="À la une" className="relative scroll-mt-(--entete) overflow-hidden border-b bg-surface">
@@ -63,7 +65,10 @@ export function Slider({ buy = null }: { buy?: { item: CartLine; inStock: boolea
               {/* Les boutons sont dans un bloc en absolu : la classe du reflet leur impose `position: relative`.
                   D'abord l'achat (rose), puis la fiche (blanc cerné de noir : lisible sur le pot noir comme sur le fond clair). */}
               <div className="absolute inset-x-5 bottom-5 flex gap-2.5 md:inset-x-auto md:bottom-10 md:left-[max(2.5rem,calc((100vw-1360px)/2+2.5rem))] md:gap-3">
-                {buy && <AddToCart key={buy.item.sku} item={buy.item} inStock={buy.inStock} preorderEta={buy.preorderEta} className="flex-1 !px-4 md:h-14 md:flex-none md:!px-10" />}
+                {/* Avant la sortie : pas d'achat, un lien vers la liste d'attente */}
+                {launch.open
+                  ? buy && <AddToCart key={buy.item.sku} item={buy.item} inStock={buy.inStock} preorderEta={buy.preorderEta} className="flex-1 !px-4 md:h-14 md:flex-none md:!px-10" />
+                  : <ButtonLink href="/produits/cri#liste" className="flex-1 !px-4 md:h-14 md:flex-none md:!px-10">Préviens-moi</ButtonLink>}
                 <ButtonLink href={s.cta.href} className="flex-1 !bg-white !px-4 shadow-[0_0_0_1.5px_var(--color-noir)] [--btn-reflet:rgb(255_46_147/0.4)] md:h-14 md:flex-none md:!px-10">{s.cta.label}</ButtonLink>
               </div>
             </div>

@@ -2,6 +2,9 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { PurchaseOptions } from "@/components/cart/PurchaseOptions";
 import { BuyButton } from "@/components/cart/BuyButton";
+import { WaitlistBar } from "./WaitlistBar";
+import { WaitlistForm } from "./WaitlistForm";
+import type { Launch } from "@/lib/launch";
 import { ProductGallery } from "./ProductGallery";
 import { FlavourGallery, FlavourIngredients, FlavourProvider, FlavourSku } from "./FlavourContext";
 import { Reassurance } from "./Reassurance";
@@ -27,12 +30,15 @@ const answer = (q: string) => FAQ_ITEMS.find((i) => i.question === q)?.answer ??
  * d'ingrédients. Sans offre par goût, la fiche vend la première variante du
  * catalogue, telle quelle.
  *
+ * `launch` : avant la sortie (`open: false`), le bloc d'achat laisse la place à
+ * la date et à la liste d'attente (ancre #liste) ; rien ne peut être mis au panier.
+ *
  * L'ordre de la colonne : nom, prix, bloc d'achat (un pot ou le pack), puis
  * seulement la description et les détails — sur téléphone, on n'a plus à
  * descendre jusqu'en bas pour acheter. Le bouton d'achat reste à l'écran
  * pendant toute la lecture (BuyButton).
  */
-export function ProductPage({ product, offer }: { product: Product; offer?: FlavourOffer | null }) {
+export function ProductPage({ product, offer, launch }: { product: Product; offer?: FlavourOffer | null; launch: Launch }) {
   const claims = CLAIMS.filter((c) => c.slug === product.slug);
   const info = PRODUCT_INFO[product.slug];
   const hasNrv = Boolean(info?.nutrition.some((n) => n.nrv));
@@ -63,7 +69,16 @@ export function ProductPage({ product, offer }: { product: Product; offer?: Flav
           {info && product.categorySlug !== "packs" && (
             <p className="mt-2 text-sm text-discret tabular-nums">Soit {formatPrice(Math.round(pricePerKg(product.priceCents, info.netGrams) * 100))} le kilo · {formatPrice(Math.round(product.priceCents / info.servings))} la dose · pot de {info.netGrams} g, {info.servings} doses</p>
           )}
-          {offer ? (
+          {!launch.open ? (
+            // Avant la sortie : pas d'achat. La date, et la liste d'attente si la base est là pour la tenir.
+            <div id="liste" className="mt-8 scroll-mt-28">
+              <p className="label inline-block rounded-full bg-rose px-3 py-1.5 font-bold text-noir">Sortie · {launch.when}</p>
+              {launch.waitlist
+                ? <WaitlistForm when={launch.when} className="mt-5" />
+                : <p className="mt-4 text-[0.95rem] leading-relaxed text-doux">Pas encore en vente. Les inscriptions pour être prévenu ouvrent bientôt.</p>}
+              <WaitlistBar title={product.name} when={launch.when} />
+            </div>
+          ) : offer ? (
             <PurchaseOptions offer={offer} />
           ) : (
             <BuyButton

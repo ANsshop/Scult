@@ -7,8 +7,12 @@ import { JsonLd } from "@/components/site/JsonLd";
 import { GUIDE, INGREDIENTS, PUBLISHED, UPDATED, getIngredient } from "@/lib/content/guides";
 import { articleJsonLd, breadcrumbJsonLd, faqPageJsonLd } from "@/lib/seo";
 
-/** Une page par ingrédient, toutes prégénérées ; une adresse inconnue rend une vraie 404. */
-export const dynamicParams = false;
+/**
+ * Une page par ingrédient, toutes prégénérées ; une adresse inconnue rend une vraie 404 (`notFound()` plus bas).
+ * Pas de `dynamicParams = false` : le gabarit du site lit l'état du lancement, et quand l'admin le change, ces pages
+ * doivent pouvoir se refaire à la demande — avec ce réglage, elles répondaient 404 jusqu'à la mise en ligne suivante
+ * (constaté le 2026-11-27).
+ */
 export function generateStaticParams() {
   return INGREDIENTS.map((i) => ({ slug: i.slug }));
 }

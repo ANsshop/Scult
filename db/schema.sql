@@ -207,3 +207,15 @@ alter table orders add column if not exists sendcloud_status text;        -- le 
 alter table orders add column if not exists tracking_url text;            -- le lien de suivi donné par Sendcloud
 alter table orders add column if not exists label_created_at timestamptz;
 create unique index if not exists orders_sendcloud_parcel_idx on orders (sendcloud_parcel_id) where sendcloud_parcel_id is not null;
+
+-- — Liste d'attente : les adresses à prévenir à la sortie (ajouté le 2026-11-27) —
+-- Tant que la boutique n'est pas ouverte (réglage `shopOpen`), le site ne vend pas : il inscrit.
+create table if not exists waitlist (
+  id          bigserial primary key,
+  email       text not null unique,                    -- en minuscules
+  source      text,                                    -- d'où venait la visite : « direct », un site, ou utm_source (tiktok…)
+  device      text check (device is null or device in ('mobile', 'desktop')),
+  created_at  timestamptz not null default now(),
+  notified_at timestamptz                              -- le jour où l'e-mail de sortie est parti
+);
+create index if not exists waitlist_created_idx on waitlist (created_at desc);

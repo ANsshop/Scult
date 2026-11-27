@@ -6,6 +6,7 @@ import { ProductPage } from "@/components/site/ProductPage";
 import { JsonLd } from "@/components/site/JsonLd";
 import { getFlavourOffer, getProductBySlug, getProducts } from "@/lib/catalog/queries";
 import { PRODUCT_INFO } from "@/lib/content/product-info";
+import { getLaunch } from "@/lib/launch";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
@@ -38,14 +39,15 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
+  const launch = await getLaunch();
   return (
     <>
-      <JsonLd data={productJsonLd(product, { label: PRODUCT_INFO[product.slug]?.label, netGrams: PRODUCT_INFO[product.slug]?.netGrams })} />
+      <JsonLd data={productJsonLd(product, { label: PRODUCT_INFO[product.slug]?.label, netGrams: PRODUCT_INFO[product.slug]?.netGrams, sold: launch.open })} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Accueil", path: "/" }, { name: product.name, path: `/produits/${product.slug}` }])} />
       <Header />
-      <main><ProductPage product={product} offer={await getFlavourOffer(product.slug)} /></main>
+      <main><ProductPage product={product} offer={await getFlavourOffer(product.slug)} launch={launch} /></main>
       <Footer />
-      {/* La place de la barre d'achat collée en bas de l'écran (BuyButton) : elle ne cache pas la fin du pied de page */}
+      {/* La place de la barre collée en bas de l'écran (BuyButton, ou WaitlistBar avant la sortie) : elle ne cache pas la fin du pied de page */}
       <div aria-hidden className="sombre h-[4.75rem] bg-fond" />
     </>
   );

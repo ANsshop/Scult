@@ -31,6 +31,8 @@ export async function startCheckoutAction(input: unknown): Promise<StartCheckout
   const parsed = schema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Panier invalide. Rechargez la page." };
   const { countryCode, items, promoCode } = parsed.data;
+  // Avant la sortie, rien ne se vend, même avec un panier resté dans le navigateur.
+  if (!(await (await import("@/lib/launch")).getLaunch()).open) return { ok: false, error: "La boutique n'est pas encore ouverte. Inscrivez-vous sur la fiche du produit pour être prévenu à la sortie." };
 
   const priced = await priceCart(items, countryCode, promoCode);
   if ("error" in priced) return { ok: false, error: priced.error };
