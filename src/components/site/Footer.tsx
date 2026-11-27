@@ -36,7 +36,7 @@ export async function Footer() {
             <p className="display mt-6 text-[clamp(1.5rem,2.6vw,2.4rem)] md:mt-8">{FOOTER.signature}</p>
             {launch.open
               ? <ButtonLink href="/produits/cri" className="mt-7">Commander · 49 €</ButtonLink>
-              : <ButtonLink href="/produits/cri#liste" className="mt-7">Être prévenu · {launch.when}</ButtonLink>}
+              : <ButtonLink href="/produits/cri#liste" className="mt-7">{launch.waitlist ? `Être prévenu · ${launch.when}` : `Sortie · ${launch.when}`}</ButtonLink>}
           </div>
 
           <nav aria-label="Pied de page" className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4">

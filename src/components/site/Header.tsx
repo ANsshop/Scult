@@ -23,7 +23,8 @@ export function Header({ overlay = false }: { overlay?: boolean }) {
   const [open, setOpen] = useState(false);
   const launch = useLaunch();
   // Avant la sortie, la bande annonce la date et mène à la liste d'attente ; ensuite, l'offre.
-  const annonce = launch.open ? ANNONCE : { text: `Sortie en ${launch.when} · Inscris-toi`, href: "/produits/cri#liste" };
+  // « Inscris-toi » seulement si la liste d'attente peut vraiment inscrire (il lui faut la base).
+  const annonce = launch.open ? ANNONCE : { text: launch.waitlist ? `Sortie en ${launch.when} · Inscris-toi` : `Sortie en ${launch.when}`, href: "/produits/cri#liste" };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);

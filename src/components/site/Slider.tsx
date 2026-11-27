@@ -68,7 +68,7 @@ export function Slider({ buy = null }: { buy?: { item: CartLine; inStock: boolea
                 {/* Avant la sortie : pas d'achat, un lien vers la liste d'attente */}
                 {launch.open
                   ? buy && <AddToCart key={buy.item.sku} item={buy.item} inStock={buy.inStock} preorderEta={buy.preorderEta} className="flex-1 !px-4 md:h-14 md:flex-none md:!px-10" />
-                  : <ButtonLink href="/produits/cri#liste" className="flex-1 !px-4 md:h-14 md:flex-none md:!px-10">Préviens-moi</ButtonLink>}
+                  : launch.waitlist && <ButtonLink href="/produits/cri#liste" className="flex-1 !px-4 md:h-14 md:flex-none md:!px-10">Préviens-moi</ButtonLink>}
                 <ButtonLink href={s.cta.href} className="flex-1 !bg-white !px-4 shadow-[0_0_0_1.5px_var(--color-noir)] [--btn-reflet:rgb(255_46_147/0.4)] md:h-14 md:flex-none md:!px-10">{s.cta.label}</ButtonLink>
               </div>
             </div>

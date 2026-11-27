@@ -76,7 +76,7 @@ export function ProductPage({ product, offer, launch }: { product: Product; offe
               {launch.waitlist
                 ? <WaitlistForm when={launch.when} className="mt-5" />
                 : <p className="mt-4 text-[0.95rem] leading-relaxed text-doux">Pas encore en vente. Les inscriptions pour être prévenu ouvrent bientôt.</p>}
-              <WaitlistBar title={product.name} when={launch.when} />
+              {launch.waitlist && <WaitlistBar title={product.name} when={launch.when} />}
             </div>
           ) : offer ? (
             <PurchaseOptions offer={offer} />
